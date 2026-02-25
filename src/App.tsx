@@ -15,12 +15,14 @@ function App() {
   const [surgeTokens, setSurgeTokens] = useState<string>('');
   const [aimTokens, setAimTokens] = useState<string>('');
   const [observeTokens, setObserveTokens] = useState<string>('');
+  const [precise, setPrecise] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
   const aimTokensNum = aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
+  const preciseNum = precise === '' ? 0 : Math.max(0, Math.floor(Number(precise)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -29,9 +31,10 @@ function App() {
         criticalXNum,
         surgeTokensNum,
         aimTokensNum,
-        observeTokensNum
+        observeTokensNum,
+        preciseNum
       ),
-    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum]
+    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -97,6 +100,19 @@ function App() {
               value={aimTokens}
               onChange={(e) => setAimTokens(e.target.value)}
               title="Reroll up to 2 blank dice per Aim token"
+            />
+          </div>
+          <div className="app__token-input">
+            <label htmlFor="precise">Keyword: Precise</label>
+            <input
+              id="precise"
+              type="number"
+              min={0}
+              placeholder="0"
+              value={precise}
+              onChange={(e) => setPrecise(e.target.value)}
+              disabled={aimTokensNum === 0}
+              title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
             />
           </div>
           <div className="app__token-input">
