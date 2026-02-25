@@ -1,4 +1,4 @@
-import type { DieColor, DieFaces, SurgeConversion, AttackPool, AttackResults } from '../types';
+import type { DieColor, DieFaces, SurgeConversion, AttackPool, AttackResults, CriticalX } from '../types';
 
 export const DICE: Record<DieColor, DieFaces> = {
   red:   { crit: 1, surge: 1, hit: 5, blank: 1 },
@@ -8,12 +8,24 @@ export const DICE: Record<DieColor, DieFaces> = {
 
 const SIDES = 8;
 
+/** Raw per-face probabilities (no surge conversion). */
+function getRawProbabilities(color: DieColor): { crit: number; surge: number; hit: number; blank: number } {
+  const d = DICE[color];
+  return {
+    crit: d.crit / SIDES,
+    surge: d.surge / SIDES,
+    hit: d.hit / SIDES,
+    blank: d.blank / SIDES,
+  };
+}
+
 export interface EffectiveProbabilities {
   crit: number;
   hit: number;
   blank: number;
 }
 
+/** Effective per-die probabilities with surge folded in (used for tests / when no Critical X). */
 export function getEffectiveProbabilities(
   color: DieColor,
   surge: SurgeConversion
@@ -38,59 +50,103 @@ export function getEffectiveProbabilities(
   };
 }
 
-function convolve(a: number[], b: number[]): number[] {
-  const result = new Array(a.length + b.length - 1).fill(0);
-  for (let i = 0; i < a.length; i++) {
-    for (let j = 0; j < b.length; j++) {
-      result[i + j] += a[i] * b[j];
-    }
+/** Convolve one die's (c,s,h,b) distribution into the pool distribution. */
+function convolveOneDie(
+  current: Map<string, number>,
+  probs: { crit: number; surge: number; hit: number; blank: number }
+): Map<string, number> {
+  const next = new Map<string, number>();
+  const key = (c: number, s: number, h: number, b: number) => `${c},${s},${h},${b}`;
+
+  for (const [k, p] of current) {
+    if (p === 0) continue;
+    const [c, s, h, b] = k.split(',').map(Number);
+    const k1 = key(c + 1, s, h, b);
+    next.set(k1, (next.get(k1) ?? 0) + p * probs.crit);
+    const k2 = key(c, s + 1, h, b);
+    next.set(k2, (next.get(k2) ?? 0) + p * probs.surge);
+    const k3 = key(c, s, h + 1, b);
+    next.set(k3, (next.get(k3) ?? 0) + p * probs.hit);
+    const k4 = key(c, s, h, b + 1);
+    next.set(k4, (next.get(k4) ?? 0) + p * probs.blank);
   }
-  return result;
+  return next;
+}
+
+/** Resolve (c,s,h,b) with Critical X then Surge Conversion → (hitsFinal, critsFinal). */
+function resolve(
+  c: number,
+  s: number,
+  h: number,
+  _b: number,
+  criticalX: number,
+  surge: SurgeConversion
+): { hits: number; crits: number } {
+  const toCrit = Math.min(criticalX, s);
+  const surgesRemaining = s - toCrit;
+  let crits = c + toCrit;
+  let hits = h;
+  if (surge === 'crit') {
+    crits += surgesRemaining;
+  } else if (surge === 'hit') {
+    hits += surgesRemaining;
+  }
+  return { hits, crits };
+}
+
+function normalizeCriticalX(x: CriticalX): number {
+  if (x === undefined || x === null) return 0;
+  const n = Number(x);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.floor(n);
 }
 
 export function calculateAttackPool(
   pool: AttackPool,
-  surge: SurgeConversion
+  surge: SurgeConversion,
+  criticalX?: CriticalX
 ): AttackResults {
+  const x = normalizeCriticalX(criticalX);
   const dieColors: DieColor[] = ['red', 'black', 'white'];
 
-  let hitDist = [1];
-  let critDist = [1];
+  // Build full (c,s,h,b) distribution via convolution
+  let cshb = new Map<string, number>();
+  cshb.set('0,0,0,0', 1);
 
   for (const color of dieColors) {
     const count = pool[color];
-    const probs = getEffectiveProbabilities(color, surge);
-
+    const probs = getRawProbabilities(color);
     for (let i = 0; i < count; i++) {
-      hitDist = convolve(hitDist, [1 - probs.hit, probs.hit]);
-      critDist = convolve(critDist, [1 - probs.crit, probs.crit]);
+      cshb = convolveOneDie(cshb, probs);
     }
   }
 
-  const expectedHits = hitDist.reduce((sum, p, i) => sum + i * p, 0);
-  const expectedCrits = critDist.reduce((sum, p, i) => sum + i * p, 0);
+  // Resolve each outcome and aggregate
+  let expectedHits = 0;
+  let expectedCrits = 0;
+  const totalProbByTotal: Record<number, number> = {};
 
-  let totalDist = [1];
-  for (const color of dieColors) {
-    const count = pool[color];
-    const probs = getEffectiveProbabilities(color, surge);
-    const successProb = probs.hit + probs.crit;
-
-    for (let i = 0; i < count; i++) {
-      totalDist = convolve(totalDist, [1 - successProb, successProb]);
-    }
+  for (const [k, prob] of cshb) {
+    if (prob === 0) continue;
+    const [c, s, h, b] = k.split(',').map(Number);
+    const { hits, crits } = resolve(c, s, h, b, x, surge);
+    expectedHits += prob * hits;
+    expectedCrits += prob * crits;
+    const total = hits + crits;
+    totalProbByTotal[total] = (totalProbByTotal[total] ?? 0) + prob;
   }
 
-  const distribution = totalDist.map((probability, total) => ({
+  const maxTotal = Math.max(...Object.keys(totalProbByTotal).map(Number), 0);
+  const distribution = Array.from({ length: maxTotal + 1 }, (_, total) => ({
     total,
-    probability,
+    probability: totalProbByTotal[total] ?? 0,
   }));
 
   const cumulative: { total: number; probability: number }[] = [];
   let cumSum = 1;
-  for (let i = 0; i < totalDist.length; i++) {
+  for (let i = 0; i <= maxTotal; i++) {
     cumulative.push({ total: i, probability: cumSum });
-    cumSum -= totalDist[i];
+    cumSum -= totalProbByTotal[i] ?? 0;
   }
 
   return {

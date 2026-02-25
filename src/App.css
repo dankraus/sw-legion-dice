@@ -34,6 +34,7 @@
   color: #111827;
 }
 
+.app__critical-x,
 .app__point-cost {
   margin-top: 1rem;
   display: flex;
@@ -41,11 +42,13 @@
   gap: 0.25rem;
 }
 
+.app__critical-x label,
 .app__point-cost label {
   font-weight: 600;
   font-size: 1.1rem;
 }
 
+.app__critical-x input,
 .app__point-cost input {
   padding: 0.5rem 0.75rem;
   border: 2px solid #d1d5db;
@@ -54,6 +57,7 @@
   transition: border-color 0.15s;
 }
 
+.app__critical-x input:focus,
 .app__point-cost input:focus {
   outline: none;
   border-color: #3b82f6;

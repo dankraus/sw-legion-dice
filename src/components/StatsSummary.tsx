@@ -24,8 +24,8 @@ export function StatsSummary({ expectedHits, expectedCrits, expectedTotal, point
       </div>
       {pointCost != null && expectedTotal > 0 && (
         <div className="stats-summary__stat stats-summary__stat--efficiency">
-          <span className="stats-summary__value">{(expectedTotal / pointCost).toFixed(3)}</span>
-          <span className="stats-summary__label">Success / Pt</span>
+          <span className="stats-summary__value">{(pointCost / expectedTotal).toFixed(1)}</span>
+          <span className="stats-summary__label">Pts / Success</span>
         </div>
       )}
     </div>

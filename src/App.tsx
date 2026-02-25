@@ -11,9 +11,14 @@ import './App.css';
 function App() {
   const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
   const [surge, setSurge] = useState<SurgeConversion>('none');
+  const [criticalX, setCriticalX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
 
-  const results = useMemo(() => calculateAttackPool(pool, surge), [pool, surge]);
+  const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
+  const results = useMemo(
+    () => calculateAttackPool(pool, surge, criticalXNum),
+    [pool, surge, criticalXNum]
+  );
 
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
@@ -43,6 +48,18 @@ function App() {
             onChange={(n) => setPool((p) => ({ ...p, white: n }))}
           />
           <SurgeToggle value={surge} onChange={setSurge} />
+          <div className="app__critical-x">
+            <label htmlFor="critical-x">Keyword: Critical X</label>
+            <input
+              id="critical-x"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={criticalX}
+              onChange={(e) => setCriticalX(e.target.value)}
+              title="Convert up to X surges to crits (before Surge Conversion)"
+            />
+          </div>
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
             <input
