@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ * Engine tests are pure TS; no DOM needed.
+ */
 import { describe, it, expect } from 'vitest';
 import { DICE, getEffectiveProbabilities, calculateAttackPool } from '../probability';
 import type { AttackPool } from '../../types';
@@ -103,5 +107,59 @@ describe('calculateAttackPool', () => {
         result.cumulative[i - 1].probability
       );
     }
+  });
+});
+
+describe('Critical X', () => {
+  it('criticalX 0 or undefined matches no keyword', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const withNone = calculateAttackPool(pool, 'hit');
+    const withZero = calculateAttackPool(pool, 'hit', 0);
+    const withUndefined = calculateAttackPool(pool, 'hit', undefined);
+    expect(withZero.expectedHits).toBeCloseTo(withNone.expectedHits);
+    expect(withZero.expectedCrits).toBeCloseTo(withNone.expectedCrits);
+    expect(withUndefined.expectedHits).toBeCloseTo(withNone.expectedHits);
+    expect(withUndefined.expectedCrits).toBeCloseTo(withNone.expectedCrits);
+  });
+
+  it('Critical 1 with surge to hit: one surge becomes crit instead of hit', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const noKeyword = calculateAttackPool(pool, 'hit');
+    const withCritical1 = calculateAttackPool(pool, 'hit', 1);
+    expect(withCritical1.expectedCrits).toBeCloseTo(noKeyword.expectedCrits + 1 / 8);
+    expect(withCritical1.expectedHits).toBeCloseTo(noKeyword.expectedHits - 1 / 8);
+  });
+
+  it('Critical 2 then Surge to Hit: 3 surges → 2 crits, 1 hit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 3 };
+    const result = calculateAttackPool(pool, 'hit', 2);
+    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    expect(sum).toBeCloseTo(1);
+    expect(result.expectedTotal).toBeGreaterThan(0);
+  });
+
+  it('distribution sums to 1 with Critical X', () => {
+    const pool: AttackPool = { red: 2, black: 1, white: 1 };
+    const result = calculateAttackPool(pool, 'hit', 2);
+    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    expect(sum).toBeCloseTo(1);
+  });
+
+  it('negative criticalX treated as 0', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const result = calculateAttackPool(pool, 'hit', -1);
+    const noKeyword = calculateAttackPool(pool, 'hit');
+    expect(result.expectedCrits).toBeCloseTo(noKeyword.expectedCrits);
+  });
+});
+
+describe('Surge Tokens', () => {
+  it('with surge none, 1 token converts one surge to hit (single white die)', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const noTokens = calculateAttackPool(pool, 'none', undefined, 0);
+    const oneToken = calculateAttackPool(pool, 'none', undefined, 1);
+    expect(noTokens.expectedHits).toBeCloseTo(1 / 8);
+    expect(oneToken.expectedHits).toBeCloseTo(2 / 8);
+    expect(oneToken.expectedCrits).toBeCloseTo(1 / 8);
   });
 });

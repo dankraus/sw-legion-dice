@@ -73,14 +73,15 @@ function convolveOneDie(
   return next;
 }
 
-/** Resolve (c,s,h,b) with Critical X then Surge Conversion → (hitsFinal, critsFinal). */
+/** Resolve (c,s,h,b) with Critical X then Surge Conversion (and Surge Tokens when surge is none) → (hitsFinal, critsFinal). */
 function resolve(
   c: number,
   s: number,
   h: number,
   _b: number,
   criticalX: number,
-  surge: SurgeConversion
+  surge: SurgeConversion,
+  surgeTokens: number
 ): { hits: number; crits: number } {
   const toCrit = Math.min(criticalX, s);
   const surgesRemaining = s - toCrit;
@@ -90,6 +91,8 @@ function resolve(
     crits += surgesRemaining;
   } else if (surge === 'hit') {
     hits += surgesRemaining;
+  } else {
+    hits += Math.min(surgeTokens, surgesRemaining);
   }
   return { hits, crits };
 }
@@ -101,12 +104,21 @@ function normalizeCriticalX(x: CriticalX): number {
   return Math.floor(n);
 }
 
+function normalizeSurgeTokens(t?: number): number {
+  if (t === undefined || t === null) return 0;
+  const n = Number(t);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.floor(n);
+}
+
 export function calculateAttackPool(
   pool: AttackPool,
   surge: SurgeConversion,
-  criticalX?: CriticalX
+  criticalX?: CriticalX,
+  surgeTokens?: number
 ): AttackResults {
   const x = normalizeCriticalX(criticalX);
+  const tokens = normalizeSurgeTokens(surgeTokens);
   const dieColors: DieColor[] = ['red', 'black', 'white'];
 
   // Build full (c,s,h,b) distribution via convolution
@@ -129,7 +141,7 @@ export function calculateAttackPool(
   for (const [k, prob] of cshb) {
     if (prob === 0) continue;
     const [c, s, h, b] = k.split(',').map(Number);
-    const { hits, crits } = resolve(c, s, h, b, x, surge);
+    const { hits, crits } = resolve(c, s, h, b, x, surge, tokens);
     expectedHits += prob * hits;
     expectedCrits += prob * crits;
     const total = hits + crits;
