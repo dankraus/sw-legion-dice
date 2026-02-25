@@ -12,12 +12,14 @@ function App() {
   const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
   const [surge, setSurge] = useState<SurgeConversion>('none');
   const [criticalX, setCriticalX] = useState<string>('');
+  const [surgeTokens, setSurgeTokens] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
+  const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
   const results = useMemo(
-    () => calculateAttackPool(pool, surge, criticalXNum),
-    [pool, surge, criticalXNum]
+    () => calculateAttackPool(pool, surge, criticalXNum, surgeTokensNum),
+    [pool, surge, criticalXNum, surgeTokensNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -58,6 +60,19 @@ function App() {
               value={criticalX}
               onChange={(e) => setCriticalX(e.target.value)}
               title="Convert up to X surges to crits (before Surge Conversion)"
+            />
+          </div>
+          <div className="app__surge-tokens">
+            <label htmlFor="surge-tokens">Surge Tokens</label>
+            <input
+              id="surge-tokens"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={surgeTokens}
+              onChange={(e) => setSurgeTokens(e.target.value)}
+              disabled={surge !== 'none'}
+              title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
             />
           </div>
           <div className="app__point-cost">

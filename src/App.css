@@ -35,6 +35,7 @@
 }
 
 .app__critical-x,
+.app__surge-tokens,
 .app__point-cost {
   margin-top: 1rem;
   display: flex;
@@ -43,12 +44,14 @@
 }
 
 .app__critical-x label,
+.app__surge-tokens label,
 .app__point-cost label {
   font-weight: 600;
   font-size: 1.1rem;
 }
 
 .app__critical-x input,
+.app__surge-tokens input,
 .app__point-cost input {
   padding: 0.5rem 0.75rem;
   border: 2px solid #d1d5db;
@@ -58,9 +61,16 @@
 }
 
 .app__critical-x input:focus,
+.app__surge-tokens input:focus,
 .app__point-cost input:focus {
   outline: none;
   border-color: #3b82f6;
+}
+
+.app__surge-tokens input:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
 }
 
 .app__empty {
