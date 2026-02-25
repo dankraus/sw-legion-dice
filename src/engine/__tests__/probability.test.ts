@@ -241,3 +241,20 @@ describe('Aim and Observe tokens', () => {
     expect(oneAimCrit.expectedTotal).toBeGreaterThan(noTokenCrit.expectedTotal);
   });
 });
+
+describe('Precise keyword', () => {
+  it('1 Aim + Precise 1: reroll capacity 3 (higher expected total than 1 Aim + Precise 0)', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 3 };
+    const oneAimNoPrecise = calculateAttackPool(pool, 'none', undefined, 0, 1, 0);
+    const oneAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 1);
+    expect(oneAimPrecise1.expectedTotal).toBeGreaterThan(oneAimNoPrecise.expectedTotal);
+    expect(oneAimPrecise1.expectedHits).toBeGreaterThan(oneAimNoPrecise.expectedHits);
+  });
+
+  it('2 Aim + Precise 1: reroll capacity 6', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 5 };
+    const twoAimPrecise0 = calculateAttackPool(pool, 'none', undefined, 0, 2, 0);
+    const twoAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 2, 0, 1);
+    expect(twoAimPrecise1.expectedTotal).toBeGreaterThan(twoAimPrecise0.expectedTotal);
+  });
+});

@@ -144,13 +144,15 @@ export function calculateAttackPool(
   criticalX?: CriticalX,
   surgeTokens?: number,
   aimTokens?: number,
-  observeTokens?: number
+  observeTokens?: number,
+  precise?: number
 ): AttackResults {
   const x = normalizeCriticalX(criticalX);
   const tokens = normalizeSurgeTokens(surgeTokens);
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
-  const rerollCapacity = aim * 2 + observe;
+  const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise ?? 0) || 0) : 0;
+  const rerollCapacity = aim * (2 + preciseVal) + observe;
   const avgPerReroll = getPoolAverageEffectiveHitCrit(pool, surge);
 
   const dieColors: DieColor[] = ['red', 'black', 'white'];
