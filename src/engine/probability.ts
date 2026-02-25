@@ -151,6 +151,7 @@ export function calculateAttackPool(
   const tokens = normalizeSurgeTokens(surgeTokens);
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
+  // Precise only when Aim present; value is non-negative integer.
   const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise ?? 0) || 0) : 0;
   const rerollCapacity = aim * (2 + preciseVal) + observe;
   const avgPerReroll = getPoolAverageEffectiveHitCrit(pool, surge);
