@@ -1,0 +1,35 @@
+.stats-summary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stats-summary__stat {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.stats-summary__stat--total {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.stats-summary__value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stats-summary__label {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

@@ -1,0 +1,29 @@
+.cumulative-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.cumulative-table th,
+.cumulative-table td {
+  padding: 0.5rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cumulative-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.cumulative-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.cumulative-table tbody tr:hover {
+  background: #eff6ff;
+}

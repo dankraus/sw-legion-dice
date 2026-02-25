@@ -1,0 +1,37 @@
+.surge-toggle {
+  border: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.surge-toggle__legend {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.surge-toggle__options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.surge-toggle__option {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.surge-toggle__option--active {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.surge-toggle__radio {
+  display: none;
+}
