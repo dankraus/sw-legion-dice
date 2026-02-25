@@ -187,3 +187,57 @@ describe('Surge Tokens', () => {
     expect(critical1OneToken.expectedHits).toBeGreaterThan(noKeywordNoToken.expectedHits);
   });
 });
+
+describe('Aim and Observe tokens', () => {
+  it('zero aim and observe: same as no tokens', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 1 };
+    const noTokens = calculateAttackPool(pool, 'none');
+    const zeroBoth = calculateAttackPool(pool, 'none', undefined, 0, 0, 0);
+    expect(zeroBoth.expectedHits).toBeCloseTo(noTokens.expectedHits);
+    expect(zeroBoth.expectedCrits).toBeCloseTo(noTokens.expectedCrits);
+  });
+
+  it('1 Observe token with 1 white die (surge none): reroll 1 blank adds expected hit/crit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const noToken = calculateAttackPool(pool, 'none');
+    const oneObserve = calculateAttackPool(pool, 'none', undefined, 0, 0, 1);
+    expect(oneObserve.expectedHits).toBeGreaterThan(noToken.expectedHits);
+    expect(oneObserve.expectedCrits).toBeGreaterThan(noToken.expectedCrits);
+    expect(noToken.expectedHits).toBeCloseTo(1 / 8);
+    expect(noToken.expectedCrits).toBeCloseTo(1 / 8);
+    expect(oneObserve.expectedHits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8));
+    expect(oneObserve.expectedCrits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8));
+  });
+
+  it('1 Aim token with 1 white die: reroll capacity 2, only 1 blank so same as 1 Observe', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const oneObserve = calculateAttackPool(pool, 'none', undefined, 0, 0, 1);
+    const oneAim = calculateAttackPool(pool, 'none', undefined, 0, 1, 0);
+    expect(oneAim.expectedHits).toBeCloseTo(oneObserve.expectedHits);
+    expect(oneAim.expectedCrits).toBeCloseTo(oneObserve.expectedCrits);
+  });
+
+  it('1 Aim token with 2 white dice: can reroll 2 blanks when both blank', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const noToken = calculateAttackPool(pool, 'none');
+    const oneAim = calculateAttackPool(pool, 'none', undefined, 0, 1, 0);
+    expect(oneAim.expectedHits).toBeGreaterThan(noToken.expectedHits);
+    expect(oneAim.expectedCrits).toBeGreaterThan(noToken.expectedCrits);
+    expect(oneAim.expectedTotal).toBeGreaterThan(noToken.expectedTotal);
+  });
+
+  it('Observe tokens work regardless of Surge Conversion', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const noTokenHit = calculateAttackPool(pool, 'hit');
+    const oneObserveHit = calculateAttackPool(pool, 'hit', undefined, 0, 0, 1);
+    expect(oneObserveHit.expectedHits).toBeGreaterThan(noTokenHit.expectedHits);
+    expect(oneObserveHit.expectedCrits).toBeGreaterThan(noTokenHit.expectedCrits);
+  });
+
+  it('Aim tokens work regardless of Surge Conversion', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const noTokenCrit = calculateAttackPool(pool, 'crit');
+    const oneAimCrit = calculateAttackPool(pool, 'crit', undefined, 0, 1, 0);
+    expect(oneAimCrit.expectedTotal).toBeGreaterThan(noTokenCrit.expectedTotal);
+  });
+});

@@ -13,13 +13,25 @@ function App() {
   const [surge, setSurge] = useState<SurgeConversion>('none');
   const [criticalX, setCriticalX] = useState<string>('');
   const [surgeTokens, setSurgeTokens] = useState<string>('');
+  const [aimTokens, setAimTokens] = useState<string>('');
+  const [observeTokens, setObserveTokens] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
+  const aimTokensNum = aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
+  const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const results = useMemo(
-    () => calculateAttackPool(pool, surge, criticalXNum, surgeTokensNum),
-    [pool, surge, criticalXNum, surgeTokensNum]
+    () =>
+      calculateAttackPool(
+        pool,
+        surge,
+        criticalXNum,
+        surgeTokensNum,
+        aimTokensNum,
+        observeTokensNum
+      ),
+    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -73,6 +85,30 @@ function App() {
               onChange={(e) => setSurgeTokens(e.target.value)}
               disabled={surge !== 'none'}
               title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
+            />
+          </div>
+          <div className="app__token-input">
+            <label htmlFor="aim-tokens">Aim Tokens</label>
+            <input
+              id="aim-tokens"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={aimTokens}
+              onChange={(e) => setAimTokens(e.target.value)}
+              title="Reroll up to 2 blank dice per Aim token"
+            />
+          </div>
+          <div className="app__token-input">
+            <label htmlFor="observe-tokens">Observe Tokens</label>
+            <input
+              id="observe-tokens"
+              type="number"
+              min="0"
+              placeholder="0"
+              value={observeTokens}
+              onChange={(e) => setObserveTokens(e.target.value)}
+              title="Reroll up to 1 blank die per Observe token"
             />
           </div>
           <div className="app__point-cost">
