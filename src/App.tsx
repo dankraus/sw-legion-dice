@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useMemo } from 'react';
+import type { AttackPool, SurgeConversion } from './types';
+import { calculateAttackPool } from './engine/probability';
+import { DiceSelector } from './components/DiceSelector';
+import { SurgeToggle } from './components/SurgeToggle';
+import { StatsSummary } from './components/StatsSummary';
+import { DistributionChart } from './components/DistributionChart';
+import { CumulativeTable } from './components/CumulativeTable';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
+  const [surge, setSurge] = useState<SurgeConversion>('none');
+
+  const results = useMemo(() => calculateAttackPool(pool, surge), [pool, surge]);
+
+  const totalDice = pool.red + pool.black + pool.white;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <header className="app__header">
+        <h1>Legion Dice Calculator</h1>
+      </header>
+
+      <div className="app__layout">
+        <section className="app__pool">
+          <h2>Attack Pool</h2>
+          <DiceSelector
+            color="red"
+            count={pool.red}
+            onChange={(n) => setPool((p) => ({ ...p, red: n }))}
+          />
+          <DiceSelector
+            color="black"
+            count={pool.black}
+            onChange={(n) => setPool((p) => ({ ...p, black: n }))}
+          />
+          <DiceSelector
+            color="white"
+            count={pool.white}
+            onChange={(n) => setPool((p) => ({ ...p, white: n }))}
+          />
+          <SurgeToggle value={surge} onChange={setSurge} />
+        </section>
+
+        <section className="app__results">
+          {totalDice === 0 ? (
+            <p className="app__empty">Add dice to see results.</p>
+          ) : (
+            <>
+              <StatsSummary
+                expectedHits={results.expectedHits}
+                expectedCrits={results.expectedCrits}
+                expectedTotal={results.expectedTotal}
+              />
+              <DistributionChart distribution={results.distribution} />
+              <CumulativeTable cumulative={results.cumulative} />
+            </>
+          )}
+        </section>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
