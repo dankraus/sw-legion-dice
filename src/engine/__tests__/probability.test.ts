@@ -162,4 +162,28 @@ describe('Surge Tokens', () => {
     expect(oneToken.expectedHits).toBeCloseTo(2 / 8);
     expect(oneToken.expectedCrits).toBeCloseTo(1 / 8);
   });
+
+  it('surge to hit: surgeTokens do not affect result', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const zero = calculateAttackPool(pool, 'hit', undefined, 0);
+    const five = calculateAttackPool(pool, 'hit', undefined, 5);
+    expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
+    expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
+  });
+
+  it('surge to crit: surgeTokens do not affect result', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const zero = calculateAttackPool(pool, 'crit', undefined, 0);
+    const five = calculateAttackPool(pool, 'crit', undefined, 5);
+    expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
+    expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
+  });
+
+  it('Critical 1 + 1 token, surge none: token applies only to surges left after Critical X', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const noKeywordNoToken = calculateAttackPool(pool, 'none');
+    const critical1OneToken = calculateAttackPool(pool, 'none', 1, 1);
+    expect(critical1OneToken.expectedCrits).toBeGreaterThan(noKeywordNoToken.expectedCrits);
+    expect(critical1OneToken.expectedHits).toBeGreaterThan(noKeywordNoToken.expectedHits);
+  });
 });
