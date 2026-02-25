@@ -3,6 +3,7 @@ import type { AttackPool, SurgeConversion } from './types';
 import { calculateAttackPool } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
 import { SurgeToggle } from './components/SurgeToggle';
+import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
 import { CumulativeTable } from './components/CumulativeTable';
@@ -65,68 +66,43 @@ function App() {
             onChange={(n) => setPool((p) => ({ ...p, white: n }))}
           />
           <SurgeToggle value={surge} onChange={setSurge} />
-          <div className="app__critical-x">
-            <label htmlFor="critical-x">Keyword: Critical X</label>
-            <input
-              id="critical-x"
-              type="number"
-              min="0"
-              placeholder="0"
-              value={criticalX}
-              onChange={(e) => setCriticalX(e.target.value)}
-              title="Convert up to X surges to crits (before Surge Conversion)"
-            />
-          </div>
-          <div className="app__surge-tokens">
-            <label htmlFor="surge-tokens">Surge Tokens</label>
-            <input
-              id="surge-tokens"
-              type="number"
-              min="0"
-              placeholder="0"
-              value={surgeTokens}
-              onChange={(e) => setSurgeTokens(e.target.value)}
-              disabled={surge !== 'none'}
-              title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
-            />
-          </div>
-          <div className="app__token-input">
-            <label htmlFor="aim-tokens">Aim Tokens</label>
-            <input
-              id="aim-tokens"
-              type="number"
-              min="0"
-              placeholder="0"
-              value={aimTokens}
-              onChange={(e) => setAimTokens(e.target.value)}
-              title="Reroll up to 2 blank dice per Aim token"
-            />
-          </div>
-          <div className="app__token-input">
-            <label htmlFor="precise">Keyword: Precise</label>
-            <input
-              id="precise"
-              type="number"
-              min={0}
-              placeholder="0"
-              value={precise}
-              onChange={(e) => setPrecise(e.target.value)}
-              disabled={aimTokensNum === 0}
-              title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
-            />
-          </div>
-          <div className="app__token-input">
-            <label htmlFor="observe-tokens">Observe Tokens</label>
-            <input
-              id="observe-tokens"
-              type="number"
-              min="0"
-              placeholder="0"
-              value={observeTokens}
-              onChange={(e) => setObserveTokens(e.target.value)}
-              title="Reroll up to 1 blank die per Observe token"
-            />
-          </div>
+          <NumberInputWithControls
+            id="critical-x"
+            label="Keyword: Critical X"
+            value={criticalX}
+            onChange={setCriticalX}
+            title="Convert up to X surges to crits (before Surge Conversion)"
+          />
+          <NumberInputWithControls
+            id="surge-tokens"
+            label="Surge Tokens"
+            value={surgeTokens}
+            onChange={setSurgeTokens}
+            disabled={surge !== 'none'}
+            title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
+          />
+          <NumberInputWithControls
+            id="aim-tokens"
+            label="Aim Tokens"
+            value={aimTokens}
+            onChange={setAimTokens}
+            title="Reroll up to 2 blank dice per Aim token"
+          />
+          <NumberInputWithControls
+            id="precise"
+            label="Keyword: Precise"
+            value={precise}
+            onChange={setPrecise}
+            disabled={aimTokensNum === 0}
+            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
+          />
+          <NumberInputWithControls
+            id="observe-tokens"
+            label="Observe Tokens"
+            value={observeTokens}
+            onChange={setObserveTokens}
+            title="Reroll up to 1 blank die per Observe token"
+          />
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
             <input
