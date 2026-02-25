@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { DICE, getEffectiveProbabilities } from '../probability';
+import { DICE, getEffectiveProbabilities, calculateAttackPool } from '../probability';
+import type { AttackPool } from '../../types';
 
 describe('DICE definitions', () => {
   it('red die faces sum to 8', () => {
@@ -45,5 +46,62 @@ describe('getEffectiveProbabilities', () => {
     expect(result.crit).toBeCloseTo(1 / 8);
     expect(result.hit).toBeCloseTo(1 / 8);
     expect(result.blank).toBeCloseTo(6 / 8);
+  });
+});
+
+describe('calculateAttackPool', () => {
+  it('zero dice returns zero everything', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 0 };
+    const result = calculateAttackPool(pool, 'none');
+    expect(result.expectedHits).toBe(0);
+    expect(result.expectedCrits).toBe(0);
+    expect(result.expectedTotal).toBe(0);
+    expect(result.distribution).toHaveLength(1);
+    expect(result.distribution[0]).toEqual({ total: 0, probability: 1 });
+  });
+
+  it('single red die with no surge has correct expected values', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const result = calculateAttackPool(pool, 'none');
+    expect(result.expectedHits).toBeCloseTo(5 / 8);
+    expect(result.expectedCrits).toBeCloseTo(1 / 8);
+    expect(result.expectedTotal).toBeCloseTo(6 / 8);
+  });
+
+  it('single red die with surge to hit', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const result = calculateAttackPool(pool, 'hit');
+    expect(result.expectedHits).toBeCloseTo(6 / 8);
+    expect(result.expectedCrits).toBeCloseTo(1 / 8);
+    expect(result.expectedTotal).toBeCloseTo(7 / 8);
+  });
+
+  it('two red dice expected total is double one red die', () => {
+    const pool: AttackPool = { red: 2, black: 0, white: 0 };
+    const result = calculateAttackPool(pool, 'none');
+    expect(result.expectedTotal).toBeCloseTo(2 * 6 / 8);
+  });
+
+  it('distribution probabilities sum to 1', () => {
+    const pool: AttackPool = { red: 2, black: 1, white: 1 };
+    const result = calculateAttackPool(pool, 'hit');
+    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    expect(sum).toBeCloseTo(1);
+  });
+
+  it('cumulative starts at 1 for at-least-0', () => {
+    const pool: AttackPool = { red: 1, black: 1, white: 0 };
+    const result = calculateAttackPool(pool, 'none');
+    expect(result.cumulative[0]).toEqual({ total: 0, probability: 1 });
+  });
+
+  it('cumulative is non-increasing', () => {
+    const pool: AttackPool = { red: 2, black: 2, white: 1 };
+    const result = calculateAttackPool(pool, 'crit');
+    for (let i = 1; i < result.cumulative.length; i++) {
+      expect(result.cumulative[i].probability).toBeLessThanOrEqual(
+        result.cumulative[i - 1].probability
+      );
+    }
   });
 });
