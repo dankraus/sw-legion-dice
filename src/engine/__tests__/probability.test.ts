@@ -257,4 +257,12 @@ describe('Precise keyword', () => {
     const twoAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 2, 0, 1);
     expect(twoAimPrecise1.expectedTotal).toBeGreaterThan(twoAimPrecise0.expectedTotal);
   });
+
+  it('0 Aim + Precise 1: same as 0 Aim (precise ignored)', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const zeroAim = calculateAttackPool(pool, 'none', undefined, 0, 0, 0);
+    const zeroAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 0, 0, 1);
+    expect(zeroAimPrecise1.expectedHits).toBeCloseTo(zeroAim.expectedHits);
+    expect(zeroAimPrecise1.expectedCrits).toBeCloseTo(zeroAim.expectedCrits);
+  });
 });
