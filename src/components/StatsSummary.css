@@ -1,5 +1,6 @@
 .stats-summary {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -16,6 +17,11 @@
 .stats-summary__stat--total {
   background: #eff6ff;
   border-color: #3b82f6;
+}
+
+.stats-summary__stat--efficiency {
+  background: #f0fdf4;
+  border-color: #22c55e;
 }
 
 .stats-summary__value {

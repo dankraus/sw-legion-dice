@@ -11,10 +11,12 @@ import './App.css';
 function App() {
   const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
   const [surge, setSurge] = useState<SurgeConversion>('none');
+  const [pointCost, setPointCost] = useState<string>('');
 
   const results = useMemo(() => calculateAttackPool(pool, surge), [pool, surge]);
 
   const totalDice = pool.red + pool.black + pool.white;
+  const parsedCost = Number(pointCost);
 
   return (
     <div className="app">
@@ -41,6 +43,17 @@ function App() {
             onChange={(n) => setPool((p) => ({ ...p, white: n }))}
           />
           <SurgeToggle value={surge} onChange={setSurge} />
+          <div className="app__point-cost">
+            <label htmlFor="point-cost">Unit Point Cost</label>
+            <input
+              id="point-cost"
+              type="number"
+              min="0"
+              placeholder="Optional"
+              value={pointCost}
+              onChange={(e) => setPointCost(e.target.value)}
+            />
+          </div>
         </section>
 
         <section className="app__results">
@@ -52,6 +65,7 @@ function App() {
                 expectedHits={results.expectedHits}
                 expectedCrits={results.expectedCrits}
                 expectedTotal={results.expectedTotal}
+                pointCost={parsedCost > 0 ? parsedCost : undefined}
               />
               <DistributionChart distribution={results.distribution} />
               <CumulativeTable cumulative={results.cumulative} />

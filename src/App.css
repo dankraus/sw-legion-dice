@@ -34,6 +34,31 @@
   color: #111827;
 }
 
+.app__point-cost {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app__point-cost label {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.app__point-cost input {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.15s;
+}
+
+.app__point-cost input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
 .app__empty {
   text-align: center;
   color: #9ca3af;
