@@ -7,9 +7,17 @@ interface CheckboxToggleProps {
   title?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }
 
-export function CheckboxToggle({ id, label, title, checked, onChange }: CheckboxToggleProps) {
+export function CheckboxToggle({
+  id,
+  label,
+  title,
+  checked,
+  onChange,
+  disabled = false,
+}: CheckboxToggleProps) {
   const labelContent = (
     <label className="checkbox-toggle" htmlFor={id}>
       <input
@@ -18,6 +26,7 @@ export function CheckboxToggle({ id, label, title, checked, onChange }: Checkbox
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
         className="checkbox-toggle__input"
+        disabled={disabled}
       />
       <span className="checkbox-toggle__label" title={title}>
         {label}

@@ -400,6 +400,7 @@ export function simulateWounds(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
+  lowProfile: boolean,
   sharpshooterX: number = 0,
   runs: number,
   rng: () => number
@@ -435,7 +436,9 @@ export function simulateWounds(
       blanksAfterReroll,
       ram
     );
-    const afterCover = applyCover(final.hits, final.crits, cover, rng, sharpshooterX);
+    const hitsForCover =
+      cover !== 'none' && lowProfile ? Math.max(0, final.hits - 1) : final.hits;
+    const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX);
     const defenseDice = outmaneuver
       ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
@@ -481,6 +484,7 @@ export function simulateWoundsFromAttackResults(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
+  lowProfile: boolean,
   sharpshooterX: number = 0,
   runs: number,
   rng: () => number
@@ -510,7 +514,9 @@ export function simulateWoundsFromAttackResults(
         break;
       }
     }
-    const afterCover = applyCover(hits, crits, cover, rng, sharpshooterX);
+    const hitsForCover =
+      cover !== 'none' && lowProfile ? Math.max(0, hits - 1) : hits;
+    const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX);
     const defenseDice = outmaneuver
       ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);

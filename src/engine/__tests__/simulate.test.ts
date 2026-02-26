@@ -319,6 +319,7 @@ describe('simulateWounds', () => {
       false, // outmaneuver
       undefined, // defenseSurgeTokens
       'none', // cover
+      false, // lowProfile
       0, // sharpshooterX
       20_000,
       rng
@@ -348,6 +349,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       'none',
+      false,
       0,
       runs,
       rngZero
@@ -360,6 +362,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       1,
       'none',
+      false,
       0,
       runs,
       rngOne
@@ -391,6 +394,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'none',
+      false,
       0,
       runs,
       rngNone
@@ -403,11 +407,64 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'light',
+      false,
       0,
       runs,
       rngLight
     );
     expect(resultLight.expectedWounds).toBeLessThan(resultNone.expectedWounds);
+  });
+  it('light cover with Low Profile on yields lower expected wounds than Low Profile off', () => {
+    const attackResults = {
+      expectedHits: 4,
+      expectedCrits: 0,
+      expectedTotal: 4,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+        { total: 4, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 4, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+        { total: 4, probability: 0 },
+      ],
+    };
+    const runs = 10_000;
+    const rngOff = createSeededRng(400);
+    const rngOn = createSeededRng(400);
+    const resultOff = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'light',
+      false,
+      0,
+      runs,
+      rngOff
+    );
+    const resultOn = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'light',
+      true,
+      0,
+      runs,
+      rngOn
+    );
+    expect(resultOn.expectedWounds).toBeLessThan(resultOff.expectedWounds);
   });
   it('sharpshooter 1 with heavy cover yields higher expected wounds than no sharpshooter', () => {
     const attackResults = {
@@ -437,6 +494,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'heavy',
+      false,
       0,
       runs,
       rngNoSharp
@@ -449,6 +507,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'heavy',
+      false,
       1,
       runs,
       rngSharp

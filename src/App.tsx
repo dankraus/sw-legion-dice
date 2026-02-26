@@ -35,6 +35,7 @@ function App() {
   const [dodgeTokens, setDodgeTokens] = useState<string>('');
   const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
   const [cover, setCover] = useState<CoverLevel>('none');
+  const [lowProfile, setLowProfile] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -71,9 +72,10 @@ function App() {
         outmaneuver,
         defenseSurgeTokensNum,
         cover,
+        lowProfile,
         sharpshooterXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, sharpshooterXNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, sharpshooterXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -96,6 +98,7 @@ function App() {
     setDodgeTokens('');
     setOutmaneuver(false);
     setCover('none');
+    setLowProfile(false);
   };
 
   return (
@@ -214,6 +217,14 @@ function App() {
             </label>
           </fieldset>
           <CoverToggle value={cover} onChange={setCover} />
+          <CheckboxToggle
+            id="low-profile"
+            label="Low Profile"
+            title="When in cover, cancel one hit before rolling cover dice."
+            checked={lowProfile}
+            onChange={setLowProfile}
+            disabled={cover === 'none'}
+          />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
