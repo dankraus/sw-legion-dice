@@ -22,6 +22,7 @@ function App() {
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
+  const [dodgeTokens, setDodgeTokens] = useState<string>('');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -29,6 +30,7 @@ function App() {
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const preciseNum = precise === '' ? 0 : Math.max(0, Math.floor(Number(precise)) || 0);
   const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
+  const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -45,8 +47,8 @@ function App() {
   );
 
   const woundsResults = useMemo(
-    () => calculateWounds(results, defenseDieColor, defenseSurge),
-    [results, defenseDieColor, defenseSurge]
+    () => calculateWounds(results, defenseDieColor, defenseSurge, dodgeTokensNum),
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -64,6 +66,7 @@ function App() {
     setPointCost('');
     setDefenseDieColor('red');
     setDefenseSurge('none');
+    setDodgeTokens('');
   };
 
   return (
@@ -175,6 +178,14 @@ function App() {
             </label>
           </fieldset>
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
+          <h3 className="app__section-heading">Tokens</h3>
+          <NumberInputWithControls
+            id="dodge-tokens"
+            label="Dodge"
+            value={dodgeTokens}
+            onChange={setDodgeTokens}
+            title="Cancel one hit per token before rolling defense; crits cannot be dodged."
+          />
         </section>
 
         <section className="app__results">
