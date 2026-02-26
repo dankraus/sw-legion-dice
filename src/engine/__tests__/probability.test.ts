@@ -8,18 +8,18 @@ import type { AttackPool } from '../../types';
 
 describe('DICE definitions', () => {
   it('red die faces sum to 8', () => {
-    const r = DICE.red;
-    expect(r.crit + r.surge + r.hit + r.blank).toBe(8);
+    const red = DICE.red;
+    expect(red.crit + red.surge + red.hit + red.blank).toBe(8);
   });
 
   it('black die faces sum to 8', () => {
-    const b = DICE.black;
-    expect(b.crit + b.surge + b.hit + b.blank).toBe(8);
+    const black = DICE.black;
+    expect(black.crit + black.surge + black.hit + black.blank).toBe(8);
   });
 
   it('white die faces sum to 8', () => {
-    const w = DICE.white;
-    expect(w.crit + w.surge + w.hit + w.blank).toBe(8);
+    const white = DICE.white;
+    expect(white.crit + white.surge + white.hit + white.blank).toBe(8);
   });
 });
 
@@ -89,7 +89,7 @@ describe('calculateAttackPool', () => {
   it('distribution probabilities sum to 1', () => {
     const pool: AttackPool = { red: 2, black: 1, white: 1 };
     const result = calculateAttackPool(pool, 'hit');
-    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    const sum = result.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
   });
 
@@ -133,7 +133,7 @@ describe('Critical X', () => {
   it('Critical 2 then Surge to Hit: 3 surges → 2 crits, 1 hit', () => {
     const pool: AttackPool = { red: 0, black: 0, white: 3 };
     const result = calculateAttackPool(pool, 'hit', 2);
-    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    const sum = result.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
     expect(result.expectedTotal).toBeGreaterThan(0);
   });
@@ -141,7 +141,7 @@ describe('Critical X', () => {
   it('distribution sums to 1 with Critical X', () => {
     const pool: AttackPool = { red: 2, black: 1, white: 1 };
     const result = calculateAttackPool(pool, 'hit', 2);
-    const sum = result.distribution.reduce((s, d) => s + d.probability, 0);
+    const sum = result.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
   });
 
