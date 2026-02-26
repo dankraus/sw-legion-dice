@@ -163,7 +163,7 @@ function App() {
             value={preciseX}
             onChange={setPreciseX}
             disabled={aimTokensNum === 0}
-            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
+            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens. Increases the dice rerolled with an Aim token by X.' : 'Extra rerolls per Aim token when using Aim.'}
           />
           <NumberInputWithControls
             id="ram-x"
