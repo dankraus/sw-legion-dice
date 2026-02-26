@@ -400,7 +400,7 @@ export function simulateWounds(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
-  sharpshooterX?: number,
+  sharpshooterX: number = 0,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -481,7 +481,7 @@ export function simulateWoundsFromAttackResults(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
-  sharpshooterX?: number,
+  sharpshooterX: number = 0,
   runs: number,
   rng: () => number
 ): WoundsResults {
