@@ -14,6 +14,8 @@ import { DICE, DEFENSE_DICE, DEFENSE_SIDES } from './dice-data';
 
 export type AttackFace = 'crit' | 'surge' | 'hit' | 'blank';
 
+export type DefenseFace = 'block' | 'surge' | 'blank';
+
 const SIDES = 8;
 
 /** Roll one attack die; returns face type. Uses rng() in [0,1). */
@@ -59,6 +61,38 @@ function normalizeSurgeTokens(value: number | undefined | null): number {
   const num = Number(value);
   if (!Number.isFinite(num) || num < 0) return 0;
   return Math.floor(num);
+}
+
+function normalizeDefenseSurgeTokens(value: number | undefined | null): number {
+  if (value === undefined || value === null) return 0;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return 0;
+  return Math.floor(num);
+}
+
+/** Resolve defense roll: blocks + (surge block ? surges : min(tokens, surges)). */
+export function resolveDefenseRoll(
+  blocks: number,
+  surges: number,
+  surge: DefenseSurgeConversion,
+  defenseSurgeTokens: number | undefined
+): number {
+  if (surge === 'block') return blocks + surges;
+  return blocks + Math.min(normalizeDefenseSurgeTokens(defenseSurgeTokens), surges);
+}
+
+/** Roll one defense die; returns face type. Uses rng() in [0,1). */
+export function rollOneDefenseDieOutcome(
+  color: DefenseDieColor,
+  rng: () => number
+): DefenseFace {
+  const die = DEFENSE_DICE[color];
+  const blockFaces = die.block;
+  const surgeFaces = die.surge;
+  const value = rng() * DEFENSE_SIDES;
+  if (value < blockFaces) return 'block';
+  if (value < blockFaces + surgeFaces) return 'surge';
+  return 'blank';
 }
 
 /** Resolve (crit, surge, hit, blank) with Critical X then Surge Conversion (and Surge Tokens when surge is none) → (hits, crits). */
@@ -257,20 +291,31 @@ export function rollOneDefenseDie(
 export function simulateDefensePool(
   pool: DefensePool,
   surge: DefenseSurgeConversion,
+  defenseSurgeTokens: number | undefined,
   runs: number,
   rng: () => number
 ): DefenseResults {
+  const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const histogram: Record<number, number> = {};
   let sumBlocks = 0;
   for (let run = 0; run < runs; run++) {
-    let blocks = 0;
+    let blockCount = 0;
+    let surgeCount = 0;
     const colors: DefenseDieColor[] = ['red', 'white'];
     for (const color of colors) {
       const count = pool[color];
       for (let i = 0; i < count; i++) {
-        blocks += rollOneDefenseDie(color, surge, rng);
+        const face = rollOneDefenseDieOutcome(color, rng);
+        if (face === 'block') blockCount++;
+        else if (face === 'surge') surgeCount++;
       }
     }
+    const blocks = resolveDefenseRoll(
+      blockCount,
+      surgeCount,
+      surge,
+      normalizedDefenseSurgeTokens
+    );
     sumBlocks += blocks;
     histogram[blocks] = (histogram[blocks] ?? 0) + 1;
   }
@@ -294,12 +339,13 @@ export function getDefenseDistributionForDiceCountSim(
   diceCount: number,
   color: DefenseDieColor,
   surge: DefenseSurgeConversion,
+  defenseSurgeTokens: number | undefined,
   runs: number,
   rng: () => number
 ): DefenseResults {
   const pool: DefensePool =
     color === 'red' ? { red: diceCount, white: 0 } : { red: 0, white: diceCount };
-  return simulateDefensePool(pool, surge, runs, rng);
+  return simulateDefensePool(pool, surge, defenseSurgeTokens, runs, rng);
 }
 
 /** Run N full (attack + defense) simulations and aggregate to WoundsResults. */
@@ -316,10 +362,12 @@ export function simulateWounds(
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
   outmaneuver: boolean,
+  defenseSurgeTokens: number | undefined,
   runs: number,
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
+  const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
   const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
@@ -353,10 +401,19 @@ export function simulateWounds(
     const defenseDice = outmaneuver
       ? Math.max(0, final.hits + final.crits - normalizedDodge)
       : final.crits + Math.max(0, final.hits - normalizedDodge);
-    let blocks = 0;
+    let blockCount = 0;
+    let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {
-      blocks += rollOneDefenseDie(defenseDieColor, defenseSurge, rng);
+      const face = rollOneDefenseDieOutcome(defenseDieColor, rng);
+      if (face === 'block') blockCount++;
+      else if (face === 'surge') surgeCount++;
     }
+    const blocks = resolveDefenseRoll(
+      blockCount,
+      surgeCount,
+      defenseSurge,
+      normalizedDefenseSurgeTokens
+    );
     const wounds = Math.max(0, defenseDice - blocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;
@@ -384,10 +441,12 @@ export function simulateWoundsFromAttackResults(
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
   outmaneuver: boolean,
+  defenseSurgeTokens: number | undefined,
   runs: number,
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
+  const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const outcomes = attackResults.distributionByHitsCrits.filter((entry) => entry.probability > 0);
   if (outcomes.length === 0) {
     return {
@@ -414,10 +473,19 @@ export function simulateWoundsFromAttackResults(
     const defenseDice = outmaneuver
       ? Math.max(0, hits + crits - normalizedDodge)
       : crits + Math.max(0, hits - normalizedDodge);
-    let blocks = 0;
+    let blockCount = 0;
+    let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {
-      blocks += rollOneDefenseDie(defenseDieColor, defenseSurge, rng);
+      const face = rollOneDefenseDieOutcome(defenseDieColor, rng);
+      if (face === 'block') blockCount++;
+      else if (face === 'surge') surgeCount++;
     }
+    const blocks = resolveDefenseRoll(
+      blockCount,
+      surgeCount,
+      defenseSurge,
+      normalizedDefenseSurgeTokens
+    );
     const wounds = Math.max(0, defenseDice - blocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;

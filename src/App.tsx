@@ -23,6 +23,7 @@ function App() {
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
+  const [defenseSurgeTokens, setDefenseSurgeTokens] = useState<string>('');
   const [dodgeTokens, setDodgeTokens] = useState<string>('');
   const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
 
@@ -32,6 +33,8 @@ function App() {
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const preciseXNum = preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
   const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
+  const defenseSurgeTokensNum =
+    defenseSurgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const results = useMemo(
     () =>
@@ -49,8 +52,16 @@ function App() {
   );
 
   const woundsResults = useMemo(
-    () => calculateWounds(results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver]
+    () =>
+      calculateWounds(
+        results,
+        defenseDieColor,
+        defenseSurge,
+        dodgeTokensNum,
+        outmaneuver,
+        defenseSurgeTokensNum
+      ),
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -68,6 +79,7 @@ function App() {
     setPointCost('');
     setDefenseDieColor('red');
     setDefenseSurge('none');
+    setDefenseSurgeTokens('');
     setDodgeTokens('');
     setOutmaneuver(false);
   };
@@ -182,6 +194,19 @@ function App() {
           </fieldset>
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
+          <NumberInputWithControls
+            id="defense-surge-tokens"
+            label="Surge"
+            value={defenseSurgeTokens}
+            onChange={setDefenseSurgeTokens}
+            min={0}
+            disabled={defenseSurge === 'block'}
+            title={
+              defenseSurge === 'block'
+                ? 'Defense Surge Tokens only apply when Defense Surge is None.'
+                : undefined
+            }
+          />
           <NumberInputWithControls
             id="dodge-tokens"
             label="Dodge"

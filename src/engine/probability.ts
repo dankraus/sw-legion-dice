@@ -108,13 +108,15 @@ export function calculateAttackPool(
 export function getDefenseDistributionForDiceCount(
   diceCount: number,
   color: DefenseDieColor,
-  surge: DefenseSurgeConversion
+  surge: DefenseSurgeConversion,
+  defenseSurgeTokens?: number
 ): DefenseResults {
   const rng = createSeededRng(SEED);
   return getDefenseDistributionForDiceCountSim(
     diceCount,
     color,
     surge,
+    defenseSurgeTokens,
     DEFAULT_RUNS,
     rng
   );
@@ -122,10 +124,11 @@ export function getDefenseDistributionForDiceCount(
 
 export function calculateDefensePool(
   pool: DefensePool,
-  surge: DefenseSurgeConversion
+  surge: DefenseSurgeConversion,
+  defenseSurgeTokens?: number
 ): DefenseResults {
   const rng = createSeededRng(SEED);
-  return simulateDefensePool(pool, surge, DEFAULT_RUNS, rng);
+  return simulateDefensePool(pool, surge, defenseSurgeTokens, DEFAULT_RUNS, rng);
 }
 
 export function calculateWounds(
@@ -133,7 +136,8 @@ export function calculateWounds(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens?: number,
-  outmaneuver?: boolean
+  outmaneuver?: boolean,
+  defenseSurgeTokens?: number
 ): WoundsResults {
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
@@ -142,6 +146,7 @@ export function calculateWounds(
     defenseSurge,
     dodgeTokens ?? 0,
     outmaneuver ?? false,
+    defenseSurgeTokens ?? 0,
     DEFAULT_RUNS,
     rng
   );

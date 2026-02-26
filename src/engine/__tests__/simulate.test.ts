@@ -12,9 +12,12 @@ import {
   applyRam,
   simulateAttackPool,
   rollOneDefenseDie,
+  resolveDefenseRoll,
+  rollOneDefenseDieOutcome,
   simulateDefensePool,
   getDefenseDistributionForDiceCountSim,
   simulateWounds,
+  simulateWoundsFromAttackResults,
 } from '../simulate';
 
 describe('rollOneAttackDie', () => {
@@ -169,6 +172,43 @@ describe('simulateAttackPool', () => {
   });
 });
 
+describe('resolveDefenseRoll', () => {
+  it('surge block: returns blocks + surges', () => {
+    expect(resolveDefenseRoll(2, 1, 'block', 0)).toBe(3);
+    expect(resolveDefenseRoll(0, 2, 'block', 5)).toBe(2);
+  });
+  it('surge none, 0 tokens: returns blocks only', () => {
+    expect(resolveDefenseRoll(2, 1, 'none', 0)).toBe(2);
+  });
+  it('surge none, tokens < surges: returns blocks + tokens', () => {
+    expect(resolveDefenseRoll(1, 3, 'none', 2)).toBe(3);
+  });
+  it('surge none, tokens >= surges: returns blocks + surges', () => {
+    expect(resolveDefenseRoll(1, 2, 'none', 5)).toBe(3);
+  });
+  it('normalizes negative/undefined defenseSurgeTokens to 0', () => {
+    expect(resolveDefenseRoll(1, 1, 'none', undefined)).toBe(1);
+    expect(resolveDefenseRoll(1, 1, 'none', -1)).toBe(1);
+  });
+});
+
+describe('rollOneDefenseDieOutcome', () => {
+  it('red die: over many rolls block/surge/blank proportions match 3/1/2', () => {
+    const rng = createSeededRng(42);
+    const counts = { block: 0, surge: 0, blank: 0 };
+    for (let i = 0; i < 6000; i++) {
+      const face = rollOneDefenseDieOutcome('red', rng);
+      counts[face]++;
+    }
+    expect(counts.block).toBeGreaterThan(2500);
+    expect(counts.block).toBeLessThan(3500);
+    expect(counts.surge).toBeGreaterThan(800);
+    expect(counts.surge).toBeLessThan(1200);
+    expect(counts.blank).toBeGreaterThan(1800);
+    expect(counts.blank).toBeLessThan(2200);
+  });
+});
+
 describe('defense simulation', () => {
   it('rollOneDefenseDie returns 0 or 1', () => {
     const rng = createSeededRng(1);
@@ -181,14 +221,14 @@ describe('defense simulation', () => {
 
   it('simulateDefensePool 0 dice returns 0 blocks', () => {
     const rng = createSeededRng(1);
-    const result = simulateDefensePool({ red: 0, white: 0 }, 'none', 100, rng);
+    const result = simulateDefensePool({ red: 0, white: 0 }, 'none', undefined, 100, rng);
     expect(result.expectedBlocks).toBe(0);
     expect(result.distribution[0].probability).toBeCloseTo(1, 2);
   });
 
   it('getDefenseDistributionForDiceCountSim 1 red die surge none: expectedBlocks close to 3/6', () => {
     const rng = createSeededRng(1);
-    const result = getDefenseDistributionForDiceCountSim(1, 'red', 'none', 10_000, rng);
+    const result = getDefenseDistributionForDiceCountSim(1, 'red', 'none', undefined, 10_000, rng);
     expect(result.expectedBlocks).toBeCloseTo(3 / 6, 1);
   });
 });
@@ -211,9 +251,49 @@ describe('simulateWounds', () => {
       'none',
       0,
       false, // outmaneuver
+      undefined, // defenseSurgeTokens
       20_000,
       rng
     );
     expect(result.expectedWounds).toBeCloseTo(3 / 8, 1);
+  });
+});
+
+describe('defense surge tokens in wounds simulation', () => {
+  it('with 1 hit 0 crits, surge none, 1 red defense die: 1 token yields higher avg blocks than 0 tokens', () => {
+    const attackResults = {
+      expectedHits: 1,
+      expectedCrits: 0,
+      expectedTotal: 1,
+      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
+      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+    };
+    const runs = 10_000;
+    const rngZero = createSeededRng(100);
+    const rngOne = createSeededRng(100);
+    const resultZero = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      runs,
+      rngZero
+    );
+    const resultOne = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      1,
+      runs,
+      rngOne
+    );
+    const expectedBlocksZero = 1 - resultZero.expectedWounds;
+    const expectedBlocksOne = 1 - resultOne.expectedWounds;
+    expect(expectedBlocksOne).toBeGreaterThan(expectedBlocksZero);
   });
 });
