@@ -340,4 +340,14 @@ describe('Ram X keyword', () => {
     const critRam1 = calculateAttackPool(pool, 'crit', undefined, 0, 0, 0, 0, 1);
     expect(critRam1.expectedCrits).toBeGreaterThan(critNoRam.expectedCrits);
   });
+
+  it('Critical X + Ram X: both apply (surges become crits via Critical, blanks via Ram)', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const noKeywords = calculateAttackPool(pool, 'none');
+    const critOnly = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 0);
+    const critPlusRam = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 1);
+    expect(critPlusRam.expectedCrits).toBeGreaterThan(critOnly.expectedCrits);
+    expect(critPlusRam.expectedTotal).toBeGreaterThan(critOnly.expectedTotal);
+    expect(critPlusRam.expectedTotal).toBeGreaterThan(noKeywords.expectedTotal);
+  });
 });
