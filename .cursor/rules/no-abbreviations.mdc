@@ -1,0 +1,29 @@
+---
+description: Use descriptive variable names — no single-letter or abbreviated parameter names
+globs: src/**/*.ts, src/**/*.tsx
+alwaysApply: true
+---
+
+# No Abbreviations in Variable and Parameter Names
+
+Use full, descriptive names for all variables, parameters, and destructured bindings. Do not use single-letter abbreviations like `c`, `s`, `h`, `b`, `d`, `p`, `k`, `n`, `r`, `w`, `t`, or `x` for domain concepts.
+
+## Examples
+
+Bad:
+```ts
+function resolve(c: number, s: number, h: number, b: number) { ... }
+const [c, s, h, b] = key.split(',').map(Number);
+const d = DICE[color];
+result.reduce((s, d) => s + d.probability, 0);
+```
+
+Good:
+```ts
+function resolve(crits: number, surges: number, hits: number, blanks: number) { ... }
+const [crits, surges, hits, blanks] = key.split(',').map(Number);
+const die = DICE[color];
+result.reduce((acc, entry) => acc + entry.probability, 0);
+```
+
+Standard loop counters (`i`, `j`) are acceptable. All other variables should have descriptive names that make the code readable without context.

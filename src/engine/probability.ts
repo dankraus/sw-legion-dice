@@ -10,12 +10,12 @@ const SIDES = 8;
 
 /** Raw per-face probabilities (no surge conversion). */
 function getRawProbabilities(color: DieColor): { crit: number; surge: number; hit: number; blank: number } {
-  const d = DICE[color];
+  const die = DICE[color];
   return {
-    crit: d.crit / SIDES,
-    surge: d.surge / SIDES,
-    hit: d.hit / SIDES,
-    blank: d.blank / SIDES,
+    crit: die.crit / SIDES,
+    surge: die.surge / SIDES,
+    hit: die.hit / SIDES,
+    blank: die.blank / SIDES,
   };
 }
 
@@ -50,72 +50,77 @@ export function getEffectiveProbabilities(
   };
 }
 
-/** Convolve one die's (c,s,h,b) distribution into the pool distribution. */
+/** Convolve one die's (crit, surge, hit, blank) distribution into the pool distribution. */
 function convolveOneDie(
   current: Map<string, number>,
   probs: { crit: number; surge: number; hit: number; blank: number }
 ): Map<string, number> {
   const next = new Map<string, number>();
-  const key = (c: number, s: number, h: number, b: number) => `${c},${s},${h},${b}`;
+  const toKey = (crit: number, surge: number, hit: number, blank: number) =>
+    `${crit},${surge},${hit},${blank}`;
 
-  for (const [k, p] of current) {
-    if (p === 0) continue;
-    const [c, s, h, b] = k.split(',').map(Number);
-    const k1 = key(c + 1, s, h, b);
-    next.set(k1, (next.get(k1) ?? 0) + p * probs.crit);
-    const k2 = key(c, s + 1, h, b);
-    next.set(k2, (next.get(k2) ?? 0) + p * probs.surge);
-    const k3 = key(c, s, h + 1, b);
-    next.set(k3, (next.get(k3) ?? 0) + p * probs.hit);
-    const k4 = key(c, s, h, b + 1);
-    next.set(k4, (next.get(k4) ?? 0) + p * probs.blank);
+  for (const [key, prob] of current) {
+    if (prob === 0) continue;
+    const [crit, surge, hit, blank] = key.split(',').map(Number);
+
+    const critKey = toKey(crit + 1, surge, hit, blank);
+    next.set(critKey, (next.get(critKey) ?? 0) + prob * probs.crit);
+
+    const surgeKey = toKey(crit, surge + 1, hit, blank);
+    next.set(surgeKey, (next.get(surgeKey) ?? 0) + prob * probs.surge);
+
+    const hitKey = toKey(crit, surge, hit + 1, blank);
+    next.set(hitKey, (next.get(hitKey) ?? 0) + prob * probs.hit);
+
+    const blankKey = toKey(crit, surge, hit, blank + 1);
+    next.set(blankKey, (next.get(blankKey) ?? 0) + prob * probs.blank);
   }
   return next;
 }
 
-/** Resolve (c,s,h,b) with Critical X then Surge Conversion (and Surge Tokens when surge is none) → (hitsFinal, critsFinal). */
+/** Resolve (crit, surge, hit, blank) with Critical X then Surge Conversion (and Surge Tokens when surge is none) → (hitsFinal, critsFinal). */
 function resolve(
-  c: number,
-  s: number,
-  h: number,
-  _b: number,
+  crits: number,
+  surges: number,
+  hits: number,
+  _blanks: number,
   criticalX: number,
   surge: SurgeConversion,
   surgeTokens: number
 ): { hits: number; crits: number } {
-  const toCrit = Math.min(criticalX, s);
-  const surgesRemaining = s - toCrit;
-  let crits = c + toCrit;
-  let hits = h;
+  const surgesToCrit = Math.min(criticalX, surges);
+  const surgesRemaining = surges - surgesToCrit;
+  let resolvedCrits = crits + surgesToCrit;
+  let resolvedHits = hits;
   if (surge === 'crit') {
-    crits += surgesRemaining;
+    resolvedCrits += surgesRemaining;
   } else if (surge === 'hit') {
-    hits += surgesRemaining;
+    resolvedHits += surgesRemaining;
   } else {
-    hits += Math.min(surgeTokens, surgesRemaining);
+    resolvedHits += Math.min(surgeTokens, surgesRemaining);
   }
-  return { hits, crits };
+  return { hits: resolvedHits, crits: resolvedCrits };
 }
 
-function normalizeCriticalX(x: CriticalX): number {
-  if (x === undefined || x === null) return 0;
-  const n = Number(x);
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return Math.floor(n);
+function normalizeCriticalX(value: CriticalX): number {
+  if (value === undefined || value === null) return 0;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return 0;
+  return Math.floor(num);
 }
 
-function normalizeSurgeTokens(t?: number): number {
-  if (t === undefined || t === null) return 0;
-  const n = Number(t);
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return Math.floor(n);
+function normalizeSurgeTokens(value?: number): number {
+  if (value === undefined || value === null) return 0;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return 0;
+  return Math.floor(num);
 }
 
-function normalizeTokenCount(t?: number): number {
-  if (t === undefined || t === null) return 0;
-  const n = Number(t);
-  if (!Number.isFinite(n) || n < 0) return 0;
-  return Math.floor(n);
+function normalizeTokenCount(value?: number): number {
+  if (value === undefined || value === null) return 0;
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) return 0;
+  return Math.floor(num);
 }
 
 /** Pool-average effective (crit, hit) per die after surge conversion; used for blank-reroll expectation. */
@@ -129,11 +134,11 @@ function getPoolAverageEffectiveHitCrit(
   let hit = 0;
   const colors: DieColor[] = ['red', 'black', 'white'];
   for (const color of colors) {
-    const n = pool[color];
-    if (n === 0) continue;
+    const count = pool[color];
+    if (count === 0) continue;
     const eff = getEffectiveProbabilities(color, surge);
-    crit += n * eff.crit;
-    hit += n * eff.hit;
+    crit += count * eff.crit;
+    hit += count * eff.hit;
   }
   return { crit: crit / total, hit: hit / total };
 }
@@ -145,43 +150,53 @@ export function calculateAttackPool(
   surgeTokens?: number,
   aimTokens?: number,
   observeTokens?: number,
-  precise?: number
+  precise?: number,
+  ramX?: number
 ): AttackResults {
-  const x = normalizeCriticalX(criticalX);
-  const tokens = normalizeSurgeTokens(surgeTokens);
+  const normalizedCriticalX = normalizeCriticalX(criticalX);
+  const normalizedSurgeTokens = normalizeSurgeTokens(surgeTokens);
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
-  // Precise only when Aim present; value is non-negative integer.
   const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise ?? 0) || 0) : 0;
   const rerollCapacity = aim * (2 + preciseVal) + observe;
+  const ram = normalizeTokenCount(ramX);
   const avgPerReroll = getPoolAverageEffectiveHitCrit(pool, surge);
 
   const dieColors: DieColor[] = ['red', 'black', 'white'];
 
-  // Build full (c,s,h,b) distribution via convolution
-  let cshb = new Map<string, number>();
-  cshb.set('0,0,0,0', 1);
+  let distribution = new Map<string, number>();
+  distribution.set('0,0,0,0', 1);
 
   for (const color of dieColors) {
     const count = pool[color];
     const probs = getRawProbabilities(color);
     for (let i = 0; i < count; i++) {
-      cshb = convolveOneDie(cshb, probs);
+      distribution = convolveOneDie(distribution, probs);
     }
   }
 
-  // Resolve each outcome and aggregate (including blank rerolls from Aim/Observe)
   let expectedHits = 0;
   let expectedCrits = 0;
   const totalProbByTotal: Record<number, number> = {};
 
-  for (const [k, prob] of cshb) {
+  for (const [key, prob] of distribution) {
     if (prob === 0) continue;
-    const [c, s, h, b] = k.split(',').map(Number);
-    const { hits, crits } = resolve(c, s, h, b, x, surge, tokens);
-    const nReroll = Math.min(rerollCapacity, b);
-    const hitsFinal = hits + nReroll * avgPerReroll.hit;
-    const critsFinal = crits + nReroll * avgPerReroll.crit;
+    const [crits, surges, hits, blanks] = key.split(',').map(Number);
+    const resolved = resolve(crits, surges, hits, blanks, normalizedCriticalX, surge, normalizedSurgeTokens);
+    const rerolls = Math.min(rerollCapacity, blanks);
+    let hitsFinal = resolved.hits + rerolls * avgPerReroll.hit;
+    let critsFinal = resolved.crits + rerolls * avgPerReroll.crit;
+
+    if (ram > 0) {
+      const blanksRemaining = blanks - rerolls;
+      const blanksConverted = Math.min(ram, blanksRemaining);
+      critsFinal += blanksConverted;
+      const ramLeft = ram - blanksConverted;
+      const hitsConverted = Math.min(ramLeft, hitsFinal);
+      critsFinal += hitsConverted;
+      hitsFinal -= hitsConverted;
+    }
+
     expectedHits += prob * hitsFinal;
     expectedCrits += prob * critsFinal;
     const totalRounded = Math.round(hitsFinal + critsFinal);
@@ -189,7 +204,7 @@ export function calculateAttackPool(
   }
 
   const maxTotal = Math.max(...Object.keys(totalProbByTotal).map(Number), 0);
-  const distribution = Array.from({ length: maxTotal + 1 }, (_, total) => ({
+  const dist = Array.from({ length: maxTotal + 1 }, (_, total) => ({
     total,
     probability: totalProbByTotal[total] ?? 0,
   }));
@@ -205,7 +220,7 @@ export function calculateAttackPool(
     expectedHits,
     expectedCrits,
     expectedTotal: expectedHits + expectedCrits,
-    distribution,
+    distribution: dist,
     cumulative,
   };
 }
