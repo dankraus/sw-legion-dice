@@ -87,7 +87,7 @@ export function calculateAttackPool(
   surgeTokens?: number,
   aimTokens?: number,
   observeTokens?: number,
-  precise?: number,
+  preciseX?: number,
   ramX?: number
 ): AttackResults {
   const rng = createSeededRng(SEED);
@@ -98,7 +98,7 @@ export function calculateAttackPool(
     surgeTokens ?? 0,
     aimTokens ?? 0,
     observeTokens ?? 0,
-    precise ?? 0,
+    preciseX ?? 0,
     ramX ?? 0,
     DEFAULT_RUNS,
     rng

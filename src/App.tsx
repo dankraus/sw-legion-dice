@@ -17,7 +17,7 @@ function App() {
   const [surgeTokens, setSurgeTokens] = useState<string>('');
   const [aimTokens, setAimTokens] = useState<string>('');
   const [observeTokens, setObserveTokens] = useState<string>('');
-  const [precise, setPrecise] = useState<string>('');
+  const [preciseX, setPreciseX] = useState<string>('');
   const [ramX, setRamX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
@@ -28,7 +28,7 @@ function App() {
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
   const aimTokensNum = aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
-  const preciseNum = precise === '' ? 0 : Math.max(0, Math.floor(Number(precise)) || 0);
+  const preciseXNum = preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
   const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const results = useMemo(
@@ -40,10 +40,10 @@ function App() {
         surgeTokensNum,
         aimTokensNum,
         observeTokensNum,
-        preciseNum,
+        preciseXNum,
         ramXNum
       ),
-    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseNum, ramXNum]
+    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseXNum, ramXNum]
   );
 
   const woundsResults = useMemo(
@@ -61,7 +61,7 @@ function App() {
     setSurgeTokens('');
     setAimTokens('');
     setObserveTokens('');
-    setPrecise('');
+    setPreciseX('');
     setRamX('');
     setPointCost('');
     setDefenseDieColor('red');
@@ -129,10 +129,10 @@ function App() {
             title="Convert up to X surges to crits (before Surge Conversion)"
           />
           <NumberInputWithControls
-            id="precise"
+            id="precise-x"
             label="Precise"
-            value={precise}
-            onChange={setPrecise}
+            value={preciseX}
+            onChange={setPreciseX}
             disabled={aimTokensNum === 0}
             title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
           />

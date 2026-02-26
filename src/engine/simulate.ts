@@ -99,13 +99,13 @@ export function applyRerolls(
   surge: SurgeConversion,
   aimTokens: number,
   observeTokens: number,
-  precise: number,
+  preciseX: number,
   rng: () => number
 ): { hits: number; crits: number } {
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
-  const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise) || 0) : 0;
-  const capacity = aim * (2 + preciseVal) + observe;
+  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
+  const capacity = aim * (2 + preciseXVal) + observe;
   const blanks = rawCounts.blank;
   const numRerolls = Math.min(capacity, blanks);
   let hits = resolveResult.hits;
@@ -163,7 +163,7 @@ export function simulateAttackPool(
   surgeTokens: number,
   aimTokens: number,
   observeTokens: number,
-  precise: number,
+  preciseX: number,
   ram: number,
   runs: number,
   rng: () => number
@@ -175,8 +175,8 @@ export function simulateAttackPool(
 
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
-  const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise) || 0) : 0;
-  const capacity = aim * (2 + preciseVal) + observe;
+  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
+  const capacity = aim * (2 + preciseXVal) + observe;
 
   for (let run = 0; run < runs; run++) {
     const raw = rollAttackPool(pool, rng);
@@ -188,7 +188,7 @@ export function simulateAttackPool(
       surge,
       aimTokens,
       observeTokens,
-      precise,
+      preciseX,
       rng
     );
     const numRerolls = Math.min(capacity, raw.blank);
@@ -310,7 +310,7 @@ export function simulateWounds(
   surgeTokens: number,
   aimTokens: number,
   observeTokens: number,
-  precise: number,
+  preciseX: number,
   ram: number,
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
@@ -321,8 +321,8 @@ export function simulateWounds(
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
-  const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise) || 0) : 0;
-  const capacity = aim * (2 + preciseVal) + observe;
+  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
+  const capacity = aim * (2 + preciseXVal) + observe;
 
   const woundsHistogram: Record<number, number> = {};
   let sumWounds = 0;
@@ -337,7 +337,7 @@ export function simulateWounds(
       surge,
       aimTokens,
       observeTokens,
-      precise,
+      preciseX,
       rng
     );
     const numRerolls = Math.min(capacity, raw.blank);
