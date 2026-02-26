@@ -17,6 +17,7 @@ function App() {
   const [aimTokens, setAimTokens] = useState<string>('');
   const [observeTokens, setObserveTokens] = useState<string>('');
   const [precise, setPrecise] = useState<string>('');
+  const [ramX, setRamX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
@@ -24,6 +25,7 @@ function App() {
   const aimTokensNum = aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const preciseNum = precise === '' ? 0 : Math.max(0, Math.floor(Number(precise)) || 0);
+  const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -33,9 +35,10 @@ function App() {
         surgeTokensNum,
         aimTokensNum,
         observeTokensNum,
-        preciseNum
+        preciseNum,
+        ramXNum
       ),
-    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseNum]
+    [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseNum, ramXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -102,6 +105,13 @@ function App() {
             value={observeTokens}
             onChange={setObserveTokens}
             title="Reroll up to 1 blank die per Observe token"
+          />
+          <NumberInputWithControls
+            id="ram-x"
+            label="Keyword: Ram X"
+            value={ramX}
+            onChange={setRamX}
+            title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
           />
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
