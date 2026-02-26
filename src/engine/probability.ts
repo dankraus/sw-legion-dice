@@ -327,6 +327,16 @@ export function calculateDefensePool(
   };
 }
 
+export function getDefenseDistributionForDiceCount(
+  diceCount: number,
+  color: DefenseDieColor,
+  surge: DefenseSurgeConversion
+): DefenseResults {
+  const pool: DefensePool =
+    color === 'red' ? { red: diceCount, white: 0 } : { red: 0, white: diceCount };
+  return calculateDefensePool(pool, surge);
+}
+
 export function calculateWounds(
   attackResults: AttackResults,
   defenseResults: DefenseResults

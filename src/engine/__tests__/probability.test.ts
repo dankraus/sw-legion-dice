@@ -9,6 +9,7 @@ import {
   calculateAttackPool,
   DEFENSE_DICE,
   getDefenseEffectiveProbabilities,
+  getDefenseDistributionForDiceCount,
   calculateDefensePool,
   calculateWounds,
 } from '../probability';
@@ -395,6 +396,25 @@ describe('getDefenseEffectiveProbabilities', () => {
     const result = getDefenseEffectiveProbabilities('white', 'block');
     expect(result.block).toBeCloseTo(2 / 6);
     expect(result.blank).toBeCloseTo(4 / 6);
+  });
+});
+
+describe('getDefenseDistributionForDiceCount', () => {
+  it('0 dice returns 0 blocks with probability 1', () => {
+    const result = getDefenseDistributionForDiceCount(0, 'red', 'none');
+    expect(result.expectedBlocks).toBe(0);
+    expect(result.distribution).toHaveLength(1);
+    expect(result.distribution[0]).toEqual({ total: 0, probability: 1 });
+  });
+
+  it('1 red die with none has expected blocks 3/6', () => {
+    const result = getDefenseDistributionForDiceCount(1, 'red', 'none');
+    expect(result.expectedBlocks).toBeCloseTo(3 / 6);
+  });
+
+  it('1 white die with block has expected blocks 2/6', () => {
+    const result = getDefenseDistributionForDiceCount(1, 'white', 'block');
+    expect(result.expectedBlocks).toBeCloseTo(2 / 6);
   });
 });
 
