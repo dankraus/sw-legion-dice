@@ -8,8 +8,8 @@ interface SurgeToggleProps {
 
 const OPTIONS: { value: SurgeConversion; label: string }[] = [
   { value: 'none', label: 'None' },
-  { value: 'hit', label: 'Surge \u2192 Hit' },
-  { value: 'crit', label: 'Surge \u2192 Crit' },
+  { value: 'hit', label: '\u2192 Hit' },
+  { value: 'crit', label: '\u2192 Crit' },
 ];
 
 export function SurgeToggle({ value, onChange }: SurgeToggleProps) {
