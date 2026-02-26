@@ -96,6 +96,19 @@ export function rollOneDefenseDieOutcome(
   return 'blank';
 }
 
+/** Sharpshooter X: reduce cover by up to X steps (heavy→light→none). Used inside applyCover. */
+export function getEffectiveCover(
+  cover: CoverLevel,
+  sharpshooterX: number
+): CoverLevel {
+  const steps = Math.max(0, Math.floor(sharpshooterX));
+  let effective: CoverLevel = cover;
+  for (let i = 0; i < steps && effective !== 'none'; i++) {
+    effective = effective === 'heavy' ? 'light' : 'none';
+  }
+  return effective;
+}
+
 /** Apply cover: roll `hits` white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. */
 export function applyCover(
   hits: number,

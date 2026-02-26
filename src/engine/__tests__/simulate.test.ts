@@ -15,6 +15,7 @@ import {
   resolveDefenseRoll,
   rollOneDefenseDieOutcome,
   applyCover,
+  getEffectiveCover,
   simulateDefensePool,
   getDefenseDistributionForDiceCountSim,
   simulateWounds,
@@ -231,6 +232,33 @@ describe('defense simulation', () => {
     const rng = createSeededRng(1);
     const result = getDefenseDistributionForDiceCountSim(1, 'red', 'none', undefined, 10_000, rng);
     expect(result.expectedBlocks).toBeCloseTo(3 / 6, 1);
+  });
+});
+
+describe('getEffectiveCover', () => {
+  it('none stays none for any X', () => {
+    expect(getEffectiveCover('none', 0)).toBe('none');
+    expect(getEffectiveCover('none', 1)).toBe('none');
+    expect(getEffectiveCover('none', 2)).toBe('none');
+  });
+
+  it('light: 0 stays light, 1 becomes none, 2+ stays none', () => {
+    expect(getEffectiveCover('light', 0)).toBe('light');
+    expect(getEffectiveCover('light', 1)).toBe('none');
+    expect(getEffectiveCover('light', 2)).toBe('none');
+    expect(getEffectiveCover('light', 3)).toBe('none');
+  });
+
+  it('heavy: 0 stays heavy, 1 becomes light, 2+ becomes none', () => {
+    expect(getEffectiveCover('heavy', 0)).toBe('heavy');
+    expect(getEffectiveCover('heavy', 1)).toBe('light');
+    expect(getEffectiveCover('heavy', 2)).toBe('none');
+    expect(getEffectiveCover('heavy', 3)).toBe('none');
+  });
+
+  it('negative X treated as 0', () => {
+    expect(getEffectiveCover('heavy', -1)).toBe('heavy');
+    expect(getEffectiveCover('light', -1)).toBe('light');
   });
 });
 
