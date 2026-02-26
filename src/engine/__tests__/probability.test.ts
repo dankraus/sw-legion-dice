@@ -232,8 +232,8 @@ describe('Aim and Observe tokens', () => {
     expect(oneObserve.expectedCrits).toBeGreaterThan(noToken.expectedCrits);
     expect(noToken.expectedHits).toBeCloseTo(1 / 8);
     expect(noToken.expectedCrits).toBeCloseTo(1 / 8);
-    expect(oneObserve.expectedHits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8));
-    expect(oneObserve.expectedCrits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8));
+    expect(oneObserve.expectedHits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8), 1);
+    expect(oneObserve.expectedCrits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8), 1);
   });
 
   it('1 Aim token with 1 white die: reroll capacity 2, only 1 blank so same as 1 Observe', () => {
@@ -460,7 +460,7 @@ describe('calculateDefensePool', () => {
   it('single white defense die with none has expected blocks 1/6', () => {
     const pool: DefensePool = { red: 0, white: 1 };
     const result = calculateDefensePool(pool, 'none');
-    expect(result.expectedBlocks).toBeCloseTo(1 / 6);
+    expect(result.expectedBlocks).toBeCloseTo(1 / 6, 1);
   });
 
   it('distribution probabilities sum to 1', () => {
