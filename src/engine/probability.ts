@@ -365,12 +365,13 @@ export function calculateWounds(
       defenseDieColor,
       defenseSurge
     );
-    const attackTotal = hits + crits;
+    // Effective attack total after dodge: dodged hits are cancelled, so only undodged successes can cause wounds
+    const attackTotalAfterDodge = defenseDice;
     for (const defenseEntry of defenseResults.distribution) {
       const defenseTotal = defenseEntry.total;
       const defenseProb = defenseEntry.probability;
       if (defenseProb === 0) continue;
-      const wounds = Math.max(0, attackTotal - defenseTotal);
+      const wounds = Math.max(0, attackTotalAfterDodge - defenseTotal);
       const jointProb = attackProb * defenseProb;
       woundsProbByTotal[wounds] = (woundsProbByTotal[wounds] ?? 0) + jointProb;
       expectedWounds += jointProb * wounds;

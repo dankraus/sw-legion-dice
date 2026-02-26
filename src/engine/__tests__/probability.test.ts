@@ -546,7 +546,7 @@ describe('calculateWounds', () => {
     expect(dodgeZero.distribution).toHaveLength(noDodge.distribution.length);
   });
 
-  it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice (2 hits + 1 crit)', () => {
+  it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice, effective attack total 3', () => {
     const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
     const attackWithHitsCrits = {
       ...emptyPool,
@@ -557,11 +557,11 @@ describe('calculateWounds', () => {
     expect(wounds.expectedWounds).toBeDefined();
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
-    // With 1 dodge: defense dice = crits + max(0, hits - 1) = 1 + 2 = 3. Attack total 4. Red none: expected blocks 1.5 → expected wounds 2.5
-    expect(wounds.expectedWounds).toBeCloseTo(2.5);
+    // 1 dodge cancels 1 hit → effective total 3, defense rolls 3 red/none dice. Expected blocks 1.5 → expected wounds 3 - 1.5 = 1.5
+    expect(wounds.expectedWounds).toBeCloseTo(1.5);
   });
 
-  it('one outcome 1 hit 2 crits, 5 dodge: 2 defense dice (crits only)', () => {
+  it('one outcome 1 hit 2 crits, 5 dodge: 2 defense dice (crits only), effective attack total 2', () => {
     const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
     const attackWithHitsCrits = {
       ...emptyPool,
@@ -571,7 +571,16 @@ describe('calculateWounds', () => {
     const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 5);
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
-    // With 5 dodge: defense dice = crits + max(0, hits - 5) = 2 + 0 = 2. Attack total 3. Red none: expected blocks 1 → expected wounds 2
-    expect(wounds.expectedWounds).toBeCloseTo(2);
+    // 5 dodge caps at 1 hit → effective total 2, defense rolls 2 red/none dice. Expected blocks 1 → expected wounds 2 - 1 = 1
+    expect(wounds.expectedWounds).toBeCloseTo(1);
+  });
+
+  it('more dodge tokens reduces expected wounds (dodged hits do not count)', () => {
+    const attackResults = calculateAttackPool({ red: 2, black: 0, white: 0 }, 'none');
+    const woundsNoDodge = calculateWounds(attackResults, 'red', 'none');
+    const woundsOneDodge = calculateWounds(attackResults, 'red', 'none', 1);
+    const woundsTwoDodge = calculateWounds(attackResults, 'red', 'none', 2);
+    expect(woundsOneDodge.expectedWounds).toBeLessThan(woundsNoDodge.expectedWounds);
+    expect(woundsTwoDodge.expectedWounds).toBeLessThan(woundsOneDodge.expectedWounds);
   });
 });
