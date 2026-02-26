@@ -34,6 +34,12 @@
   color: #111827;
 }
 
+.app__section-heading {
+  margin: 1rem 0 0.25rem;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
 .app__point-cost {
   margin-top: 1rem;
   display: flex;

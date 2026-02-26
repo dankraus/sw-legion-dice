@@ -70,13 +70,6 @@ function App() {
           />
           <SurgeToggle value={surge} onChange={setSurge} />
           <NumberInputWithControls
-            id="critical-x"
-            label="Keyword: Critical X"
-            value={criticalX}
-            onChange={setCriticalX}
-            title="Convert up to X surges to crits (before Surge Conversion)"
-          />
-          <NumberInputWithControls
             id="surge-tokens"
             label="Surge Tokens"
             value={surgeTokens}
@@ -92,23 +85,31 @@ function App() {
             title="Reroll up to 2 blank dice per Aim token"
           />
           <NumberInputWithControls
-            id="precise"
-            label="Keyword: Precise"
-            value={precise}
-            onChange={setPrecise}
-            disabled={aimTokensNum === 0}
-            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
-          />
-          <NumberInputWithControls
             id="observe-tokens"
             label="Observe Tokens"
             value={observeTokens}
             onChange={setObserveTokens}
             title="Reroll up to 1 blank die per Observe token"
           />
+          <h3 className="app__section-heading">Keywords</h3>
+          <NumberInputWithControls
+            id="critical-x"
+            label="Critical"
+            value={criticalX}
+            onChange={setCriticalX}
+            title="Convert up to X surges to crits (before Surge Conversion)"
+          />
+          <NumberInputWithControls
+            id="precise"
+            label="Precise"
+            value={precise}
+            onChange={setPrecise}
+            disabled={aimTokensNum === 0}
+            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens.' : 'Extra rerolls per Aim token when using Aim.'}
+          />
           <NumberInputWithControls
             id="ram-x"
-            label="Keyword: Ram X"
+            label="Ram"
             value={ramX}
             onChange={setRamX}
             title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
