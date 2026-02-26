@@ -285,6 +285,25 @@ describe('Ram X keyword', () => {
     expect(ram1.expectedHits).toBeCloseTo(0);
   });
 
+  it('Ram 0 or undefined: same as no Ram', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 1 };
+    const noRam = calculateAttackPool(pool, 'hit');
+    const ram0 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 0);
+    const ramUndef = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, undefined);
+    expect(ram0.expectedHits).toBeCloseTo(noRam.expectedHits);
+    expect(ram0.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+    expect(ramUndef.expectedHits).toBeCloseTo(noRam.expectedHits);
+    expect(ramUndef.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+  });
+
+  it('negative ramX treated as 0', () => {
+    const pool: AttackPool = { red: 1, black: 0, white: 0 };
+    const noRam = calculateAttackPool(pool, 'hit');
+    const negRam = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, -1);
+    expect(negRam.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+    expect(negRam.expectedHits).toBeCloseTo(noRam.expectedHits);
+  });
+
   it('Ram 2 with 1 white die (surge none, no rerolls): converts blank then hit to crit', () => {
     const pool: AttackPool = { red: 0, black: 0, white: 1 };
     // Per outcome (single die):
