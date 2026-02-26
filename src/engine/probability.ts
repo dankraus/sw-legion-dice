@@ -9,6 +9,7 @@ import type {
   DefensePool,
   DefenseResults,
   WoundsResults,
+  CoverLevel,
 } from '../types';
 
 export {
@@ -137,7 +138,8 @@ export function calculateWounds(
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens?: number,
   outmaneuver?: boolean,
-  defenseSurgeTokens?: number
+  defenseSurgeTokens?: number,
+  cover?: CoverLevel
 ): WoundsResults {
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
@@ -147,6 +149,7 @@ export function calculateWounds(
     dodgeTokens ?? 0,
     outmaneuver ?? false,
     defenseSurgeTokens ?? 0,
+    cover ?? 'none',
     DEFAULT_RUNS,
     rng
   );

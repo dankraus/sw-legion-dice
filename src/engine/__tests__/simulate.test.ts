@@ -14,6 +14,7 @@ import {
   rollOneDefenseDie,
   resolveDefenseRoll,
   rollOneDefenseDieOutcome,
+  applyCover,
   simulateDefensePool,
   getDefenseDistributionForDiceCountSim,
   simulateWounds,
@@ -233,6 +234,32 @@ describe('defense simulation', () => {
   });
 });
 
+describe('applyCover', () => {
+  it('none: returns hits and crits unchanged', () => {
+    const rng = createSeededRng(42);
+    expect(applyCover(3, 1, 'none', rng)).toEqual({ hits: 3, crits: 1 });
+    expect(applyCover(0, 2, 'none', rng)).toEqual({ hits: 0, crits: 2 });
+  });
+  it('zero hits: returns 0 hits and crits unchanged', () => {
+    const rng = createSeededRng(99);
+    expect(applyCover(0, 1, 'light', rng)).toEqual({ hits: 0, crits: 1 });
+    expect(applyCover(0, 1, 'heavy', rng)).toEqual({ hits: 0, crits: 1 });
+  });
+  it('light: crits unchanged', () => {
+    const rng = createSeededRng(123);
+    const result = applyCover(2, 3, 'light', rng);
+    expect(result.crits).toBe(3);
+    expect(result.hits).toBeLessThanOrEqual(2);
+  });
+  it('heavy: crits unchanged, hits never exceed original', () => {
+    const rng = createSeededRng(456);
+    const result = applyCover(4, 2, 'heavy', rng);
+    expect(result.crits).toBe(2);
+    expect(result.hits).toBeLessThanOrEqual(4);
+    expect(result.hits).toBeGreaterThanOrEqual(0);
+  });
+});
+
 describe('simulateWounds', () => {
   it('1 red die vs red defense none, 0 dodge: expectedWounds close to 3/8', () => {
     // E[wounds] = E[attack] * (1 - P(block)) for 1v1 ≈ (6/8) * (1 - 3/6) = 3/8
@@ -252,6 +279,7 @@ describe('simulateWounds', () => {
       0,
       false, // outmaneuver
       undefined, // defenseSurgeTokens
+      'none', // cover
       20_000,
       rng
     );
@@ -279,6 +307,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       false,
       0,
+      'none',
       runs,
       rngZero
     );
@@ -289,11 +318,51 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       false,
       1,
+      'none',
       runs,
       rngOne
     );
     const expectedBlocksZero = 1 - resultZero.expectedWounds;
     const expectedBlocksOne = 1 - resultOne.expectedWounds;
     expect(expectedBlocksOne).toBeGreaterThan(expectedBlocksZero);
+  });
+});
+
+describe('cover in wounds simulation', () => {
+  it('1 hit 0 crits: light cover yields lower expected wounds than none', () => {
+    const attackResults = {
+      expectedHits: 1,
+      expectedCrits: 0,
+      expectedTotal: 1,
+      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
+      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+    };
+    const runs = 10_000;
+    const rngNone = createSeededRng(200);
+    const rngLight = createSeededRng(200);
+    const resultNone = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      runs,
+      rngNone
+    );
+    const resultLight = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'light',
+      runs,
+      rngLight
+    );
+    expect(resultLight.expectedWounds).toBeLessThan(resultNone.expectedWounds);
   });
 });

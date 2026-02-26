@@ -9,6 +9,7 @@ import type {
   DefensePool,
   DefenseResults,
   WoundsResults,
+  CoverLevel,
 } from '../types';
 import { DICE, DEFENSE_DICE, DEFENSE_SIDES } from './dice-data';
 
@@ -93,6 +94,26 @@ export function rollOneDefenseDieOutcome(
   if (value < blockFaces) return 'block';
   if (value < blockFaces + surgeFaces) return 'surge';
   return 'blank';
+}
+
+/** Apply cover: roll `hits` white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. */
+export function applyCover(
+  hits: number,
+  crits: number,
+  cover: CoverLevel,
+  rng: () => number
+): { hits: number; crits: number } {
+  if (cover === 'none' || hits <= 0) return { hits, crits };
+  let blockCount = 0;
+  let surgeCount = 0;
+  for (let i = 0; i < hits; i++) {
+    const face = rollOneDefenseDieOutcome('white', rng);
+    if (face === 'block') blockCount++;
+    else if (face === 'surge') surgeCount++;
+  }
+  const hitsCancelled =
+    cover === 'light' ? blockCount : Math.min(hits, blockCount + surgeCount);
+  return { hits: Math.max(0, hits - hitsCancelled), crits };
 }
 
 /** Resolve (crit, surge, hit, blank) with Critical X then Surge Conversion (and Surge Tokens when surge is none) → (hits, crits). */
@@ -363,6 +384,7 @@ export function simulateWounds(
   dodgeTokens: number,
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
+  cover: CoverLevel,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -397,10 +419,10 @@ export function simulateWounds(
       blanksAfterReroll,
       ram
     );
-
+    const afterCover = applyCover(final.hits, final.crits, cover, rng);
     const defenseDice = outmaneuver
-      ? Math.max(0, final.hits + final.crits - normalizedDodge)
-      : final.crits + Math.max(0, final.hits - normalizedDodge);
+      ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
+      : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
     let blockCount = 0;
     let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {
@@ -442,6 +464,7 @@ export function simulateWoundsFromAttackResults(
   dodgeTokens: number,
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
+  cover: CoverLevel,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -470,9 +493,10 @@ export function simulateWoundsFromAttackResults(
         break;
       }
     }
+    const afterCover = applyCover(hits, crits, cover, rng);
     const defenseDice = outmaneuver
-      ? Math.max(0, hits + crits - normalizedDodge)
-      : crits + Math.max(0, hits - normalizedDodge);
+      ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
+      : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
     let blockCount = 0;
     let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {

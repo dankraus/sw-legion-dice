@@ -1,9 +1,16 @@
 import { useState, useMemo } from 'react';
-import type { AttackPool, SurgeConversion, DefenseDieColor, DefenseSurgeConversion } from './types';
+import type {
+  AttackPool,
+  SurgeConversion,
+  DefenseDieColor,
+  DefenseSurgeConversion,
+  CoverLevel,
+} from './types';
 import { calculateAttackPool, calculateWounds } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
 import { SurgeToggle } from './components/SurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
+import { CoverToggle } from './components/CoverToggle';
 import { CheckboxToggle } from './components/CheckboxToggle';
 import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
@@ -26,6 +33,7 @@ function App() {
   const [defenseSurgeTokens, setDefenseSurgeTokens] = useState<string>('');
   const [dodgeTokens, setDodgeTokens] = useState<string>('');
   const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
+  const [cover, setCover] = useState<CoverLevel>('none');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -59,9 +67,10 @@ function App() {
         defenseSurge,
         dodgeTokensNum,
         outmaneuver,
-        defenseSurgeTokensNum
+        defenseSurgeTokensNum,
+        cover
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -82,6 +91,7 @@ function App() {
     setDefenseSurgeTokens('');
     setDodgeTokens('');
     setOutmaneuver(false);
+    setCover('none');
   };
 
   return (
@@ -192,6 +202,7 @@ function App() {
               <span>White</span>
             </label>
           </fieldset>
+          <CoverToggle value={cover} onChange={setCover} />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
