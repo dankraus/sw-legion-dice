@@ -318,4 +318,26 @@ describe('Ram X keyword', () => {
     expect(ram2.expectedHits).toBeCloseTo(0);
     expect(ram2.expectedTotal).toBeCloseTo(7 / 8);
   });
+
+  it('Ram 1 + 1 Aim with white dice: Ram applies after rerolls, converts a remaining blank', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 3 };
+    const aimOnly = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 0, 0);
+    const aimPlusRam = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 0, 1);
+    expect(aimPlusRam.expectedCrits).toBeGreaterThan(aimOnly.expectedCrits);
+    expect(aimPlusRam.expectedTotal).toBeGreaterThan(aimOnly.expectedTotal);
+  });
+
+  it('Ram works with surge to hit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const hitNoRam = calculateAttackPool(pool, 'hit');
+    const hitRam1 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 1);
+    expect(hitRam1.expectedCrits).toBeGreaterThan(hitNoRam.expectedCrits);
+  });
+
+  it('Ram works with surge to crit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 2 };
+    const critNoRam = calculateAttackPool(pool, 'crit');
+    const critRam1 = calculateAttackPool(pool, 'crit', undefined, 0, 0, 0, 0, 1);
+    expect(critRam1.expectedCrits).toBeGreaterThan(critNoRam.expectedCrits);
+  });
 });
