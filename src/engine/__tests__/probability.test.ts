@@ -266,3 +266,37 @@ describe('Precise keyword', () => {
     expect(zeroAimPrecise1.expectedCrits).toBeCloseTo(zeroAim.expectedCrits);
   });
 });
+
+describe('Ram X keyword', () => {
+  it('Ram 1 with 1 white die (surge none, no rerolls): converts blank or hit to crit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const noRam = calculateAttackPool(pool, 'none');
+    // white die: 1 crit, 1 surge, 1 hit, 5 blank. Surge none → surge wasted.
+    // Per outcome with Ram 1:
+    //   crit(1/8): no blanks/hits to convert → crits=1
+    //   surge(1/8): no blanks/hits → crits=0
+    //   hit(1/8): 0 blanks, 1 hit → hit→crit → crits=1, hits=0
+    //   blank(5/8): 1 blank→crit → crits=1
+    // expectedCrits = (1+0+1+5)/8 = 7/8, expectedHits = 0
+    const ram1 = calculateAttackPool(pool, 'none', undefined, 0, 0, 0, 0, 1);
+    expect(ram1.expectedCrits).toBeGreaterThan(noRam.expectedCrits);
+    expect(ram1.expectedTotal).toBeGreaterThan(noRam.expectedTotal);
+    expect(ram1.expectedCrits).toBeCloseTo(7 / 8);
+    expect(ram1.expectedHits).toBeCloseTo(0);
+  });
+
+  it('Ram 2 with 1 white die (surge none, no rerolls): converts blank then hit to crit', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    // Per outcome (single die):
+    //   crit: 0 blanks, 0 hits → ram does nothing. crits=1
+    //   surge: 0 blanks, 0 hits (surge=none → wasted) → ram does nothing. crits=0
+    //   hit: 0 blanks, 1 hit → ram converts 1 hit to crit. crits=1, hits=0
+    //   blank: 1 blank → ram converts 1 blank to crit, ram left=1, 0 hits left → crits=1, hits=0
+    // expectedCrits = (1 + 0 + 1 + 5*1)/8 = 7/8
+    // expectedHits = 0
+    const ram2 = calculateAttackPool(pool, 'none', undefined, 0, 0, 0, 0, 2);
+    expect(ram2.expectedCrits).toBeCloseTo(7 / 8);
+    expect(ram2.expectedHits).toBeCloseTo(0);
+    expect(ram2.expectedTotal).toBeCloseTo(7 / 8);
+  });
+});

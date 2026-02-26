@@ -145,7 +145,8 @@ export function calculateAttackPool(
   surgeTokens?: number,
   aimTokens?: number,
   observeTokens?: number,
-  precise?: number
+  precise?: number,
+  ramX?: number
 ): AttackResults {
   const x = normalizeCriticalX(criticalX);
   const tokens = normalizeSurgeTokens(surgeTokens);
@@ -154,6 +155,7 @@ export function calculateAttackPool(
   // Precise only when Aim present; value is non-negative integer.
   const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise ?? 0) || 0) : 0;
   const rerollCapacity = aim * (2 + preciseVal) + observe;
+  const ram = normalizeTokenCount(ramX);
   const avgPerReroll = getPoolAverageEffectiveHitCrit(pool, surge);
 
   const dieColors: DieColor[] = ['red', 'black', 'white'];
@@ -180,8 +182,19 @@ export function calculateAttackPool(
     const [c, s, h, b] = k.split(',').map(Number);
     const { hits, crits } = resolve(c, s, h, b, x, surge, tokens);
     const nReroll = Math.min(rerollCapacity, b);
-    const hitsFinal = hits + nReroll * avgPerReroll.hit;
-    const critsFinal = crits + nReroll * avgPerReroll.crit;
+    let hitsFinal = hits + nReroll * avgPerReroll.hit;
+    let critsFinal = crits + nReroll * avgPerReroll.crit;
+
+    if (ram > 0) {
+      const blanksRemaining = b - nReroll;
+      const blanksConverted = Math.min(ram, blanksRemaining);
+      critsFinal += blanksConverted;
+      const ramLeft = ram - blanksConverted;
+      const hitsConverted = Math.min(ramLeft, hitsFinal);
+      critsFinal += hitsConverted;
+      hitsFinal -= hitsConverted;
+    }
+
     expectedHits += prob * hitsFinal;
     expectedCrits += prob * critsFinal;
     const totalRounded = Math.round(hitsFinal + critsFinal);
