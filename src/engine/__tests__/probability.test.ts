@@ -493,7 +493,11 @@ describe('calculateWounds', () => {
       { total: 1, probability: 1 },
       { total: 2, probability: 0 },
     ];
-    const attackWithDist = { ...attackResults, distribution: attackDist };
+    const attackWithDist = {
+      ...attackResults,
+      distribution: attackDist,
+      distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
+    };
     const wounds = calculateWounds(attackWithDist, 'red', 'none');
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
@@ -507,7 +511,14 @@ describe('calculateWounds', () => {
       { total: 1, probability: 0 },
       { total: 2, probability: 0.5 },
     ];
-    const attackWithDist = { ...attackResults, distribution: attackDist };
+    const attackWithDist = {
+      ...attackResults,
+      distribution: attackDist,
+      distributionByHitsCrits: [
+        { hits: 0, crits: 0, probability: 0.5 },
+        { hits: 2, crits: 0, probability: 0.5 },
+      ],
+    };
     const wounds = calculateWounds(attackWithDist, 'red', 'none');
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
@@ -525,5 +536,42 @@ describe('calculateWounds', () => {
     const wounds = calculateWounds(attackResults, 'red', 'block');
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
+  });
+
+  it('dodge 0 matches no-dodge wounds', () => {
+    const attackResults = calculateAttackPool({ red: 2, black: 0, white: 0 }, 'none');
+    const noDodge = calculateWounds(attackResults, 'red', 'none');
+    const dodgeZero = calculateWounds(attackResults, 'red', 'none', 0);
+    expect(dodgeZero.expectedWounds).toBeCloseTo(noDodge.expectedWounds);
+    expect(dodgeZero.distribution).toHaveLength(noDodge.distribution.length);
+  });
+
+  it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice (2 hits + 1 crit)', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 4, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 3, crits: 1, probability: 1 }],
+    };
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1);
+    expect(wounds.expectedWounds).toBeDefined();
+    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    expect(sum).toBeCloseTo(1);
+    // With 1 dodge: defense dice = crits + max(0, hits - 1) = 1 + 2 = 3. Attack total 4. Red none: expected blocks 1.5 → expected wounds 2.5
+    expect(wounds.expectedWounds).toBeCloseTo(2.5);
+  });
+
+  it('one outcome 1 hit 2 crits, 5 dodge: 2 defense dice (crits only)', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 3, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 2, probability: 1 }],
+    };
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 5);
+    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    expect(sum).toBeCloseTo(1);
+    // With 5 dodge: defense dice = crits + max(0, hits - 5) = 2 + 0 = 2. Attack total 3. Red none: expected blocks 1 → expected wounds 2
+    expect(wounds.expectedWounds).toBeCloseTo(2);
   });
 });

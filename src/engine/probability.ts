@@ -349,20 +349,23 @@ export function getDefenseDistributionForDiceCount(
 export function calculateWounds(
   attackResults: AttackResults,
   defenseDieColor: DefenseDieColor,
-  defenseSurge: DefenseSurgeConversion
+  defenseSurge: DefenseSurgeConversion,
+  dodgeTokens?: number
 ): WoundsResults {
+  const normalizedDodge = dodgeTokens == null ? 0 : Math.max(0, Math.floor(dodgeTokens));
   const woundsProbByTotal: Record<number, number> = {};
   let expectedWounds = 0;
 
-  for (const attackEntry of attackResults.distribution) {
-    const attackTotal = attackEntry.total;
-    const attackProb = attackEntry.probability;
+  for (const hitsCritsEntry of attackResults.distributionByHitsCrits) {
+    const { hits, crits, probability: attackProb } = hitsCritsEntry;
     if (attackProb === 0) continue;
+    const defenseDice = crits + Math.max(0, hits - normalizedDodge);
     const defenseResults = getDefenseDistributionForDiceCount(
-      attackTotal,
+      defenseDice,
       defenseDieColor,
       defenseSurge
     );
+    const attackTotal = hits + crits;
     for (const defenseEntry of defenseResults.distribution) {
       const defenseTotal = defenseEntry.total;
       const defenseProb = defenseEntry.probability;
