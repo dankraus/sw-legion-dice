@@ -150,6 +150,7 @@ export function calculateWounds(
     outmaneuver ?? false,
     defenseSurgeTokens ?? 0,
     cover ?? 'none',
+    0, // sharpshooterX
     DEFAULT_RUNS,
     rng
   );

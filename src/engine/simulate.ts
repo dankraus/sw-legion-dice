@@ -109,14 +109,16 @@ export function getEffectiveCover(
   return effective;
 }
 
-/** Apply cover: roll `hits` white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. */
+/** Apply cover: roll hits white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. Sharpshooter X reduces effective cover before rolling. */
 export function applyCover(
   hits: number,
   crits: number,
   cover: CoverLevel,
-  rng: () => number
+  rng: () => number,
+  sharpshooterX?: number
 ): { hits: number; crits: number } {
-  if (cover === 'none' || hits <= 0) return { hits, crits };
+  const effective = getEffectiveCover(cover, sharpshooterX ?? 0);
+  if (effective === 'none' || hits <= 0) return { hits, crits };
   let blockCount = 0;
   let surgeCount = 0;
   for (let i = 0; i < hits; i++) {
@@ -125,7 +127,7 @@ export function applyCover(
     else if (face === 'surge') surgeCount++;
   }
   const hitsCancelled =
-    cover === 'light' ? blockCount : Math.min(hits, blockCount + surgeCount);
+    effective === 'light' ? blockCount : Math.min(hits, blockCount + surgeCount);
   return { hits: Math.max(0, hits - hitsCancelled), crits };
 }
 
@@ -398,6 +400,7 @@ export function simulateWounds(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
+  sharpshooterX?: number,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -432,7 +435,7 @@ export function simulateWounds(
       blanksAfterReroll,
       ram
     );
-    const afterCover = applyCover(final.hits, final.crits, cover, rng);
+    const afterCover = applyCover(final.hits, final.crits, cover, rng, sharpshooterX);
     const defenseDice = outmaneuver
       ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
@@ -478,6 +481,7 @@ export function simulateWoundsFromAttackResults(
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
+  sharpshooterX?: number,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -506,7 +510,7 @@ export function simulateWoundsFromAttackResults(
         break;
       }
     }
-    const afterCover = applyCover(hits, crits, cover, rng);
+    const afterCover = applyCover(hits, crits, cover, rng, sharpshooterX);
     const defenseDice = outmaneuver
       ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);

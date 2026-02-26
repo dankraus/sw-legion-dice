@@ -265,26 +265,37 @@ describe('getEffectiveCover', () => {
 describe('applyCover', () => {
   it('none: returns hits and crits unchanged', () => {
     const rng = createSeededRng(42);
-    expect(applyCover(3, 1, 'none', rng)).toEqual({ hits: 3, crits: 1 });
-    expect(applyCover(0, 2, 'none', rng)).toEqual({ hits: 0, crits: 2 });
+    expect(applyCover(3, 1, 'none', rng, 0)).toEqual({ hits: 3, crits: 1 });
+    expect(applyCover(0, 2, 'none', rng, undefined)).toEqual({ hits: 0, crits: 2 });
   });
   it('zero hits: returns 0 hits and crits unchanged', () => {
     const rng = createSeededRng(99);
-    expect(applyCover(0, 1, 'light', rng)).toEqual({ hits: 0, crits: 1 });
-    expect(applyCover(0, 1, 'heavy', rng)).toEqual({ hits: 0, crits: 1 });
+    expect(applyCover(0, 1, 'light', rng, 0)).toEqual({ hits: 0, crits: 1 });
+    expect(applyCover(0, 1, 'heavy', rng, 0)).toEqual({ hits: 0, crits: 1 });
   });
   it('light: crits unchanged', () => {
     const rng = createSeededRng(123);
-    const result = applyCover(2, 3, 'light', rng);
+    const result = applyCover(2, 3, 'light', rng, 0);
     expect(result.crits).toBe(3);
     expect(result.hits).toBeLessThanOrEqual(2);
   });
   it('heavy: crits unchanged, hits never exceed original', () => {
     const rng = createSeededRng(456);
-    const result = applyCover(4, 2, 'heavy', rng);
+    const result = applyCover(4, 2, 'heavy', rng, 0);
     expect(result.crits).toBe(2);
     expect(result.hits).toBeLessThanOrEqual(4);
     expect(result.hits).toBeGreaterThanOrEqual(0);
+  });
+  it('sharpshooter 2: heavy becomes none so hits and crits unchanged', () => {
+    const rng = createSeededRng(1);
+    expect(applyCover(3, 1, 'heavy', rng, 2)).toEqual({ hits: 3, crits: 1 });
+  });
+  it('sharpshooter 1: heavy becomes light so only blocks cancel hits', () => {
+    const rng1 = createSeededRng(100);
+    const rng2 = createSeededRng(100);
+    const withHeavyAndSharpshooter1 = applyCover(4, 2, 'heavy', rng1, 1);
+    const withLightNoSharpshooter = applyCover(4, 2, 'light', rng2, 0);
+    expect(withHeavyAndSharpshooter1).toEqual(withLightNoSharpshooter);
   });
 });
 
@@ -308,6 +319,7 @@ describe('simulateWounds', () => {
       false, // outmaneuver
       undefined, // defenseSurgeTokens
       'none', // cover
+      0, // sharpshooterX
       20_000,
       rng
     );
@@ -336,6 +348,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       'none',
+      0,
       runs,
       rngZero
     );
@@ -347,6 +360,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       1,
       'none',
+      0,
       runs,
       rngOne
     );
@@ -377,6 +391,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'none',
+      0,
       runs,
       rngNone
     );
@@ -388,6 +403,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'light',
+      0,
       runs,
       rngLight
     );
