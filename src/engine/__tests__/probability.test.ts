@@ -117,6 +117,24 @@ describe('calculateAttackPool', () => {
       );
     }
   });
+
+  it('returns distributionByHitsCrits that sums to 1 and matches total distribution', () => {
+    const result = calculateAttackPool({ red: 1, black: 0, white: 0 }, 'none');
+    expect(result.distributionByHitsCrits).toBeDefined();
+    const sumByHitsCrits = result.distributionByHitsCrits.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
+    expect(sumByHitsCrits).toBeCloseTo(1);
+    const byTotal: Record<number, number> = {};
+    for (const entry of result.distributionByHitsCrits) {
+      const total = Math.round(entry.hits + entry.crits);
+      byTotal[total] = (byTotal[total] ?? 0) + entry.probability;
+    }
+    for (const entry of result.distribution) {
+      expect(byTotal[entry.total] ?? 0).toBeCloseTo(entry.probability);
+    }
+  });
 });
 
 describe('Critical X', () => {

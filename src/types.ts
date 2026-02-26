@@ -20,6 +20,7 @@ export interface AttackResults {
   expectedCrits: number;
   expectedTotal: number;
   distribution: { total: number; probability: number }[];
+  distributionByHitsCrits: { hits: number; crits: number; probability: number }[];
   cumulative: { total: number; probability: number }[];
 }
 

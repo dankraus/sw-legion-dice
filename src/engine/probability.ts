@@ -203,6 +203,7 @@ export function calculateAttackPool(
   let expectedHits = 0;
   let expectedCrits = 0;
   const totalProbByTotal: Record<number, number> = {};
+  const totalProbByHitsCrits = new Map<string, number>();
 
   for (const [key, prob] of distribution) {
     if (prob === 0) continue;
@@ -226,7 +227,14 @@ export function calculateAttackPool(
     expectedCrits += prob * critsFinal;
     const totalRounded = Math.round(hitsFinal + critsFinal);
     totalProbByTotal[totalRounded] = (totalProbByTotal[totalRounded] ?? 0) + prob;
+    const hitsCritsKey = `${hitsFinal},${critsFinal}`;
+    totalProbByHitsCrits.set(hitsCritsKey, (totalProbByHitsCrits.get(hitsCritsKey) ?? 0) + prob);
   }
+
+  const distributionByHitsCrits = Array.from(totalProbByHitsCrits.entries()).map(([hitsCritsKey, probability]) => {
+    const [hits, crits] = hitsCritsKey.split(',').map(Number);
+    return { hits, crits, probability };
+  });
 
   const maxTotal = Math.max(...Object.keys(totalProbByTotal).map(Number), 0);
   const dist = Array.from({ length: maxTotal + 1 }, (_, total) => ({
@@ -246,6 +254,7 @@ export function calculateAttackPool(
     expectedCrits,
     expectedTotal: expectedHits + expectedCrits,
     distribution: dist,
+    distributionByHitsCrits,
     cumulative,
   };
 }
