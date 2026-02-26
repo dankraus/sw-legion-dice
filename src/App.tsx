@@ -27,6 +27,7 @@ function App() {
   const [observeTokens, setObserveTokens] = useState<string>('');
   const [preciseX, setPreciseX] = useState<string>('');
   const [ramX, setRamX] = useState<string>('');
+  const [sharpshooterX, setSharpshooterX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
@@ -41,6 +42,7 @@ function App() {
   const observeTokensNum = observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const preciseXNum = preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
   const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
+  const sharpshooterXNum = sharpshooterX === '' ? 0 : Math.max(0, Math.floor(Number(sharpshooterX)) || 0);
   const defenseSurgeTokensNum =
     defenseSurgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
@@ -68,9 +70,10 @@ function App() {
         dodgeTokensNum,
         outmaneuver,
         defenseSurgeTokensNum,
-        cover
+        cover,
+        sharpshooterXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, sharpshooterXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -85,6 +88,7 @@ function App() {
     setObserveTokens('');
     setPreciseX('');
     setRamX('');
+    setSharpshooterX('');
     setPointCost('');
     setDefenseDieColor('red');
     setDefenseSurge('none');
@@ -167,6 +171,13 @@ function App() {
             value={ramX}
             onChange={setRamX}
             title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
+          />
+          <NumberInputWithControls
+            id="sharpshooter-x"
+            label="Sharpshooter"
+            value={sharpshooterX}
+            onChange={setSharpshooterX}
+            title="Reduce cover: 1 = heavy→light, light→none; 2 = heavy/light→none"
           />
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
