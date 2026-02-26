@@ -409,4 +409,50 @@ describe('cover in wounds simulation', () => {
     );
     expect(resultLight.expectedWounds).toBeLessThan(resultNone.expectedWounds);
   });
+  it('sharpshooter 1 with heavy cover yields higher expected wounds than no sharpshooter', () => {
+    const attackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+      ],
+    };
+    const runs = 10_000;
+    const rngNoSharp = createSeededRng(300);
+    const rngSharp = createSeededRng(300);
+    const noSharpshooter = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'heavy',
+      0,
+      runs,
+      rngNoSharp
+    );
+    const withSharpshooter1 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'heavy',
+      1,
+      runs,
+      rngSharp
+    );
+    expect(withSharpshooter1.expectedWounds).toBeGreaterThan(noSharpshooter.expectedWounds);
+  });
 });
