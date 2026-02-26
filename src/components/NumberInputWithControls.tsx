@@ -1,3 +1,4 @@
+import { Tooltip } from './Tooltip';
 import './NumberInputWithControls.css';
 
 interface NumberInputWithControlsProps {
@@ -38,7 +39,7 @@ export function NumberInputWithControls({
   const canDecrement = !disabled && numericValue > min;
   const canIncrement = !disabled && (max === undefined || numericValue < max);
 
-  return (
+  const control = (
     <div className={`num-input${disabled ? ' num-input--disabled' : ''}`} title={title}>
       <label className="num-input__label" htmlFor={id}>
         {label}
@@ -78,4 +79,13 @@ export function NumberInputWithControls({
       </div>
     </div>
   );
+
+  if (title) {
+    return (
+      <Tooltip title={title} fullWidth>
+        {control}
+      </Tooltip>
+    );
+  }
+  return control;
 }

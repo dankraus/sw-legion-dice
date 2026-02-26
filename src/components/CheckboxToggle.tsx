@@ -1,3 +1,4 @@
+import { Tooltip } from './Tooltip';
 import './CheckboxToggle.css';
 
 interface CheckboxToggleProps {
@@ -9,7 +10,7 @@ interface CheckboxToggleProps {
 }
 
 export function CheckboxToggle({ id, label, title, checked, onChange }: CheckboxToggleProps) {
-  return (
+  const labelContent = (
     <label className="checkbox-toggle" htmlFor={id}>
       <input
         type="checkbox"
@@ -23,4 +24,9 @@ export function CheckboxToggle({ id, label, title, checked, onChange }: Checkbox
       </span>
     </label>
   );
+
+  if (title) {
+    return <Tooltip title={title}>{labelContent}</Tooltip>;
+  }
+  return labelContent;
 }
