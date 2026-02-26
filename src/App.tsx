@@ -44,10 +44,25 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
+  const handleReset = () => {
+    setPool({ red: 0, black: 0, white: 0 });
+    setSurge('none');
+    setCriticalX('');
+    setSurgeTokens('');
+    setAimTokens('');
+    setObserveTokens('');
+    setPrecise('');
+    setRamX('');
+    setPointCost('');
+  };
+
   return (
     <div className="app">
       <header className="app__header">
         <h1>Legion Dice Calculator</h1>
+        <button type="button" className="app__reset" onClick={handleReset}>
+          Reset
+        </button>
       </header>
 
       <div className="app__layout">
