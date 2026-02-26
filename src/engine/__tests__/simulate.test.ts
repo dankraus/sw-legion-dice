@@ -210,6 +210,7 @@ describe('simulateWounds', () => {
       'red',
       'none',
       0,
+      false, // outmaneuver
       20_000,
       rng
     );

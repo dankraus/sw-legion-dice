@@ -1,0 +1,16 @@
+.checkbox-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-toggle__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.checkbox-toggle__input {
+  margin: 0;
+}

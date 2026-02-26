@@ -132,7 +132,8 @@ export function calculateWounds(
   attackResults: AttackResults,
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
-  dodgeTokens?: number
+  dodgeTokens?: number,
+  outmaneuver?: boolean
 ): WoundsResults {
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
@@ -140,6 +141,7 @@ export function calculateWounds(
     defenseDieColor,
     defenseSurge,
     dodgeTokens ?? 0,
+    outmaneuver ?? false,
     DEFAULT_RUNS,
     rng
   );

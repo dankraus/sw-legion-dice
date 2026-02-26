@@ -583,4 +583,39 @@ describe('calculateWounds', () => {
     expect(woundsOneDodge.expectedWounds).toBeLessThan(woundsNoDodge.expectedWounds);
     expect(woundsTwoDodge.expectedWounds).toBeLessThan(woundsOneDodge.expectedWounds);
   });
+
+  it('outmaneuver on: 1 hit 1 crit 1 dodge → 1 defense die, expected wounds 0.5', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 2, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
+    };
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, true);
+    expect(wounds.expectedWounds).toBeCloseTo(0.5); // 1 die, expected blocks 0.5
+  });
+
+  it('outmaneuver off: 1 hit 1 crit 1 dodge → 1 defense die (dodge cancels hit only)', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 2, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
+    };
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, false);
+    expect(wounds.expectedWounds).toBeCloseTo(0.5); // 1 die (crit only), expected blocks 0.5
+  });
+
+  it('outmaneuver on reduces expected wounds vs off when crits and dodge present', () => {
+    // 1 hit, 1 crit, 2 dodge: off → 1 die (dodge cancels hit, crit remains); on → 0 dice (both cancelled)
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 2, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
+    };
+    const woundsOff = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, false);
+    const woundsOn = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, true);
+    expect(woundsOn.expectedWounds).toBeLessThan(woundsOff.expectedWounds);
+  });
 });

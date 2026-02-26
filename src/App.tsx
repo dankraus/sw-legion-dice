@@ -4,6 +4,7 @@ import { calculateAttackPool, calculateWounds } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
 import { SurgeToggle } from './components/SurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
+import { CheckboxToggle } from './components/CheckboxToggle';
 import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
@@ -23,6 +24,7 @@ function App() {
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
   const [dodgeTokens, setDodgeTokens] = useState<string>('');
+  const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -47,8 +49,8 @@ function App() {
   );
 
   const woundsResults = useMemo(
-    () => calculateWounds(results, defenseDieColor, defenseSurge, dodgeTokensNum),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum]
+    () => calculateWounds(results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver),
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -67,6 +69,7 @@ function App() {
     setDefenseDieColor('red');
     setDefenseSurge('none');
     setDodgeTokens('');
+    setOutmaneuver(false);
   };
 
   return (
@@ -185,6 +188,13 @@ function App() {
             value={dodgeTokens}
             onChange={setDodgeTokens}
             title="Cancel one hit per token before rolling defense; crits cannot be dodged."
+          />
+          <CheckboxToggle
+            id="outmaneuver"
+            label="Outmaneuver"
+            title="Dodge tokens can cancel crits as well as hits."
+            checked={outmaneuver}
+            onChange={setOutmaneuver}
           />
         </section>
 

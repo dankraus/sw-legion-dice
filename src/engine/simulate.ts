@@ -315,6 +315,7 @@ export function simulateWounds(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
+  outmaneuver: boolean,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -349,7 +350,9 @@ export function simulateWounds(
       ram
     );
 
-    const defenseDice = final.crits + Math.max(0, final.hits - normalizedDodge);
+    const defenseDice = outmaneuver
+      ? Math.max(0, final.hits + final.crits - normalizedDodge)
+      : final.crits + Math.max(0, final.hits - normalizedDodge);
     let blocks = 0;
     for (let i = 0; i < defenseDice; i++) {
       blocks += rollOneDefenseDie(defenseDieColor, defenseSurge, rng);
@@ -380,6 +383,7 @@ export function simulateWoundsFromAttackResults(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
+  outmaneuver: boolean,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -407,7 +411,9 @@ export function simulateWoundsFromAttackResults(
         break;
       }
     }
-    const defenseDice = crits + Math.max(0, hits - normalizedDodge);
+    const defenseDice = outmaneuver
+      ? Math.max(0, hits + crits - normalizedDodge)
+      : crits + Math.max(0, hits - normalizedDodge);
     let blocks = 0;
     for (let i = 0; i < defenseDice; i++) {
       blocks += rollOneDefenseDie(defenseDieColor, defenseSurge, rng);
