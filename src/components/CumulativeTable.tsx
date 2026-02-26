@@ -2,12 +2,13 @@ import './CumulativeTable.css';
 
 interface CumulativeTableProps {
   cumulative: { total: number; probability: number }[];
+  title?: string;
 }
 
-export function CumulativeTable({ cumulative }: CumulativeTableProps) {
+export function CumulativeTable({ cumulative, title = 'Cumulative Probabilities' }: CumulativeTableProps) {
   return (
     <div>
-      <h3>Cumulative Probabilities</h3>
+      <h3>{title}</h3>
       <table className="cumulative-table">
         <thead>
           <tr>

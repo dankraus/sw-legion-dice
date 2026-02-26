@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import type { AttackPool, SurgeConversion } from './types';
-import { calculateAttackPool } from './engine/probability';
+import type { AttackPool, SurgeConversion, DefensePool, DefenseSurgeConversion } from './types';
+import { calculateAttackPool, calculateDefensePool, calculateWounds } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
 import { SurgeToggle } from './components/SurgeToggle';
+import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
 import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
@@ -19,6 +20,8 @@ function App() {
   const [precise, setPrecise] = useState<string>('');
   const [ramX, setRamX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
+  const [defensePool, setDefensePool] = useState<DefensePool>({ red: 0, white: 0 });
+  const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -41,7 +44,18 @@ function App() {
     [pool, surge, criticalXNum, surgeTokensNum, aimTokensNum, observeTokensNum, preciseNum, ramXNum]
   );
 
+  const defenseResults = useMemo(
+    () => calculateDefensePool(defensePool, defenseSurge),
+    [defensePool, defenseSurge]
+  );
+
+  const woundsResults = useMemo(
+    () => calculateWounds(results, defenseResults),
+    [results, defenseResults]
+  );
+
   const totalDice = pool.red + pool.black + pool.white;
+  const totalDefenseDice = defensePool.red + defensePool.white;
   const parsedCost = Number(pointCost);
 
   const handleReset = () => {
@@ -54,6 +68,8 @@ function App() {
     setPrecise('');
     setRamX('');
     setPointCost('');
+    setDefensePool({ red: 0, white: 0 });
+    setDefenseSurge('none');
   };
 
   return (
@@ -67,7 +83,7 @@ function App() {
 
       <div className="app__layout">
         <section className="app__pool">
-          <h2>Attack Pool</h2>
+          <h2 className="app__section-heading">Attack Pool</h2>
           <DiceSelector
             color="red"
             count={pool.red}
@@ -141,21 +157,90 @@ function App() {
               onChange={(e) => setPointCost(e.target.value)}
             />
           </div>
+
+          <h2 className="app__section-heading">Defense Pool</h2>
+          <DiceSelector
+            color="red"
+            count={defensePool.red}
+            onChange={(count) => setDefensePool((prev) => ({ ...prev, red: count }))}
+          />
+          <DiceSelector
+            color="white"
+            count={defensePool.white}
+            onChange={(count) => setDefensePool((prev) => ({ ...prev, white: count }))}
+          />
+          <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
         </section>
 
         <section className="app__results">
-          {totalDice === 0 ? (
+          {totalDice === 0 && totalDefenseDice === 0 ? (
             <p className="app__empty">Add dice to see results.</p>
           ) : (
             <>
-              <StatsSummary
-                expectedHits={results.expectedHits}
-                expectedCrits={results.expectedCrits}
-                expectedTotal={results.expectedTotal}
-                pointCost={parsedCost > 0 ? parsedCost : undefined}
-              />
-              <DistributionChart distribution={results.distribution} />
-              <CumulativeTable cumulative={results.cumulative} />
+              {totalDice > 0 && (
+                <>
+                  <h3 className="app__results-heading">Attack</h3>
+                  <StatsSummary
+                    expectedHits={results.expectedHits}
+                    expectedCrits={results.expectedCrits}
+                    expectedTotal={results.expectedTotal}
+                    pointCost={parsedCost > 0 ? parsedCost : undefined}
+                  />
+                  <DistributionChart
+                    distribution={results.distribution}
+                    title="Attack Distribution"
+                    xAxisLabel="Total Successes"
+                  />
+                  <CumulativeTable
+                    cumulative={results.cumulative}
+                    title="Attack: At Least N Successes"
+                  />
+                </>
+              )}
+              {totalDefenseDice > 0 && (
+                <>
+                  <h3 className="app__results-heading">Defense</h3>
+                  <div className="stats-summary">
+                    <div className="stats-summary__stat stats-summary__stat--total">
+                      <span className="stats-summary__value">
+                        {defenseResults.expectedBlocks.toFixed(2)}
+                      </span>
+                      <span className="stats-summary__label">Avg Blocks</span>
+                    </div>
+                  </div>
+                  <DistributionChart
+                    distribution={defenseResults.distribution}
+                    title="Blocks Distribution"
+                    xAxisLabel="Total Blocks"
+                  />
+                  <CumulativeTable
+                    cumulative={defenseResults.cumulative}
+                    title="Defense: At Least N Blocks"
+                  />
+                </>
+              )}
+              {totalDice > 0 && totalDefenseDice > 0 && (
+                <>
+                  <h3 className="app__results-heading">Wounds</h3>
+                  <div className="stats-summary">
+                    <div className="stats-summary__stat stats-summary__stat--total">
+                      <span className="stats-summary__value">
+                        {woundsResults.expectedWounds.toFixed(2)}
+                      </span>
+                      <span className="stats-summary__label">Avg Wounds</span>
+                    </div>
+                  </div>
+                  <DistributionChart
+                    distribution={woundsResults.distribution}
+                    title="Wounds Distribution"
+                    xAxisLabel="Wounds"
+                  />
+                  <CumulativeTable
+                    cumulative={woundsResults.cumulative}
+                    title="At Least N Wounds"
+                  />
+                </>
+              )}
             </>
           )}
         </section>

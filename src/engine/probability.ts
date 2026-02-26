@@ -1,4 +1,16 @@
-import type { DieColor, DieFaces, SurgeConversion, AttackPool, AttackResults, CriticalX } from '../types';
+import type {
+  DieColor,
+  DieFaces,
+  SurgeConversion,
+  AttackPool,
+  AttackResults,
+  CriticalX,
+  DefenseDieColor,
+  DefenseSurgeConversion,
+  DefensePool,
+  DefenseResults,
+  WoundsResults,
+} from '../types';
 
 export const DICE: Record<DieColor, DieFaces> = {
   red:   { crit: 1, surge: 1, hit: 5, blank: 1 },
@@ -7,6 +19,19 @@ export const DICE: Record<DieColor, DieFaces> = {
 };
 
 const SIDES = 8;
+
+export interface DefenseDieFaces {
+  block: number;
+  surge: number;
+  blank: number;
+}
+
+export const DEFENSE_DICE: Record<DefenseDieColor, DefenseDieFaces> = {
+  red:   { block: 3, surge: 1, blank: 2 },
+  white: { block: 1, surge: 1, blank: 4 },
+};
+
+const DEFENSE_SIDES = 6;
 
 /** Raw per-face probabilities (no surge conversion). */
 function getRawProbabilities(color: DieColor): { crit: number; surge: number; hit: number; blank: number } {
@@ -221,6 +246,130 @@ export function calculateAttackPool(
     expectedCrits,
     expectedTotal: expectedHits + expectedCrits,
     distribution: dist,
+    cumulative,
+  };
+}
+
+/** Effective per-die probabilities with defense surge folded in. */
+export function getDefenseEffectiveProbabilities(
+  color: DefenseDieColor,
+  surge: DefenseSurgeConversion
+): { block: number; blank: number } {
+  const die = DEFENSE_DICE[color];
+  let block = die.block;
+  let blank = die.blank;
+  if (surge === 'block') {
+    block += die.surge;
+  } else {
+    blank += die.surge;
+  }
+  return {
+    block: block / DEFENSE_SIDES,
+    blank: blank / DEFENSE_SIDES,
+  };
+}
+
+/** Convolve one defense die into the pool distribution over total blocks. */
+function convolveOneDefenseDie(
+  current: Map<number, number>,
+  probs: { block: number; blank: number }
+): Map<number, number> {
+  const next = new Map<number, number>();
+  for (const [blocks, prob] of current) {
+    if (prob === 0) continue;
+    const blockKey = blocks + 1;
+    next.set(blockKey, (next.get(blockKey) ?? 0) + prob * probs.block);
+    next.set(blocks, (next.get(blocks) ?? 0) + prob * probs.blank);
+  }
+  return next;
+}
+
+export function calculateDefensePool(
+  pool: DefensePool,
+  surge: DefenseSurgeConversion
+): DefenseResults {
+  let distribution = new Map<number, number>();
+  distribution.set(0, 1);
+
+  const colors: DefenseDieColor[] = ['red', 'white'];
+  for (const color of colors) {
+    const count = pool[color];
+    const probs = getDefenseEffectiveProbabilities(color, surge);
+    for (let i = 0; i < count; i++) {
+      distribution = convolveOneDefenseDie(distribution, probs);
+    }
+  }
+
+  let expectedBlocks = 0;
+  const totalProbByTotal: Record<number, number> = {};
+  for (const [blocks, prob] of distribution) {
+    expectedBlocks += prob * blocks;
+    totalProbByTotal[blocks] = (totalProbByTotal[blocks] ?? 0) + prob;
+  }
+
+  const maxTotal = Math.max(...Object.keys(totalProbByTotal).map(Number), 0);
+  const dist = Array.from({ length: maxTotal + 1 }, (_, total) => ({
+    total,
+    probability: totalProbByTotal[total] ?? 0,
+  }));
+
+  const cumulative: { total: number; probability: number }[] = [];
+  let cumSum = 1;
+  for (let i = 0; i <= maxTotal; i++) {
+    cumulative.push({ total: i, probability: cumSum });
+    cumSum -= totalProbByTotal[i] ?? 0;
+  }
+
+  return {
+    expectedBlocks,
+    distribution: dist,
+    cumulative,
+  };
+}
+
+export function calculateWounds(
+  attackResults: AttackResults,
+  defenseResults: DefenseResults
+): WoundsResults {
+  const attackDist = new Map<number, number>();
+  for (const entry of attackResults.distribution) {
+    attackDist.set(entry.total, (attackDist.get(entry.total) ?? 0) + entry.probability);
+  }
+  const defenseDist = new Map<number, number>();
+  for (const entry of defenseResults.distribution) {
+    defenseDist.set(entry.total, (defenseDist.get(entry.total) ?? 0) + entry.probability);
+  }
+
+  const woundsProbByTotal: Record<number, number> = {};
+  let expectedWounds = 0;
+
+  for (const [attackTotal, attackProb] of attackDist) {
+    if (attackProb === 0) continue;
+    for (const [defenseTotal, defenseProb] of defenseDist) {
+      if (defenseProb === 0) continue;
+      const wounds = Math.max(0, attackTotal - defenseTotal);
+      const jointProb = attackProb * defenseProb;
+      woundsProbByTotal[wounds] = (woundsProbByTotal[wounds] ?? 0) + jointProb;
+      expectedWounds += jointProb * wounds;
+    }
+  }
+
+  const maxWounds = Math.max(...Object.keys(woundsProbByTotal).map(Number), 0);
+  const distribution = Array.from({ length: maxWounds + 1 }, (_, total) => ({
+    total,
+    probability: woundsProbByTotal[total] ?? 0,
+  }));
+
+  const cumulative: { total: number; probability: number }[] = [];
+  let cumSum = 1;
+  for (let i = 0; i <= maxWounds; i++) {
+    cumulative.push({ total: i, probability: cumSum });
+    cumSum -= woundsProbByTotal[i] ?? 0;
+  }
+
+  return {
+    expectedWounds,
+    distribution,
     cumulative,
   };
 }

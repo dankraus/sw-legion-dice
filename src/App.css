@@ -61,6 +61,17 @@
   color: #374151;
 }
 
+.app__results-heading {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.app__results .app__results-heading:first-child {
+  margin-top: 0;
+}
+
 .app__point-cost {
   margin-top: 1rem;
   display: flex;
