@@ -69,9 +69,10 @@ function App() {
             onChange={(n) => setPool((p) => ({ ...p, white: n }))}
           />
           <SurgeToggle value={surge} onChange={setSurge} />
+          <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
             id="surge-tokens"
-            label="Surge Tokens"
+            label="Surge"
             value={surgeTokens}
             onChange={setSurgeTokens}
             disabled={surge !== 'none'}
@@ -79,14 +80,14 @@ function App() {
           />
           <NumberInputWithControls
             id="aim-tokens"
-            label="Aim Tokens"
+            label="Aim"
             value={aimTokens}
             onChange={setAimTokens}
             title="Reroll up to 2 blank dice per Aim token"
           />
           <NumberInputWithControls
             id="observe-tokens"
-            label="Observe Tokens"
+            label="Observe"
             value={observeTokens}
             onChange={setObserveTokens}
             title="Reroll up to 1 blank die per Observe token"
