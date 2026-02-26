@@ -460,80 +460,51 @@ describe('calculateDefensePool', () => {
 });
 
 describe('calculateWounds', () => {
-  it('attack always 2, defense always 1: expected wounds 1', () => {
-    const attackResults = calculateAttackPool(
-      { red: 0, black: 0, white: 0 },
-      'none'
-    );
-    const attackDist = [
-      { total: 0, probability: 0 },
-      { total: 1, probability: 0 },
-      { total: 2, probability: 1 },
-    ];
-    const defenseResults: ReturnType<typeof calculateDefensePool> = {
-      expectedBlocks: 1,
-      distribution: [
-        { total: 0, probability: 0 },
-        { total: 1, probability: 1 },
-      ],
-      cumulative: [
-        { total: 0, probability: 1 },
-        { total: 1, probability: 1 },
-      ],
-    };
-    const attackWithDist = { ...attackResults, distribution: attackDist };
-    const wounds = calculateWounds(attackWithDist, defenseResults);
-    expect(wounds.expectedWounds).toBeCloseTo(1);
-    expect(wounds.distribution.find((d) => d.total === 1)?.probability).toBeCloseTo(1);
+  it('zero attack dice yields 0 wounds', () => {
+    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const wounds = calculateWounds(attackResults, 'red', 'none');
+    expect(wounds.expectedWounds).toBe(0);
+    expect(wounds.distribution).toHaveLength(1);
+    expect(wounds.distribution[0]).toEqual({ total: 0, probability: 1 });
   });
 
-  it('attack 50% 0 / 50% 2, defense always 1: 50% 0 wounds, 50% 1 wound', () => {
-    const attackResults = calculateAttackPool(
-      { red: 0, black: 0, white: 0 },
-      'none'
-    );
+  it('attack always 1 success, red defense none: expected wounds 1 - 3/6', () => {
+    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackDist = [
+      { total: 0, probability: 0 },
+      { total: 1, probability: 1 },
+      { total: 2, probability: 0 },
+    ];
+    const attackWithDist = { ...attackResults, distribution: attackDist };
+    const wounds = calculateWounds(attackWithDist, 'red', 'none');
+    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    expect(sum).toBeCloseTo(1);
+    expect(wounds.expectedWounds).toBeCloseTo(1 - 3 / 6);
+  });
+
+  it('attack 50% 0 / 50% 2, red defense none: wounds distribution sums to 1', () => {
+    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
     const attackDist = [
       { total: 0, probability: 0.5 },
       { total: 1, probability: 0 },
       { total: 2, probability: 0.5 },
     ];
-    const defenseResults: ReturnType<typeof calculateDefensePool> = {
-      expectedBlocks: 1,
-      distribution: [
-        { total: 0, probability: 0 },
-        { total: 1, probability: 1 },
-      ],
-      cumulative: [
-        { total: 0, probability: 1 },
-        { total: 1, probability: 1 },
-      ],
-    };
     const attackWithDist = { ...attackResults, distribution: attackDist };
-    const wounds = calculateWounds(attackWithDist, defenseResults);
-    expect(wounds.expectedWounds).toBeCloseTo(0.5);
-    expect(wounds.distribution.find((d) => d.total === 0)?.probability).toBeCloseTo(0.5);
-    expect(wounds.distribution.find((d) => d.total === 1)?.probability).toBeCloseTo(0.5);
+    const wounds = calculateWounds(attackWithDist, 'red', 'none');
+    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    expect(sum).toBeCloseTo(1);
   });
 
-  it('zero defense: wounds distribution equals attack total distribution', () => {
-    const attackResults = calculateAttackPool(
-      { red: 1, black: 0, white: 0 },
-      'none'
-    );
-    const defenseResults = calculateDefensePool({ red: 0, white: 0 }, 'none');
-    const wounds = calculateWounds(attackResults, defenseResults);
-    expect(wounds.expectedWounds).toBeCloseTo(attackResults.expectedTotal);
-    const woundsSum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
-    expect(woundsSum).toBeCloseTo(1);
+  it('attack pool red 1 none: wounds distribution sums to 1', () => {
+    const attackResults = calculateAttackPool({ red: 1, black: 0, white: 0 }, 'none');
+    const wounds = calculateWounds(attackResults, 'red', 'none');
+    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    expect(sum).toBeCloseTo(1);
   });
 
-  it('wounds distribution probabilities sum to 1', () => {
-    const attackResults = calculateAttackPool(
-      { red: 2, black: 1, white: 0 },
-      'hit'
-    );
-    const defenseResults = calculateDefensePool({ red: 1, white: 1 }, 'block');
-    const wounds = calculateWounds(attackResults, defenseResults);
+  it('attack pool 2 red 1 black hit, red defense block: wounds distribution sums to 1', () => {
+    const attackResults = calculateAttackPool({ red: 2, black: 1, white: 0 }, 'hit');
+    const wounds = calculateWounds(attackResults, 'red', 'block');
     const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
     expect(sum).toBeCloseTo(1);
   });

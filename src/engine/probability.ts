@@ -339,23 +339,24 @@ export function getDefenseDistributionForDiceCount(
 
 export function calculateWounds(
   attackResults: AttackResults,
-  defenseResults: DefenseResults
+  defenseDieColor: DefenseDieColor,
+  defenseSurge: DefenseSurgeConversion
 ): WoundsResults {
-  const attackDist = new Map<number, number>();
-  for (const entry of attackResults.distribution) {
-    attackDist.set(entry.total, (attackDist.get(entry.total) ?? 0) + entry.probability);
-  }
-  const defenseDist = new Map<number, number>();
-  for (const entry of defenseResults.distribution) {
-    defenseDist.set(entry.total, (defenseDist.get(entry.total) ?? 0) + entry.probability);
-  }
-
   const woundsProbByTotal: Record<number, number> = {};
   let expectedWounds = 0;
 
-  for (const [attackTotal, attackProb] of attackDist) {
+  for (const attackEntry of attackResults.distribution) {
+    const attackTotal = attackEntry.total;
+    const attackProb = attackEntry.probability;
     if (attackProb === 0) continue;
-    for (const [defenseTotal, defenseProb] of defenseDist) {
+    const defenseResults = getDefenseDistributionForDiceCount(
+      attackTotal,
+      defenseDieColor,
+      defenseSurge
+    );
+    for (const defenseEntry of defenseResults.distribution) {
+      const defenseTotal = defenseEntry.total;
+      const defenseProb = defenseEntry.probability;
       if (defenseProb === 0) continue;
       const wounds = Math.max(0, attackTotal - defenseTotal);
       const jointProb = attackProb * defenseProb;
