@@ -37,7 +37,10 @@ export function CheckboxToggle({
   );
 
   const labelContent = (
-    <label className="checkbox-toggle" htmlFor={id}>
+    <label
+      className={`checkbox-toggle${disabled ? ' checkbox-toggle--disabled' : ''}`}
+      htmlFor={id}
+    >
       <input
         type="checkbox"
         id={id}

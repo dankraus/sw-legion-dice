@@ -23,3 +23,16 @@
 .checkbox-toggle__input {
   margin: 0;
 }
+
+.checkbox-toggle--disabled {
+  cursor: not-allowed;
+}
+
+.checkbox-toggle--disabled .checkbox-toggle__label {
+  color: #9ca3af;
+}
+
+.checkbox-toggle--disabled .checkbox-toggle__label-link {
+  color: #9ca3af;
+  pointer-events: none;
+}
