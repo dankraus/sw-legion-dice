@@ -37,6 +37,7 @@ function App() {
   const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
   const [cover, setCover] = useState<CoverLevel>('none');
   const [lowProfile, setLowProfile] = useState<boolean>(false);
+  const [suppressed, setSuppressed] = useState<boolean>(false);
   const [backup, setBackup] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
@@ -75,10 +76,11 @@ function App() {
         defenseSurgeTokensNum,
         cover,
         lowProfile,
+        suppressed,
         sharpshooterXNum,
         backup
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, sharpshooterXNum, backup]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, sharpshooterXNum, backup]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -102,6 +104,7 @@ function App() {
     setOutmaneuver(false);
     setCover('none');
     setLowProfile(false);
+    setSuppressed(false);
     setBackup(false);
   };
 
@@ -216,6 +219,14 @@ function App() {
             onChange={setLowProfile}
             disabled={cover === 'none'}
             guideAnchor="low-profile"
+          />
+          <CheckboxToggle
+            id="suppressed"
+            label="Suppressed"
+            title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
+            checked={suppressed}
+            onChange={setSuppressed}
+            disabled={cover === 'heavy'}
           />
           <CheckboxToggle
             id="backup"

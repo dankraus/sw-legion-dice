@@ -618,4 +618,36 @@ describe('calculateWounds', () => {
     const woundsOn = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, true);
     expect(woundsOn.expectedWounds).toBeLessThan(woundsOff.expectedWounds);
   });
+
+  it('cover none with suppressed true yields lower expected wounds than suppressed false', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHits = {
+      ...emptyPool,
+      distribution: [{ total: 3, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 3, crits: 0, probability: 1 }],
+    };
+    const woundsSuppressedOff = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      undefined,
+      undefined,
+      undefined,
+      'none',
+      false,
+      false // suppressed false: no effective cover
+    );
+    const woundsSuppressedOn = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      undefined,
+      undefined,
+      undefined,
+      'none',
+      false,
+      true // suppressed true: effective cover light → fewer wounds
+    );
+    expect(woundsSuppressedOn.expectedWounds).toBeLessThan(woundsSuppressedOff.expectedWounds);
+  });
 });

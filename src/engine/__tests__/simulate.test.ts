@@ -260,6 +260,13 @@ describe('getEffectiveCover', () => {
     expect(getEffectiveCover('heavy', -1)).toBe('heavy');
     expect(getEffectiveCover('light', -1)).toBe('light');
   });
+
+  it('suppressed true: improves cover by 1 then sharpshooter applies', () => {
+    expect(getEffectiveCover('none', 0, true)).toBe('light');
+    expect(getEffectiveCover('light', 0, true)).toBe('heavy');
+    expect(getEffectiveCover('heavy', 0, true)).toBe('heavy');
+    expect(getEffectiveCover('light', 1, true)).toBe('light');
+  });
 });
 
 describe('applyCover', () => {
@@ -297,6 +304,13 @@ describe('applyCover', () => {
     const withLightNoSharpshooter = applyCover(4, 2, 'light', rng2, 0);
     expect(withHeavyAndSharpshooter1).toEqual(withLightNoSharpshooter);
   });
+  it('suppressed true: none behaves like light', () => {
+    const rng1 = createSeededRng(200);
+    const rng2 = createSeededRng(200);
+    const noneSuppressed = applyCover(2, 1, 'none', rng1, 0, true);
+    const lightNoSuppressed = applyCover(2, 1, 'light', rng2, 0);
+    expect(noneSuppressed).toEqual(lightNoSuppressed);
+  });
 });
 
 describe('simulateWounds', () => {
@@ -320,6 +334,7 @@ describe('simulateWounds', () => {
       undefined, // defenseSurgeTokens
       'none', // cover
       false, // lowProfile
+      false, // suppressed
       0, // sharpshooterX
       false, // backup
       20_000,
@@ -351,6 +366,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       'none',
       false,
+      false,
       0,
       false,
       runs,
@@ -364,6 +380,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       1,
       'none',
+      false,
       false,
       0,
       false,
@@ -398,6 +415,7 @@ describe('cover in wounds simulation', () => {
       0,
       'none',
       false,
+      false,
       0,
       false,
       runs,
@@ -411,6 +429,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       'light',
+      false,
       false,
       0,
       false,
@@ -452,6 +471,7 @@ describe('cover in wounds simulation', () => {
       0,
       'light',
       false,
+      false,
       0,
       false,
       runs,
@@ -466,6 +486,7 @@ describe('cover in wounds simulation', () => {
       0,
       'light',
       true,
+      false,
       0,
       false,
       runs,
@@ -502,6 +523,7 @@ describe('cover in wounds simulation', () => {
       0,
       'heavy',
       false,
+      false,
       0,
       false,
       runs,
@@ -516,12 +538,67 @@ describe('cover in wounds simulation', () => {
       0,
       'heavy',
       false,
+      false,
       1,
       false,
       runs,
       rngSharp
     );
     expect(withSharpshooter1.expectedWounds).toBeGreaterThan(noSharpshooter.expectedWounds);
+  });
+  it('cover none with Suppressed on yields lower expected wounds than Suppressed off', () => {
+    const attackResults = {
+      expectedHits: 3,
+      expectedCrits: 0,
+      expectedTotal: 3,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 3, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+      ],
+    };
+    const runs = 5000;
+    const rngOff = createSeededRng(801);
+    const rngOn = createSeededRng(801);
+    const resultOff = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      runs,
+      rngOff
+    );
+    const resultOn = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      true,
+      0,
+      false,
+      runs,
+      rngOn
+    );
+    expect(resultOn.expectedWounds).toBeLessThan(resultOff.expectedWounds);
   });
 });
 
@@ -557,6 +634,7 @@ describe('backup in wounds simulation', () => {
       0,
       'none',
       false,
+      false,
       0,
       false,
       runs,
@@ -570,6 +648,7 @@ describe('backup in wounds simulation', () => {
       false,
       0,
       'none',
+      false,
       false,
       0,
       true,

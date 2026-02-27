@@ -96,14 +96,19 @@ export function rollOneDefenseDieOutcome(
   return 'blank';
 }
 
-/** Sharpshooter X: reduce cover by up to X steps (heavy→light→none). Used inside applyCover. */
+/** Sharpshooter X: reduce cover by up to X steps (heavy→light→none). Suppressed: improve by 1 first (none→light, light→heavy). Used inside applyCover. */
 export function getEffectiveCover(
   cover: CoverLevel,
-  sharpshooterX: number
+  sharpshooterX: number,
+  suppressed?: boolean
 ): CoverLevel {
-  const steps = Math.max(0, Math.floor(sharpshooterX));
   let effective: CoverLevel = cover;
-  for (let i = 0; i < steps && effective !== 'none'; i++) {
+  if (suppressed) {
+    effective =
+      effective === 'none' ? 'light' : effective === 'light' ? 'heavy' : 'heavy';
+  }
+  const steps = Math.max(0, Math.floor(sharpshooterX));
+  for (let index = 0; index < steps && effective !== 'none'; index++) {
     effective = effective === 'heavy' ? 'light' : 'none';
   }
   return effective;
@@ -115,9 +120,10 @@ export function applyCover(
   crits: number,
   cover: CoverLevel,
   rng: () => number,
-  sharpshooterX?: number
+  sharpshooterX?: number,
+  suppressed?: boolean
 ): { hits: number; crits: number } {
-  const effective = getEffectiveCover(cover, sharpshooterX ?? 0);
+  const effective = getEffectiveCover(cover, sharpshooterX ?? 0, suppressed);
   if (effective === 'none' || hits <= 0) return { hits, crits };
   let blockCount = 0;
   let surgeCount = 0;
@@ -401,6 +407,7 @@ export function simulateWounds(
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
   lowProfile: boolean,
+  suppressed: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
   runs: number,
@@ -439,7 +446,7 @@ export function simulateWounds(
     );
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, final.hits - 1) : final.hits;
-    const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX);
+    const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX, suppressed);
     const hitsAfterBackup = backup
       ? Math.max(0, afterCover.hits - 2)
       : afterCover.hits;
@@ -489,6 +496,7 @@ export function simulateWoundsFromAttackResults(
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
   lowProfile: boolean,
+  suppressed: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
   runs: number,
@@ -521,7 +529,7 @@ export function simulateWoundsFromAttackResults(
     }
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, hits - 1) : hits;
-    const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX);
+    const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX, suppressed);
     const hitsAfterBackup = backup
       ? Math.max(0, afterCover.hits - 2)
       : afterCover.hits;

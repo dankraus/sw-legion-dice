@@ -141,6 +141,7 @@ export function calculateWounds(
   defenseSurgeTokens?: number,
   cover?: CoverLevel,
   lowProfile?: boolean,
+  suppressed?: boolean,
   sharpshooterX?: number,
   backup?: boolean
 ): WoundsResults {
@@ -154,6 +155,7 @@ export function calculateWounds(
     defenseSurgeTokens ?? 0,
     cover ?? 'none',
     lowProfile ?? false,
+    suppressed ?? false,
     sharpshooterX ?? 0,
     backup ?? false,
     DEFAULT_RUNS,
