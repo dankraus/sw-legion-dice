@@ -96,22 +96,29 @@ export function rollOneDefenseDieOutcome(
   return 'blank';
 }
 
-/** Sharpshooter X: reduce cover by up to X steps (heavy→light→none). Suppressed: improve by 1 first (none→light, light→heavy). Used inside applyCover. */
+function coverToValue(cover: CoverLevel): number {
+  return cover === 'none' ? 0 : cover === 'light' ? 1 : 2;
+}
+
+function valueToCover(value: number): CoverLevel {
+  return value <= 0 ? 'none' : value === 1 ? 'light' : 'heavy';
+}
+
+/** Sharpshooter X: reduce cover by up to X steps (heavy→light→none). Suppressed: improve by 1 first (none→light, light→heavy). Cover X: improve by X, cap at heavy (2). Sharpshooter applies after. Used inside applyCover. */
 export function getEffectiveCover(
   cover: CoverLevel,
   sharpshooterX: number,
-  suppressed?: boolean
+  suppressed?: boolean,
+  coverX?: number
 ): CoverLevel {
-  let effective: CoverLevel = cover;
-  if (suppressed) {
-    effective =
-      effective === 'none' ? 'light' : effective === 'light' ? 'heavy' : 'heavy';
-  }
+  const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX ?? 0)));
+  const coverValue = coverToValue(cover) + (suppressed ? 1 : 0) + normalizedCoverX;
+  let improved = valueToCover(Math.min(2, coverValue));
   const steps = Math.max(0, Math.floor(sharpshooterX));
-  for (let index = 0; index < steps && effective !== 'none'; index++) {
-    effective = effective === 'heavy' ? 'light' : 'none';
+  for (let index = 0; index < steps && improved !== 'none'; index++) {
+    improved = improved === 'heavy' ? 'light' : 'none';
   }
-  return effective;
+  return improved;
 }
 
 /** Apply cover: roll hits white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. Sharpshooter X reduces effective cover before rolling. */

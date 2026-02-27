@@ -267,6 +267,15 @@ describe('getEffectiveCover', () => {
     expect(getEffectiveCover('heavy', 0, true)).toBe('heavy');
     expect(getEffectiveCover('light', 1, true)).toBe('light');
   });
+
+  it('coverX: improves by X then cap at heavy; sharpshooter applies after', () => {
+    expect(getEffectiveCover('none', 0, false, 1)).toBe('light');
+    expect(getEffectiveCover('none', 0, false, 2)).toBe('heavy');
+    expect(getEffectiveCover('light', 0, false, 1)).toBe('heavy');
+    expect(getEffectiveCover('heavy', 0, false, 2)).toBe('heavy');
+    expect(getEffectiveCover('none', 0, true, 1)).toBe('heavy');
+    expect(getEffectiveCover('heavy', 1, false, 1)).toBe('light');
+  });
 });
 
 describe('applyCover', () => {
