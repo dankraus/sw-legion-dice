@@ -1,0 +1,20 @@
+---
+description: Link new keywords, toggles, and dice-pool modifiers to Legion Quick Guide
+globs: src/App.tsx, src/components/*.tsx
+alwaysApply: false
+---
+
+# Link Keywords and Modifiers to Legion Quick Guide
+
+Whenever you add a new keyword, toggle, or control that adjusts attack/defense dice pools or outcomes:
+
+1. **Look up the rule** at [Legion Quick Guide](https://legionquickguide.com/). Find the matching entry (e.g. Critical X, Backup, Low Profile). Anchor format is lowercase with hyphens: `critical-x`, `low-profile`, `surge-tokens`.
+
+2. **Add the link in the UI** using the existing pattern:
+   - For `NumberInputWithControls`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="critical-x"`).
+   - For `CheckboxToggle`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="backup"`).
+   - Links open in a new tab (`target="_blank"`); use `legionQuickGuideHref(anchor)` from `src/legionQuickGuide.ts`.
+
+3. **If the term is not on Legion Quick Guide**, omit `guideAnchor`; do not link to the homepage. Add a link only when there is a specific anchor for that rule.
+
+This keeps the calculator aligned with official rules and helps users jump to definitions without leaving the app flow.

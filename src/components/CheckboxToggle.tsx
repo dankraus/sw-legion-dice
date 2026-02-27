@@ -1,4 +1,5 @@
 import { Tooltip } from './Tooltip';
+import { legionQuickGuideHref } from '../legionQuickGuide';
 import './CheckboxToggle.css';
 
 interface CheckboxToggleProps {
@@ -8,6 +9,8 @@ interface CheckboxToggleProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  /** Legion Quick Guide anchor (e.g. 'backup'); label becomes a link when set. */
+  guideAnchor?: string;
 }
 
 export function CheckboxToggle({
@@ -17,7 +20,22 @@ export function CheckboxToggle({
   checked,
   onChange,
   disabled = false,
+  guideAnchor,
 }: CheckboxToggleProps) {
+  const labelText = guideAnchor ? (
+    <a
+      className="checkbox-toggle__label-link"
+      href={legionQuickGuideHref(guideAnchor)}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event) => event.stopPropagation()}
+    >
+      {label}
+    </a>
+  ) : (
+    label
+  );
+
   const labelContent = (
     <label className="checkbox-toggle" htmlFor={id}>
       <input
@@ -29,7 +47,7 @@ export function CheckboxToggle({
         disabled={disabled}
       />
       <span className="checkbox-toggle__label" title={title}>
-        {label}
+        {labelText}
       </span>
     </label>
   );

@@ -13,6 +13,20 @@
   min-width: 0;
 }
 
+.num-input__label-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.num-input__label-link:hover {
+  text-decoration: underline;
+}
+
+.num-input--disabled .num-input__label-link {
+  color: inherit;
+  pointer-events: none;
+}
+
 .num-input__controls {
   display: flex;
   align-items: center;

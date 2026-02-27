@@ -141,6 +141,7 @@ function App() {
             onChange={setSurgeTokens}
             disabled={surge !== 'none'}
             title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
+            guideAnchor="surge-tokens"
           />
           <NumberInputWithControls
             id="aim-tokens"
@@ -148,6 +149,7 @@ function App() {
             value={aimTokens}
             onChange={setAimTokens}
             title="Reroll up to 2 blank dice per Aim token"
+            guideAnchor="aim"
           />
           <NumberInputWithControls
             id="observe-tokens"
@@ -155,6 +157,7 @@ function App() {
             value={observeTokens}
             onChange={setObserveTokens}
             title="Reroll up to 1 blank die per Observe token"
+            guideAnchor="observe-x"
           />
           <h3 className="app__section-heading">Keywords</h3>
           <NumberInputWithControls
@@ -163,6 +166,7 @@ function App() {
             value={criticalX}
             onChange={setCriticalX}
             title="Convert up to X surges to crits (before Surge Conversion)"
+            guideAnchor="critical-x"
           />
           <NumberInputWithControls
             id="precise-x"
@@ -171,6 +175,7 @@ function App() {
             onChange={setPreciseX}
             disabled={aimTokensNum === 0}
             title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens. Increases the dice rerolled with an Aim token by X.' : 'Extra rerolls per Aim token when using Aim.'}
+            guideAnchor="precise-x"
           />
           <NumberInputWithControls
             id="ram-x"
@@ -178,6 +183,7 @@ function App() {
             value={ramX}
             onChange={setRamX}
             title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
+            guideAnchor="ram-x"
           />
           <NumberInputWithControls
             id="sharpshooter-x"
@@ -185,6 +191,7 @@ function App() {
             value={sharpshooterX}
             onChange={setSharpshooterX}
             title="Reduce cover: 1 = heavy→light, light→none; 2 = heavy/light→none"
+            guideAnchor="sharpshooter-x"
           />
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
@@ -208,6 +215,7 @@ function App() {
             checked={lowProfile}
             onChange={setLowProfile}
             disabled={cover === 'none'}
+            guideAnchor="low-profile"
           />
           <CheckboxToggle
             id="backup"
@@ -215,6 +223,7 @@ function App() {
             title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
             checked={backup}
             onChange={setBackup}
+            guideAnchor="backup"
           />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
@@ -230,6 +239,7 @@ function App() {
                 ? 'Defense Surge Tokens only apply when Defense Surge is None.'
                 : undefined
             }
+            guideAnchor="surge-tokens"
           />
           <NumberInputWithControls
             id="dodge-tokens"
@@ -237,6 +247,7 @@ function App() {
             value={dodgeTokens}
             onChange={setDodgeTokens}
             title="Cancel one hit per token before rolling defense; crits cannot be dodged."
+            guideAnchor="dodge"
           />
           <CheckboxToggle
             id="outmaneuver"
@@ -244,6 +255,7 @@ function App() {
             title="Dodge tokens can cancel crits as well as hits."
             checked={outmaneuver}
             onChange={setOutmaneuver}
+            guideAnchor="outmaneuver"
           />
         </section>
 
