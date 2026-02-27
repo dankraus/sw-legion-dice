@@ -320,6 +320,13 @@ describe('applyCover', () => {
     const lightNoSuppressed = applyCover(2, 1, 'light', rng2, 0);
     expect(noneSuppressed).toEqual(lightNoSuppressed);
   });
+  it('coverX 1: none behaves like light', () => {
+    const rng1 = createSeededRng(300);
+    const rng2 = createSeededRng(300);
+    const noneCover1 = applyCover(2, 1, 'none', rng1, 0, false, 1);
+    const lightNoCoverX = applyCover(2, 1, 'light', rng2, 0);
+    expect(noneCover1).toEqual(lightNoCoverX);
+  });
 });
 
 describe('simulateWounds', () => {

@@ -128,9 +128,10 @@ export function applyCover(
   cover: CoverLevel,
   rng: () => number,
   sharpshooterX?: number,
-  suppressed?: boolean
+  suppressed?: boolean,
+  coverX?: number
 ): { hits: number; crits: number } {
-  const effective = getEffectiveCover(cover, sharpshooterX ?? 0, suppressed);
+  const effective = getEffectiveCover(cover, sharpshooterX ?? 0, suppressed, coverX);
   if (effective === 'none' || hits <= 0) return { hits, crits };
   let blockCount = 0;
   let surgeCount = 0;
