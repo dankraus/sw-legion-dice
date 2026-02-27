@@ -10,6 +10,7 @@ import { calculateAttackPool, calculateWounds } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
 import { SurgeToggle } from './components/SurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
+import { DefenseDiceToggle } from './components/DefenseDiceToggle';
 import { CoverToggle } from './components/CoverToggle';
 import { CheckboxToggle } from './components/CheckboxToggle';
 import { NumberInputWithControls } from './components/NumberInputWithControls';
@@ -195,27 +196,7 @@ function App() {
           </div>
 
           <h2 className="app__section-heading">Defense</h2>
-          <fieldset className="surge-toggle">
-            <legend className="surge-toggle__legend">Defense dice</legend>
-            <label className="surge-toggle__label">
-              <input
-                type="radio"
-                name="defense-dice"
-                checked={defenseDieColor === 'red'}
-                onChange={() => setDefenseDieColor('red')}
-              />
-              <span>Red</span>
-            </label>
-            <label className="surge-toggle__label">
-              <input
-                type="radio"
-                name="defense-dice"
-                checked={defenseDieColor === 'white'}
-                onChange={() => setDefenseDieColor('white')}
-              />
-              <span>White</span>
-            </label>
-          </fieldset>
+          <DefenseDiceToggle value={defenseDieColor} onChange={setDefenseDieColor} />
           <CoverToggle value={cover} onChange={setCover} />
           <CheckboxToggle
             id="low-profile"
