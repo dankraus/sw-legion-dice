@@ -326,6 +326,21 @@ function App() {
           )}
         </section>
       </div>
+
+      <p className="app__github-note">
+        Spotted a problem?{' '}
+        <a href="https://github.com/dskraus/legion-dice/issues" target="_blank" rel="noopener noreferrer">
+          Open an issue on the Github page
+        </a>{' '}
+        and let me know.
+      </p>
+
+      <footer className="app__footer">
+        Made in Massachusetts by{' '}
+        <a href="http://www.dskraus.com" target="_blank" rel="noopener noreferrer">
+          Dan Kraus
+        </a>
+      </footer>
     </div>
   );
 }

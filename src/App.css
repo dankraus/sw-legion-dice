@@ -103,3 +103,35 @@
   font-size: 1.1rem;
   padding: 3rem 0;
 }
+
+.app__github-note {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.app__github-note a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.app__github-note a:hover {
+  text-decoration: underline;
+}
+
+.app__footer {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.app__footer a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.app__footer a:hover {
+  text-decoration: underline;
+}
