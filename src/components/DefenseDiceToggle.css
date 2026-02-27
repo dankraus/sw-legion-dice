@@ -1,0 +1,19 @@
+.defense-dice-toggle .surge-toggle__option:first-child {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+}
+
+.defense-dice-toggle .surge-toggle__option:first-child.surge-toggle__option--active {
+  border-color: #b91c1c;
+  color: #991b1b;
+}
+
+.defense-dice-toggle .surge-toggle__option:last-child {
+  background: #f9fafb;
+  border: 2px solid #d1d5db;
+}
+
+.defense-dice-toggle .surge-toggle__option:last-child.surge-toggle__option--active {
+  border-color: #9ca3af;
+  color: #374151;
+}
