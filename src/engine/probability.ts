@@ -141,7 +141,8 @@ export function calculateWounds(
   defenseSurgeTokens?: number,
   cover?: CoverLevel,
   lowProfile?: boolean,
-  sharpshooterX?: number
+  sharpshooterX?: number,
+  backup?: boolean
 ): WoundsResults {
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
@@ -154,6 +155,7 @@ export function calculateWounds(
     cover ?? 'none',
     lowProfile ?? false,
     sharpshooterX ?? 0,
+    backup ?? false,
     DEFAULT_RUNS,
     rng
   );

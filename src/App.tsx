@@ -37,6 +37,7 @@ function App() {
   const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
   const [cover, setCover] = useState<CoverLevel>('none');
   const [lowProfile, setLowProfile] = useState<boolean>(false);
+  const [backup, setBackup] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
@@ -74,9 +75,10 @@ function App() {
         defenseSurgeTokensNum,
         cover,
         lowProfile,
-        sharpshooterXNum
+        sharpshooterXNum,
+        backup
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, sharpshooterXNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, sharpshooterXNum, backup]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -100,6 +102,7 @@ function App() {
     setOutmaneuver(false);
     setCover('none');
     setLowProfile(false);
+    setBackup(false);
   };
 
   return (
@@ -205,6 +208,13 @@ function App() {
             checked={lowProfile}
             onChange={setLowProfile}
             disabled={cover === 'none'}
+          />
+          <CheckboxToggle
+            id="backup"
+            label="Backup"
+            title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
+            checked={backup}
+            onChange={setBackup}
           />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>

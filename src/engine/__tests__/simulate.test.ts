@@ -321,6 +321,7 @@ describe('simulateWounds', () => {
       'none', // cover
       false, // lowProfile
       0, // sharpshooterX
+      false, // backup
       20_000,
       rng
     );
@@ -351,6 +352,7 @@ describe('defense surge tokens in wounds simulation', () => {
       'none',
       false,
       0,
+      false,
       runs,
       rngZero
     );
@@ -364,6 +366,7 @@ describe('defense surge tokens in wounds simulation', () => {
       'none',
       false,
       0,
+      false,
       runs,
       rngOne
     );
@@ -396,6 +399,7 @@ describe('cover in wounds simulation', () => {
       'none',
       false,
       0,
+      false,
       runs,
       rngNone
     );
@@ -409,6 +413,7 @@ describe('cover in wounds simulation', () => {
       'light',
       false,
       0,
+      false,
       runs,
       rngLight
     );
@@ -448,6 +453,7 @@ describe('cover in wounds simulation', () => {
       'light',
       false,
       0,
+      false,
       runs,
       rngOff
     );
@@ -461,6 +467,7 @@ describe('cover in wounds simulation', () => {
       'light',
       true,
       0,
+      false,
       runs,
       rngOn
     );
@@ -496,6 +503,7 @@ describe('cover in wounds simulation', () => {
       'heavy',
       false,
       0,
+      false,
       runs,
       rngNoSharp
     );
@@ -509,9 +517,66 @@ describe('cover in wounds simulation', () => {
       'heavy',
       false,
       1,
+      false,
       runs,
       rngSharp
     );
     expect(withSharpshooter1.expectedWounds).toBeGreaterThan(noSharpshooter.expectedWounds);
+  });
+});
+
+describe('backup in wounds simulation', () => {
+  it('3 hits 0 crits: backup on yields lower expected wounds than backup off', () => {
+    const attackResults = {
+      expectedHits: 3,
+      expectedCrits: 0,
+      expectedTotal: 3,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 3, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+      ],
+    };
+    const runs = 10_000;
+    const rngOff = createSeededRng(500);
+    const rngOn = createSeededRng(500);
+    const resultOff = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      0,
+      false,
+      runs,
+      rngOff
+    );
+    const resultOn = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      0,
+      true,
+      runs,
+      rngOn
+    );
+    // Backup removes 2 hits → 1 defense die instead of 3; fewer dice to roll, different wound distribution
+    expect(resultOn.expectedWounds).toBeLessThan(resultOff.expectedWounds);
   });
 });

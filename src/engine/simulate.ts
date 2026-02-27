@@ -402,6 +402,7 @@ export function simulateWounds(
   cover: CoverLevel,
   lowProfile: boolean,
   sharpshooterX: number = 0,
+  backup: boolean = false,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -439,9 +440,12 @@ export function simulateWounds(
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, final.hits - 1) : final.hits;
     const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX);
+    const hitsAfterBackup = backup
+      ? Math.max(0, afterCover.hits - 2)
+      : afterCover.hits;
     const defenseDice = outmaneuver
-      ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
-      : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
+      ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
+      : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
     let blockCount = 0;
     let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {
@@ -486,6 +490,7 @@ export function simulateWoundsFromAttackResults(
   cover: CoverLevel,
   lowProfile: boolean,
   sharpshooterX: number = 0,
+  backup: boolean = false,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -517,9 +522,12 @@ export function simulateWoundsFromAttackResults(
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, hits - 1) : hits;
     const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX);
+    const hitsAfterBackup = backup
+      ? Math.max(0, afterCover.hits - 2)
+      : afterCover.hits;
     const defenseDice = outmaneuver
-      ? Math.max(0, afterCover.hits + afterCover.crits - normalizedDodge)
-      : afterCover.crits + Math.max(0, afterCover.hits - normalizedDodge);
+      ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
+      : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
     let blockCount = 0;
     let surgeCount = 0;
     for (let i = 0; i < defenseDice; i++) {
