@@ -416,6 +416,7 @@ export function simulateWounds(
   cover: CoverLevel,
   lowProfile: boolean,
   suppressed: boolean = false,
+  coverX: number = 0,
   sharpshooterX: number = 0,
   backup: boolean = false,
   pierceX: number = 0,
@@ -425,6 +426,7 @@ export function simulateWounds(
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
+  const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
   const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
@@ -456,7 +458,7 @@ export function simulateWounds(
     );
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, final.hits - 1) : final.hits;
-    const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX, suppressed);
+    const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX, suppressed, normalizedCoverX);
     const hitsAfterBackup = backup
       ? Math.max(0, afterCover.hits - 2)
       : afterCover.hits;
@@ -508,6 +510,7 @@ export function simulateWoundsFromAttackResults(
   cover: CoverLevel,
   lowProfile: boolean,
   suppressed: boolean = false,
+  coverX: number = 0,
   sharpshooterX: number = 0,
   backup: boolean = false,
   pierceX: number = 0,
@@ -517,6 +520,7 @@ export function simulateWoundsFromAttackResults(
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
+  const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
   const outcomes = attackResults.distributionByHitsCrits.filter((entry) => entry.probability > 0);
   if (outcomes.length === 0) {
     return {
@@ -542,7 +546,7 @@ export function simulateWoundsFromAttackResults(
     }
     const hitsForCover =
       cover !== 'none' && lowProfile ? Math.max(0, hits - 1) : hits;
-    const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX, suppressed);
+    const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX, suppressed, normalizedCoverX);
     const hitsAfterBackup = backup
       ? Math.max(0, afterCover.hits - 2)
       : afterCover.hits;

@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { describe, it, expect } from 'vitest';
-import type { AttackPool } from '../../types';
+import type { AttackPool, AttackResults } from '../../types';
 import { createSeededRng } from '../rng';
 import {
   rollOneAttackDie,
@@ -351,6 +351,7 @@ describe('simulateWounds', () => {
       'none', // cover
       false, // lowProfile
       false, // suppressed
+      0, // coverX
       0, // sharpshooterX
       false, // backup
       0, // pierceX
@@ -385,6 +386,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -400,6 +402,7 @@ describe('defense surge tokens in wounds simulation', () => {
       'none',
       false,
       false,
+      0,
       0,
       false,
       0,
@@ -436,6 +439,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -451,6 +455,7 @@ describe('cover in wounds simulation', () => {
       'light',
       false,
       false,
+      0,
       0,
       false,
       0,
@@ -494,6 +499,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -509,6 +515,7 @@ describe('cover in wounds simulation', () => {
       'light',
       true,
       false,
+      0,
       0,
       false,
       0,
@@ -548,6 +555,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -563,6 +571,7 @@ describe('cover in wounds simulation', () => {
       'heavy',
       false,
       false,
+      0,
       1,
       false,
       0,
@@ -603,6 +612,7 @@ describe('cover in wounds simulation', () => {
       'none',
       false,
       false,
+      0, // coverX
       0,
       false,
       0,
@@ -619,6 +629,7 @@ describe('cover in wounds simulation', () => {
       'none',
       false,
       true,
+      0, // coverX
       0,
       false,
       0,
@@ -626,6 +637,47 @@ describe('cover in wounds simulation', () => {
       rngOn
     );
     expect(resultOn.expectedWounds).toBeLessThan(resultOff.expectedWounds);
+  });
+  it('cover none + coverX 1 yields lower expected wounds than cover none + coverX 0', () => {
+    const attackResults = {
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+    } as AttackResults;
+    const rng = createSeededRng(400);
+    const woundsNoneCover0 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0, // coverX
+      0,
+      false,
+      0,
+      10_000,
+      rng
+    );
+    const woundsNoneCover1 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      1, // coverX
+      0,
+      false,
+      0,
+      10_000,
+      rng
+    );
+    expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(woundsNoneCover0.expectedWounds);
   });
 });
 
@@ -662,6 +714,7 @@ describe('backup in wounds simulation', () => {
       'none',
       false,
       false,
+      0, // coverX
       0,
       false,
       0,
@@ -678,6 +731,7 @@ describe('backup in wounds simulation', () => {
       'none',
       false,
       false,
+      0, // coverX
       0,
       true,
       0,
@@ -712,6 +766,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -728,6 +783,7 @@ describe('Pierce X in wounds simulation', () => {
       'none',
       false,
       false,
+      0,
       0,
       false,
       0,
@@ -770,6 +826,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0,
+      0,
       false,
       0,
       runs,
@@ -785,6 +842,7 @@ describe('Pierce X in wounds simulation', () => {
       'none',
       false,
       false,
+      0, // coverX
       0,
       false,
       3,
