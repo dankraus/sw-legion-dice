@@ -337,6 +337,7 @@ describe('simulateWounds', () => {
       false, // suppressed
       0, // sharpshooterX
       false, // backup
+      0, // pierceX
       20_000,
       rng
     );
@@ -369,6 +370,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngZero
     );
@@ -384,6 +386,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngOne
     );
@@ -418,6 +421,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngNone
     );
@@ -433,6 +437,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngLight
     );
@@ -474,6 +479,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngOff
     );
@@ -489,6 +495,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngOn
     );
@@ -526,6 +533,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngNoSharp
     );
@@ -541,6 +549,7 @@ describe('cover in wounds simulation', () => {
       false,
       1,
       false,
+      0,
       runs,
       rngSharp
     );
@@ -580,6 +589,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngOff
     );
@@ -595,6 +605,7 @@ describe('cover in wounds simulation', () => {
       true,
       0,
       false,
+      0,
       runs,
       rngOn
     );
@@ -637,6 +648,7 @@ describe('backup in wounds simulation', () => {
       false,
       0,
       false,
+      0,
       runs,
       rngOff
     );
@@ -652,10 +664,117 @@ describe('backup in wounds simulation', () => {
       false,
       0,
       true,
+      0,
       runs,
       rngOn
     );
     // Backup removes 2 hits → 1 defense die instead of 3; fewer dice to roll, different wound distribution
     expect(resultOn.expectedWounds).toBeLessThan(resultOff.expectedWounds);
+  });
+});
+
+describe('Pierce X in wounds simulation', () => {
+  it('pierce 0 yields same result as baseline (no canceling blocks)', () => {
+    const attackResults = {
+      expectedHits: 1,
+      expectedCrits: 0,
+      expectedTotal: 1,
+      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
+      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+    };
+    const runs = 5_000;
+    const rng = createSeededRng(900);
+    const withPierce0 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      runs,
+      rng
+    );
+    const rng2 = createSeededRng(900);
+    const again = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      runs,
+      rng2
+    );
+    expect(again.expectedWounds).toBeCloseTo(withPierce0.expectedWounds, 10);
+  });
+
+  it('pierce 3 with 3 hits and 3 defense dice yields higher expected wounds than pierce 0', () => {
+    const attackResults = {
+      expectedHits: 3,
+      expectedCrits: 0,
+      expectedTotal: 3,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 3, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+      ],
+    };
+    const runs = 10_000;
+    const rngZero = createSeededRng(1000);
+    const rngThree = createSeededRng(1000);
+    const pierce0 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      runs,
+      rngZero
+    );
+    const pierce3 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      3,
+      runs,
+      rngThree
+    );
+    expect(pierce3.expectedWounds).toBeGreaterThan(pierce0.expectedWounds);
   });
 });

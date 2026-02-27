@@ -410,11 +410,13 @@ export function simulateWounds(
   suppressed: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
+  pierceX: number = 0,
   runs: number,
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
+  const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
   const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
@@ -466,7 +468,8 @@ export function simulateWounds(
       defenseSurge,
       normalizedDefenseSurgeTokens
     );
-    const wounds = Math.max(0, defenseDice - blocks);
+    const effectiveBlocks = Math.max(0, blocks - normalizedPierceX);
+    const wounds = Math.max(0, defenseDice - effectiveBlocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;
   }
@@ -499,11 +502,13 @@ export function simulateWoundsFromAttackResults(
   suppressed: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
+  pierceX: number = 0,
   runs: number,
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
+  const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const outcomes = attackResults.distributionByHitsCrits.filter((entry) => entry.probability > 0);
   if (outcomes.length === 0) {
     return {
@@ -549,7 +554,8 @@ export function simulateWoundsFromAttackResults(
       defenseSurge,
       normalizedDefenseSurgeTokens
     );
-    const wounds = Math.max(0, defenseDice - blocks);
+    const effectiveBlocks = Math.max(0, blocks - normalizedPierceX);
+    const wounds = Math.max(0, defenseDice - effectiveBlocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;
   }

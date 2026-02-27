@@ -143,7 +143,8 @@ export function calculateWounds(
   lowProfile?: boolean,
   suppressed?: boolean,
   sharpshooterX?: number,
-  backup?: boolean
+  backup?: boolean,
+  pierceX?: number
 ): WoundsResults {
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
@@ -158,6 +159,7 @@ export function calculateWounds(
     suppressed ?? false,
     sharpshooterX ?? 0,
     backup ?? false,
+    pierceX ?? 0,
     DEFAULT_RUNS,
     rng
   );

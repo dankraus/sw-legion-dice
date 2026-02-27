@@ -29,6 +29,7 @@ function App() {
   const [preciseX, setPreciseX] = useState<string>('');
   const [ramX, setRamX] = useState<string>('');
   const [sharpshooterX, setSharpshooterX] = useState<string>('');
+  const [pierceX, setPierceX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
@@ -47,6 +48,7 @@ function App() {
   const preciseXNum = preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
   const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
   const sharpshooterXNum = sharpshooterX === '' ? 0 : Math.max(0, Math.floor(Number(sharpshooterX)) || 0);
+  const pierceXNum = pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0);
   const defenseSurgeTokensNum =
     defenseSurgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
@@ -78,9 +80,10 @@ function App() {
         lowProfile,
         suppressed,
         sharpshooterXNum,
-        backup
+        backup,
+        pierceXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, sharpshooterXNum, backup]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, sharpshooterXNum, backup, pierceXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -96,6 +99,7 @@ function App() {
     setPreciseX('');
     setRamX('');
     setSharpshooterX('');
+    setPierceX('');
     setPointCost('');
     setDefenseDieColor('red');
     setDefenseSurge('none');
@@ -195,6 +199,15 @@ function App() {
             onChange={setSharpshooterX}
             title="Reduce cover: 1 = heavy→light, light→none; 2 = heavy/light→none"
             guideAnchor="sharpshooter-x"
+          />
+          <NumberInputWithControls
+            id="pierce-x"
+            label="Pierce"
+            value={pierceX}
+            onChange={setPierceX}
+            min={0}
+            title="Cancel up to X blocks on the final defense roll"
+            guideAnchor="pierce-x"
           />
           <div className="app__point-cost">
             <label htmlFor="point-cost">Unit Point Cost</label>
