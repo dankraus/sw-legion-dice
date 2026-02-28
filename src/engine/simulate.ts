@@ -411,6 +411,7 @@ export function simulateWounds(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
+  shieldTokens: number,
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
@@ -429,6 +430,7 @@ export function simulateWounds(
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
+  const normalizedShields = Math.max(0, Math.floor(shieldTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
@@ -471,9 +473,14 @@ export function simulateWounds(
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
+    const critsAfterShields = Math.max(0, afterCover.crits - normalizedShields);
+    const hitsAfterShields = Math.max(
+      0,
+      hitsAfterBackup - Math.max(0, normalizedShields - afterCover.crits)
+    );
     const defenseDice = outmaneuver
-      ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
-      : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
+      ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)
+      : critsAfterShields + Math.max(0, hitsAfterShields - normalizedDodge);
     const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
     const normalizedSuppressionTokens = Math.max(0, Math.floor(suppressionTokens));
     const normalizedDangerSenseX = Math.max(0, Math.floor(dangerSenseX));
@@ -519,6 +526,7 @@ export function simulateWoundsFromAttackResults(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens: number,
+  shieldTokens: number,
   outmaneuver: boolean,
   defenseSurgeTokens: number | undefined,
   cover: CoverLevel,
@@ -537,6 +545,7 @@ export function simulateWoundsFromAttackResults(
   rng: () => number
 ): WoundsResults {
   const normalizedDodge = Math.max(0, Math.floor(dodgeTokens));
+  const normalizedShields = Math.max(0, Math.floor(shieldTokens));
   const normalizedDefenseSurgeTokens = normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
@@ -576,9 +585,14 @@ export function simulateWoundsFromAttackResults(
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
+    const critsAfterShields = Math.max(0, afterCover.crits - normalizedShields);
+    const hitsAfterShields = Math.max(
+      0,
+      hitsAfterBackup - Math.max(0, normalizedShields - afterCover.crits)
+    );
     const defenseDice = outmaneuver
-      ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
-      : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
+      ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)
+      : critsAfterShields + Math.max(0, hitsAfterShields - normalizedDodge);
     const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
     const totalDefenseDice = defenseDice + extraDiceFromImpervious + dangerSenseExtra;
     let blockCount = 0;
