@@ -22,6 +22,7 @@ export interface UrlState {
   dSurge: DefenseSurgeOption;
   dSurgeTok: number;
   dodge: number;
+  shield: number;
   out: boolean;
   cover: CoverOption;
   lowProf: boolean;
@@ -53,6 +54,7 @@ export const DEFAULT_URL_STATE: UrlState = {
   dSurge: 'none',
   dSurgeTok: 0,
   dodge: 0,
+  shield: 0,
   out: false,
   cover: 'none',
   lowProf: false,
@@ -113,6 +115,7 @@ export function parseFragment(hash: string): UrlState {
     dSurge: parseEnum(get('dSurge'), D_SURGE_VALUES, DEFAULT_URL_STATE.dSurge),
     dSurgeTok: parseNumber(get('dSurgeTok'), DEFAULT_URL_STATE.dSurgeTok),
     dodge: parseNumber(get('dodge'), DEFAULT_URL_STATE.dodge),
+    shield: parseNumber(get('shield'), DEFAULT_URL_STATE.shield),
     out: parseBoolean(get('out')),
     cover: parseEnum(get('cover'), COVER_VALUES, DEFAULT_URL_STATE.cover),
     lowProf: parseBoolean(get('lowProf')),
