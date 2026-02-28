@@ -316,6 +316,22 @@ function App() {
             title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
             guideAnchor="armor-x"
           />
+          <NumberInputWithControls
+            id="suppression-tokens"
+            label="Suppression tokens"
+            value={suppressionTokens}
+            onChange={setSuppressionTokens}
+            min={0}
+            title="Number of suppression tokens on the defender; used by Danger Sense X for extra defense dice."
+          />
+          <NumberInputWithControls
+            id="danger-sense-x"
+            label="Danger Sense X"
+            value={dangerSenseX}
+            onChange={setDangerSenseX}
+            min={0}
+            title="While defending, roll one extra defense die per suppression token, up to X extra dice."
+          />
           <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
             id="defense-surge-tokens"
