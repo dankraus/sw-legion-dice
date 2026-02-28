@@ -650,4 +650,46 @@ describe('calculateWounds', () => {
     );
     expect(woundsSuppressedOn.expectedWounds).toBeLessThan(woundsSuppressedOff.expectedWounds);
   });
+
+  it('armorX reduces expected wounds (armorX 3 ≤ armorX 0)', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHits = {
+      ...emptyPool,
+      distribution: [{ total: 4, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 3, crits: 1, probability: 1 }],
+    };
+    const woundsArmor0 = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0
+    );
+    const woundsArmor3 = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      3,
+      0
+    );
+    expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(woundsArmor0.expectedWounds);
+  });
 });
