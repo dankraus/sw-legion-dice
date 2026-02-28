@@ -141,8 +141,9 @@ function App() {
 
       <div className="app__layout">
         <section className="app__pool">
-          <h2 className="app__section-heading">Attack Pool</h2>
-          <DiceSelector
+          <div className="app__attack-pool">
+            <h2 className="app__section-heading">Attack Pool</h2>
+            <DiceSelector
             color="red"
             count={pool.red}
             onChange={(n) => setPool((p) => ({ ...p, red: n }))}
@@ -246,8 +247,10 @@ function App() {
               onChange={(e) => setPointCost(e.target.value)}
             />
           </div>
+          </div>
 
-          <h2 className="app__section-heading">Defense Pool</h2>
+          <div className="app__defense-pool">
+            <h2 className="app__section-heading">Defense Pool</h2>
           <DefenseDiceToggle value={defenseDieColor} onChange={setDefenseDieColor} />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <CoverToggle value={cover} onChange={setCover} />
@@ -334,6 +337,7 @@ function App() {
             onChange={setOutmaneuver}
             guideAnchor="outmaneuver"
           />
+          </div>
         </section>
 
         <section className="app__results">

@@ -68,6 +68,20 @@
   color: #111827;
 }
 
+.app__attack-pool {
+  padding-bottom: 0.75rem;
+}
+
+.app__defense-pool {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid #d1d5db;
+}
+
+.app__defense-pool .app__section-heading:first-child {
+  margin-top: 0;
+}
+
 .app__section-heading {
   margin: 1rem 0 0.25rem;
   font-size: 1.1rem;
