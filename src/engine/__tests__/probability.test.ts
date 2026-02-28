@@ -780,4 +780,54 @@ describe('calculateWounds', () => {
     );
     expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
   });
+
+  it('Danger Sense X: expected wounds with suppressionTokens 2 and dangerSenseX 2 are less than or equal to 0/0', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHits = {
+      ...emptyPool,
+      distribution: [{ total: 3, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 3, crits: 0, probability: 1 }],
+    };
+    const woundsBaseline = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0, // suppressionTokens
+      0 // dangerSenseX
+    );
+    const woundsWithDangerSense2 = calculateWounds(
+      attackWithHits,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      2, // suppressionTokens
+      2 // dangerSenseX
+    );
+    expect(woundsWithDangerSense2.expectedWounds).toBeLessThanOrEqual(woundsBaseline.expectedWounds);
+  });
 });
