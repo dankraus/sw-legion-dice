@@ -1028,3 +1028,113 @@ describe('Impact X in wounds simulation', () => {
     expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
   });
 });
+
+describe('Impervious in wounds simulation', () => {
+  it('impervious true with pierce 2 yields lower or equal expected wounds than impervious false', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const rng = createSeededRng(42);
+    const woundsNoImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2, // pierceX
+      false, // impervious
+      runs,
+      rng
+    );
+    const woundsImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2, // pierceX
+      true, // impervious
+      runs,
+      rng
+    );
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
+  });
+
+  it('impervious with pierce 0 yields same expected wounds as no impervious', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const rng = createSeededRng(42);
+    const woundsNoImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0, // pierceX
+      false,
+      runs,
+      rng
+    );
+    const woundsImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0, // pierceX
+      true,
+      runs,
+      rng
+    );
+    expect(woundsImpervious.expectedWounds).toBeCloseTo(woundsNoImpervious.expectedWounds, 10);
+  });
+});
