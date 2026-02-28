@@ -121,6 +121,13 @@ function App() {
         : String(initialFromUrl.dodge)
       : "",
   );
+  const [shieldTokens, setShieldTokens] = useState<string>(() =>
+    initialFromUrl
+      ? initialFromUrl.shield === 0
+        ? ""
+        : String(initialFromUrl.shield)
+      : "",
+  );
   const [outmaneuver, setOutmaneuver] = useState<boolean>(
     () => initialFromUrl?.out ?? false,
   );
@@ -209,6 +216,10 @@ function App() {
         dodgeTokens === ""
           ? 0
           : Math.max(0, Math.floor(Number(dodgeTokens)) || 0),
+      shield:
+        shieldTokens === ""
+          ? 0
+          : Math.max(0, Math.floor(Number(shieldTokens)) || 0),
       out: outmaneuver,
       cover,
       lowProf: lowProfile,
@@ -248,6 +259,7 @@ function App() {
       defenseSurge,
       defenseSurgeTokens,
       dodgeTokens,
+      shieldTokens,
       outmaneuver,
       cover,
       lowProfile,
@@ -297,6 +309,8 @@ function App() {
       : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum =
     dodgeTokens === "" ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
+  const shieldTokensNum =
+    shieldTokens === "" ? 0 : Math.max(0, Math.floor(Number(shieldTokens)) || 0);
   const coverXNum =
     coverX === ""
       ? 0
@@ -344,6 +358,7 @@ function App() {
         defenseDieColor,
         defenseSurge,
         dodgeTokensNum,
+        shieldTokensNum,
         outmaneuver,
         defenseSurgeTokensNum,
         cover,
@@ -364,6 +379,7 @@ function App() {
       defenseDieColor,
       defenseSurge,
       dodgeTokensNum,
+      shieldTokensNum,
       outmaneuver,
       defenseSurgeTokensNum,
       cover,
@@ -413,6 +429,7 @@ function App() {
     setDefenseSurge("none");
     setDefenseSurgeTokens("");
     setDodgeTokens("");
+    setShieldTokens("");
     setOutmaneuver(false);
     setCover("none");
     setLowProfile(false);
@@ -643,6 +660,14 @@ function App() {
               onChange={setDefenseSurgeTokens}
               min={0}
               guideAnchor="surge-tokens"
+            />
+            <NumberInputWithControls
+              id="shield-tokens"
+              label="Shields"
+              value={shieldTokens}
+              onChange={setShieldTokens}
+              min={0}
+              title="Cancel one hit or one crit per token before rolling defense (applied after cover, before dodge)."
             />
             <NumberInputWithControls
               id="dodge-tokens"
