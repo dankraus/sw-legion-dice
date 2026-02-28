@@ -310,7 +310,9 @@ function App() {
   const dodgeTokensNum =
     dodgeTokens === "" ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const shieldTokensNum =
-    shieldTokens === "" ? 0 : Math.max(0, Math.floor(Number(shieldTokens)) || 0);
+    shieldTokens === ""
+      ? 0
+      : Math.max(0, Math.floor(Number(shieldTokens)) || 0);
   const coverXNum =
     coverX === ""
       ? 0
@@ -663,7 +665,7 @@ function App() {
             />
             <NumberInputWithControls
               id="shield-tokens"
-              label="Shields"
+              label="Shield"
               value={shieldTokens}
               onChange={setShieldTokens}
               min={0}
