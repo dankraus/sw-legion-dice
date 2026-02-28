@@ -2,7 +2,7 @@ name: Test, Build & Deploy
 
 on:
   push:
-    branches: [main, cursor/static-page-deployment-actions-97a2]
+    branches: [main]
   pull_request:
     branches: [main]
 
