@@ -42,6 +42,7 @@ function App() {
   const [suppressed, setSuppressed] = useState<boolean>(false);
   const [coverX, setCoverX] = useState<string>('');
   const [armorX, setArmorX] = useState<string>('');
+  const [impervious, setImpervious] = useState<boolean>(false);
   const [backup, setBackup] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
@@ -90,9 +91,10 @@ function App() {
         backup,
         armorXNum,
         impactXNum,
-        pierceXNum
+        pierceXNum,
+        impervious
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, impactXNum, pierceXNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, impactXNum, pierceXNum, impervious]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -121,6 +123,7 @@ function App() {
     setSuppressed(false);
     setCoverX('');
     setArmorX('');
+    setImpervious(false);
     setBackup(false);
   };
 
@@ -291,6 +294,13 @@ function App() {
             min={0}
             title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
             guideAnchor="armor-x"
+          />
+          <CheckboxToggle
+            id="impervious"
+            label="Impervious"
+            title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
+            checked={impervious}
+            onChange={setImpervious}
           />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
