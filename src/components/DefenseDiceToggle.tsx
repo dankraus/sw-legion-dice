@@ -32,7 +32,14 @@ export function DefenseDiceToggle({ value, onChange }: DefenseDiceToggleProps) {
               onChange={() => onChange(option.value)}
               className="surge-toggle__radio"
             />
-            {option.label}
+            {value === option.value ? (
+              <>
+                <span className="defense-dice-toggle__check" aria-hidden>✓</span>{' '}
+                {option.label}
+              </>
+            ) : (
+              option.label
+            )}
           </label>
         ))}
       </div>
