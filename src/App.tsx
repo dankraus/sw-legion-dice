@@ -39,6 +39,7 @@ function App() {
   const [cover, setCover] = useState<CoverLevel>('none');
   const [lowProfile, setLowProfile] = useState<boolean>(false);
   const [suppressed, setSuppressed] = useState<boolean>(false);
+  const [coverX, setCoverX] = useState<string>('');
   const [backup, setBackup] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
@@ -52,6 +53,7 @@ function App() {
   const defenseSurgeTokensNum =
     defenseSurgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
+  const coverXNum = coverX === '' ? 0 : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0));
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -79,11 +81,12 @@ function App() {
         cover,
         lowProfile,
         suppressed,
+        coverXNum,
         sharpshooterXNum,
         backup,
         pierceXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, sharpshooterXNum, backup, pierceXNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, pierceXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -109,6 +112,7 @@ function App() {
     setCover('none');
     setLowProfile(false);
     setSuppressed(false);
+    setCoverX('');
     setBackup(false);
   };
 
@@ -240,6 +244,15 @@ function App() {
             checked={suppressed}
             onChange={setSuppressed}
             disabled={cover === 'heavy'}
+          />
+          <NumberInputWithControls
+            id="cover-x"
+            label="Cover"
+            value={coverX}
+            onChange={setCoverX}
+            min={0}
+            max={2}
+            title="Improve cover by X for cover rolls (none=0, light=1, heavy=2); cannot exceed heavy."
           />
           <CheckboxToggle
             id="backup"
