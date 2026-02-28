@@ -672,6 +672,7 @@ describe('calculateWounds', () => {
       0,
       false,
       0,
+      0, // impactX
       0
     );
     const woundsArmor3 = calculateWounds(
@@ -688,6 +689,7 @@ describe('calculateWounds', () => {
       0,
       false,
       3,
+      0, // impactX
       0
     );
     expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(woundsArmor0.expectedWounds);
