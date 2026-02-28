@@ -47,6 +47,7 @@ function App() {
   const [suppressionTokens, setSuppressionTokens] = useState<string>('');
   const [dangerSenseX, setDangerSenseX] = useState<string>('');
   const [backup, setBackup] = useState<boolean>(false);
+  const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -215,6 +216,18 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
+  const handleCopyLink = () => {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(window.location.href).then(
+        () => {
+          setCopyFeedback(true);
+          window.setTimeout(() => setCopyFeedback(false), 2000);
+        },
+        () => {}
+      );
+    }
+  };
+
   const handleReset = () => {
     setPool({ red: 0, black: 0, white: 0 });
     setSurge('none');
@@ -251,9 +264,19 @@ function App() {
           <h1>Legion Roller</h1>
           <p className="app__header-subtitle">Never tell me the odds!</p>
         </div>
-        <button type="button" className="app__reset" onClick={handleReset}>
-          Reset
-        </button>
+        <div className="app__header-actions">
+          <button
+            type="button"
+            className="app__reset"
+            onClick={handleCopyLink}
+            title="Copy URL with current settings"
+          >
+            {copyFeedback ? 'Copied!' : 'Copy link'}
+          </button>
+          <button type="button" className="app__reset" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
       </header>
 
       <div className="app__layout">
