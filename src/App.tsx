@@ -261,6 +261,14 @@ function App() {
             max={2}
             title="Improve cover by X for cover rolls (none=0, light=1, heavy=2); cannot exceed heavy."
           />
+          <NumberInputWithControls
+            id="armor-x"
+            label="Armor"
+            value={armorX}
+            onChange={setArmorX}
+            min={0}
+            title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
+          />
           <CheckboxToggle
             id="backup"
             label="Backup"
