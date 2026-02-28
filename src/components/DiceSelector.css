@@ -64,3 +64,31 @@
   min-width: 2ch;
   text-align: center;
 }
+
+.dice-selector__input {
+  width: 3rem;
+  padding: 0.35rem 0.4rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+  background: white;
+}
+
+.dice-selector__input::-webkit-outer-spin-button,
+.dice-selector__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dice-selector__input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.dice-selector__input::placeholder {
+  color: #9ca3af;
+}
