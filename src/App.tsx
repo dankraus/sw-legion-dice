@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { parseFragment } from './urlState';
+import { parseFragment, buildFragment, type UrlState } from './urlState';
 import type {
   AttackPool,
   SurgeConversion,
@@ -79,6 +79,82 @@ function App() {
     setDangerSenseX(parsed.danger === 0 ? '' : String(parsed.danger));
     setBackup(parsed.backup);
   }, []);
+
+  const urlState = useMemo<UrlState>(
+    () => ({
+      r: pool.red,
+      b: pool.black,
+      w: pool.white,
+      surge,
+      crit: criticalX === '' ? 0 : Math.max(0, Math.floor(Number(criticalX)) || 0),
+      sTok: surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0),
+      aim: aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0),
+      obs: observeTokens === '' ? 0 : Math.max(0, Math.floor(Number(observeTokens)) || 0),
+      precise: preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0),
+      ram: ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0),
+      sharp: sharpshooterX === '' ? 0 : Math.max(0, Math.floor(Number(sharpshooterX)) || 0),
+      pierce: pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0),
+      impact: impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0),
+      cost: pointCost,
+      dColor: defenseDieColor,
+      dSurge: defenseSurge,
+      dSurgeTok:
+        defenseSurgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0),
+      dodge: dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0),
+      out: outmaneuver,
+      cover,
+      lowProf: lowProfile,
+      sup: suppressed,
+      coverX: coverX === '' ? 0 : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0)),
+      armor: armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0),
+      imp: impervious,
+      suppTok:
+        suppressionTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(suppressionTokens)) || 0),
+      danger: dangerSenseX === '' ? 0 : Math.max(0, Math.floor(Number(dangerSenseX)) || 0),
+      backup,
+    }),
+    [
+      pool.red,
+      pool.black,
+      pool.white,
+      surge,
+      criticalX,
+      surgeTokens,
+      aimTokens,
+      observeTokens,
+      preciseX,
+      ramX,
+      sharpshooterX,
+      pierceX,
+      impactX,
+      pointCost,
+      defenseDieColor,
+      defenseSurge,
+      defenseSurgeTokens,
+      dodgeTokens,
+      outmaneuver,
+      cover,
+      lowProfile,
+      suppressed,
+      coverX,
+      armorX,
+      impervious,
+      suppressionTokens,
+      dangerSenseX,
+      backup,
+    ]
+  );
+
+  useEffect(() => {
+    const fragment = buildFragment(urlState);
+    const url =
+      window.location.pathname +
+      window.location.search +
+      (fragment ? '#' + fragment : '');
+    window.history.replaceState(undefined, '', url);
+  }, [urlState]);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
