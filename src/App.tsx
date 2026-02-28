@@ -448,7 +448,10 @@ function App() {
     <div className="app">
       <header className="app__header">
         <div className="app__header-title">
-          <h1>Legion Roller</h1>
+          <h1>
+            <img src="/logo.svg" alt="" className="app__header-logo" />
+            Legion Roller
+          </h1>
           <p className="app__header-subtitle">Never tell me the odds!</p>
         </div>
         <div className="app__header-actions">

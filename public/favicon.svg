@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="img">
+  <!-- Single D8 die (diamond / octahedron view) -->
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+    <path d="M16 4 L28 16 L16 28 L4 16 Z" />
+  </g>
+  <!-- Optional pip on visible face -->
+  <circle cx="16" cy="16" r="2.5" fill="currentColor" />
+</svg>
