@@ -281,6 +281,15 @@ function App() {
             onChange={setBackup}
             guideAnchor="backup"
           />
+
+          <CheckboxToggle
+            id="outmaneuver"
+            label="Outmaneuver"
+            title="Dodge tokens can cancel crits as well as hits."
+            checked={outmaneuver}
+            onChange={setOutmaneuver}
+            guideAnchor="outmaneuver"
+          />
           <CheckboxToggle
             id="suppressed"
             label="Suppressed"
@@ -326,7 +335,7 @@ function App() {
           />
           <NumberInputWithControls
             id="danger-sense-x"
-            label="Danger Sense X"
+            label="Danger Sense"
             value={dangerSenseX}
             onChange={setDangerSenseX}
             min={0}
@@ -354,14 +363,6 @@ function App() {
             onChange={setDodgeTokens}
             title="Cancel one hit per token before rolling defense; crits cannot be dodged."
             guideAnchor="dodge"
-          />
-          <CheckboxToggle
-            id="outmaneuver"
-            label="Outmaneuver"
-            title="Dodge tokens can cancel crits as well as hits."
-            checked={outmaneuver}
-            onChange={setOutmaneuver}
-            guideAnchor="outmaneuver"
           />
           </div>
         </section>
