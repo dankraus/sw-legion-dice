@@ -738,4 +738,46 @@ describe('calculateWounds', () => {
     );
     expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
   });
+
+  it('impervious true with pierce 2 yields lower or equal expected wounds than impervious false', () => {
+    const pool = { red: 2, black: 0, white: 0 };
+    const attackResults = calculateAttackPool(pool, 'hit');
+    const woundsNoImpervious = calculateWounds(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2, // pierceX
+      false // impervious
+    );
+    const woundsImpervious = calculateWounds(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2, // pierceX
+      true // impervious
+    );
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
+  });
 });
