@@ -422,6 +422,7 @@ export function simulateWounds(
   armorX: number = 0,
   impactX: number = 0,
   pierceX: number = 0,
+  impervious: boolean = false,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -471,9 +472,11 @@ export function simulateWounds(
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
+    const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
+    const totalDefenseDice = defenseDice + extraDiceFromImpervious;
     let blockCount = 0;
     let surgeCount = 0;
-    for (let i = 0; i < defenseDice; i++) {
+    for (let i = 0; i < totalDefenseDice; i++) {
       const face = rollOneDefenseDieOutcome(defenseDieColor, rng);
       if (face === 'block') blockCount++;
       else if (face === 'surge') surgeCount++;
@@ -522,6 +525,7 @@ export function simulateWoundsFromAttackResults(
   armorX: number = 0,
   impactX: number = 0,
   pierceX: number = 0,
+  impervious: boolean = false,
   runs: number,
   rng: () => number
 ): WoundsResults {
@@ -565,9 +569,11 @@ export function simulateWoundsFromAttackResults(
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterBackup + afterCover.crits - normalizedDodge)
       : afterCover.crits + Math.max(0, hitsAfterBackup - normalizedDodge);
+    const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
+    const totalDefenseDice = defenseDice + extraDiceFromImpervious;
     let blockCount = 0;
     let surgeCount = 0;
-    for (let i = 0; i < defenseDice; i++) {
+    for (let i = 0; i < totalDefenseDice; i++) {
       const face = rollOneDefenseDieOutcome(defenseDieColor, rng);
       if (face === 'block') blockCount++;
       else if (face === 'surge') surgeCount++;

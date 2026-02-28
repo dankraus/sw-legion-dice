@@ -357,6 +357,7 @@ describe('simulateWounds', () => {
       0, // armorX
       0, // impactX
       0, // pierceX
+      false, // impervious
       20_000,
       rng
     );
@@ -393,6 +394,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngZero
     );
@@ -412,6 +414,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOne
     );
@@ -450,6 +453,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngNone
     );
@@ -469,6 +473,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngLight
     );
@@ -514,6 +519,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOff
     );
@@ -533,6 +539,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOn
     );
@@ -574,6 +581,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngNoSharp
     );
@@ -593,6 +601,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngSharp
     );
@@ -636,6 +645,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOff
     );
@@ -655,6 +665,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOn
     );
@@ -681,6 +692,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       10_000,
       rng
     );
@@ -700,6 +712,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       10_000,
       rng
     );
@@ -746,6 +759,7 @@ describe('backup in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOff
     );
@@ -765,6 +779,7 @@ describe('backup in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngOn
     );
@@ -801,6 +816,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rng
     );
@@ -821,6 +837,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rng2
     );
@@ -865,6 +882,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngZero
     );
@@ -884,6 +902,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       3,
+      false,
       runs,
       rngThree
     );
@@ -934,6 +953,7 @@ describe('Armor X in wounds simulation', () => {
       0,
       0,
       0,
+      false,
       runs,
       rngArmor0
     );
@@ -953,6 +973,7 @@ describe('Armor X in wounds simulation', () => {
       3,
       0,
       0,
+      false,
       runs,
       rngArmor3
     );
@@ -1003,6 +1024,7 @@ describe('Impact X in wounds simulation', () => {
       3, // armorX
       0, // impactX
       0, // pierceX
+      false,
       runs,
       rngImpact0
     );
@@ -1022,6 +1044,7 @@ describe('Impact X in wounds simulation', () => {
       3, // armorX
       2, // impactX
       0, // pierceX
+      false,
       runs,
       rngImpact2
     );
@@ -1094,7 +1117,8 @@ describe('Impervious in wounds simulation', () => {
       cumulative: [],
     };
     const runs = 5000;
-    const rng = createSeededRng(42);
+    const rngNoImpervious = createSeededRng(42);
+    const rngImpervious = createSeededRng(42);
     const woundsNoImpervious = simulateWoundsFromAttackResults(
       attackResults,
       'red',
@@ -1113,7 +1137,7 @@ describe('Impervious in wounds simulation', () => {
       0, // pierceX
       false,
       runs,
-      rng
+      rngNoImpervious
     );
     const woundsImpervious = simulateWoundsFromAttackResults(
       attackResults,
@@ -1133,7 +1157,7 @@ describe('Impervious in wounds simulation', () => {
       0, // pierceX
       true,
       runs,
-      rng
+      rngImpervious
     );
     expect(woundsImpervious.expectedWounds).toBeCloseTo(woundsNoImpervious.expectedWounds, 10);
   });
