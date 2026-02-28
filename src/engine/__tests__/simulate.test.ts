@@ -938,3 +938,72 @@ describe('Armor X in wounds simulation', () => {
     expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(woundsArmor0.expectedWounds);
   });
 });
+
+describe('Impact X in wounds simulation', () => {
+  it('impactX 2 with armorX 3 yields higher or equal expected wounds than impactX 0', () => {
+    const attackResults = {
+      expectedHits: 4,
+      expectedCrits: 1,
+      expectedTotal: 5,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+        { total: 4, probability: 0 },
+        { total: 5, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 4, crits: 1, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+        { total: 3, probability: 0 },
+        { total: 4, probability: 0 },
+        { total: 5, probability: 0 },
+      ],
+    };
+    const runs = 5000;
+    const rngImpact0 = createSeededRng(3000);
+    const rngImpact2 = createSeededRng(3000);
+    const woundsImpact0 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      3, // armorX
+      0, // impactX
+      0, // pierceX
+      runs,
+      rngImpact0
+    );
+    const woundsImpact2 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      3, // armorX
+      2, // impactX
+      0, // pierceX
+      runs,
+      rngImpact2
+    );
+    expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
+  });
+});
