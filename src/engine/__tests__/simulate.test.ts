@@ -1162,3 +1162,63 @@ describe('Impervious in wounds simulation', () => {
     expect(woundsImpervious.expectedWounds).toBeCloseTo(woundsNoImpervious.expectedWounds, 10);
   });
 });
+
+describe('Danger Sense X in wounds simulation', () => {
+  it('dangerSenseX 2 with 2 suppression yields lower or equal expected wounds than 0/0', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 3,
+      expectedCrits: 1,
+      expectedTotal: 4,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 3, crits: 1, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const rng = createSeededRng(42);
+    const woundsNone = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0, // suppressionTokens
+      0, // dangerSenseX
+      runs,
+      rng
+    );
+    const woundsDangerSense2 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      2, // suppressionTokens
+      2, // dangerSenseX
+      runs,
+      rng
+    );
+    expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(woundsNone.expectedWounds);
+  });
+});
