@@ -13,10 +13,23 @@
   gap: 1rem;
 }
 
+.app__header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .app__header h1 {
   font-size: 1.8rem;
   color: #111827;
   margin: 0;
+}
+
+.app__header-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+  font-style: italic;
 }
 
 .app__reset {

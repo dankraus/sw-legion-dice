@@ -119,7 +119,10 @@ function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1>Legion Dice Calculator</h1>
+        <div className="app__header-title">
+          <h1>Legion Roller</h1>
+          <p className="app__header-subtitle">Never tell me the odds!</p>
+        </div>
         <button type="button" className="app__reset" onClick={handleReset}>
           Reset
         </button>
