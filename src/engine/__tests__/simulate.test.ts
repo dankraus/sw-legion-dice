@@ -358,6 +358,8 @@ describe('simulateWounds', () => {
       0, // impactX
       0, // pierceX
       false, // impervious
+      0,
+      0,
       20_000,
       rng
     );
@@ -395,6 +397,8 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngZero
     );
@@ -415,6 +419,8 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOne
     );
@@ -454,6 +460,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngNone
     );
@@ -474,6 +482,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngLight
     );
@@ -520,6 +530,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOff
     );
@@ -540,6 +552,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOn
     );
@@ -582,6 +596,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngNoSharp
     );
@@ -602,6 +618,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngSharp
     );
@@ -646,6 +664,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOff
     );
@@ -666,6 +686,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOn
     );
@@ -693,6 +715,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       10_000,
       rng
     );
@@ -713,6 +737,8 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       10_000,
       rng
     );
@@ -760,6 +786,8 @@ describe('backup in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOff
     );
@@ -780,6 +808,8 @@ describe('backup in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngOn
     );
@@ -817,6 +847,8 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rng
     );
@@ -838,6 +870,8 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rng2
     );
@@ -883,6 +917,8 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngZero
     );
@@ -903,6 +939,8 @@ describe('Pierce X in wounds simulation', () => {
       0,
       3,
       false,
+      0,
+      0,
       runs,
       rngThree
     );
@@ -954,6 +992,8 @@ describe('Armor X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngArmor0
     );
@@ -974,6 +1014,8 @@ describe('Armor X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
+      0,
       runs,
       rngArmor3
     );
@@ -1025,6 +1067,8 @@ describe('Impact X in wounds simulation', () => {
       0, // impactX
       0, // pierceX
       false,
+      0,
+      0,
       runs,
       rngImpact0
     );
@@ -1045,6 +1089,8 @@ describe('Impact X in wounds simulation', () => {
       2, // impactX
       0, // pierceX
       false,
+      0,
+      0,
       runs,
       rngImpact2
     );
@@ -1081,6 +1127,8 @@ describe('Impervious in wounds simulation', () => {
       0,
       2, // pierceX
       false, // impervious
+      0,
+      0,
       runs,
       rng
     );
@@ -1101,6 +1149,8 @@ describe('Impervious in wounds simulation', () => {
       0,
       2, // pierceX
       true, // impervious
+      0,
+      0,
       runs,
       rng
     );
@@ -1136,6 +1186,8 @@ describe('Impervious in wounds simulation', () => {
       0,
       0, // pierceX
       false,
+      0,
+      0,
       runs,
       rngNoImpervious
     );
@@ -1156,6 +1208,8 @@ describe('Impervious in wounds simulation', () => {
       0,
       0, // pierceX
       true,
+      0,
+      0,
       runs,
       rngImpervious
     );
