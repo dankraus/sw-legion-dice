@@ -1,6 +1,6 @@
-import type { DefenseDieColor } from '../types';
-import './SurgeToggle.css';
-import './DefenseDiceToggle.css';
+import type { DefenseDieColor } from "../types";
+import "./SurgeToggle.css";
+import "./DefenseDiceToggle.css";
 
 interface DefenseDiceToggleProps {
   value: DefenseDieColor;
@@ -8,8 +8,8 @@ interface DefenseDiceToggleProps {
 }
 
 const OPTIONS: { value: DefenseDieColor; label: string }[] = [
-  { value: 'red', label: 'Red' },
-  { value: 'white', label: 'White' },
+  { value: "red", label: "Red" },
+  { value: "white", label: "White" },
 ];
 
 export function DefenseDiceToggle({ value, onChange }: DefenseDiceToggleProps) {
@@ -21,7 +21,7 @@ export function DefenseDiceToggle({ value, onChange }: DefenseDiceToggleProps) {
           <label
             key={option.value}
             className={`surge-toggle__option ${
-              value === option.value ? 'surge-toggle__option--active' : ''
+              value === option.value ? "surge-toggle__option--active" : ""
             }`}
           >
             <input
