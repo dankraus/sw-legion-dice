@@ -351,6 +351,10 @@ function App() {
         and let me know.
       </p>
 
+      <a href='https://ko-fi.com/E1E31V2I7V' target='_blank'>
+        <img height='36' style={{ border: '0px', height: '36px' }} src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' alt='Support Legion Roller on Ko-fi' />
+      </a>
+
       <footer className="app__footer">
         Made in Massachusetts by{' '}
         <a href="http://www.dskraus.com" target="_blank" rel="noopener noreferrer">
