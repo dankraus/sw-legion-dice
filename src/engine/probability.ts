@@ -162,6 +162,7 @@ export function calculateWounds(
     normalizedCoverX,
     sharpshooterX ?? 0,
     backup ?? false,
+    0, // armorX
     pierceX ?? 0,
     DEFAULT_RUNS,
     rng

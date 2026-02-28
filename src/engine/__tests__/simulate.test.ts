@@ -354,6 +354,7 @@ describe('simulateWounds', () => {
       0, // coverX
       0, // sharpshooterX
       false, // backup
+      0, // armorX
       0, // pierceX
       20_000,
       rng
@@ -389,6 +390,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngZero
     );
@@ -405,6 +407,7 @@ describe('defense surge tokens in wounds simulation', () => {
       0,
       0,
       false,
+      0,
       0,
       runs,
       rngOne
@@ -442,6 +445,7 @@ describe('cover in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngNone
     );
@@ -458,6 +462,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
       0,
       runs,
       rngLight
@@ -502,6 +507,7 @@ describe('cover in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngOff
     );
@@ -518,6 +524,7 @@ describe('cover in wounds simulation', () => {
       0,
       0,
       false,
+      0,
       0,
       runs,
       rngOn
@@ -558,6 +565,7 @@ describe('cover in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngNoSharp
     );
@@ -574,6 +582,7 @@ describe('cover in wounds simulation', () => {
       0,
       1,
       false,
+      0,
       0,
       runs,
       rngSharp
@@ -616,6 +625,7 @@ describe('cover in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngOff
     );
@@ -632,6 +642,7 @@ describe('cover in wounds simulation', () => {
       0, // coverX
       0,
       false,
+      0,
       0,
       runs,
       rngOn
@@ -657,6 +668,7 @@ describe('cover in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       10_000,
       rng
     );
@@ -673,6 +685,7 @@ describe('cover in wounds simulation', () => {
       1, // coverX
       0,
       false,
+      0,
       0,
       10_000,
       rng
@@ -718,6 +731,7 @@ describe('backup in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngOff
     );
@@ -734,6 +748,7 @@ describe('backup in wounds simulation', () => {
       0, // coverX
       0,
       true,
+      0,
       0,
       runs,
       rngOn
@@ -769,6 +784,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rng
     );
@@ -786,6 +802,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       0,
       false,
+      0,
       0,
       runs,
       rng2
@@ -829,6 +846,7 @@ describe('Pierce X in wounds simulation', () => {
       0,
       false,
       0,
+      0,
       runs,
       rngZero
     );
@@ -845,6 +863,7 @@ describe('Pierce X in wounds simulation', () => {
       0, // coverX
       0,
       false,
+      0,
       3,
       runs,
       rngThree
