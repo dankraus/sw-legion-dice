@@ -216,6 +216,14 @@ function App() {
             guideAnchor="sharpshooter-x"
           />
           <NumberInputWithControls
+            id="impact-x"
+            label="Impact"
+            value={impactX}
+            onChange={setImpactX}
+            min={0}
+            title="Up to X hits bypass armor when determining how many hits armor cancels."
+          />
+          <NumberInputWithControls
             id="pierce-x"
             label="Pierce"
             value={pierceX}
