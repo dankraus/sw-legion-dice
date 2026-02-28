@@ -30,6 +30,7 @@ function App() {
   const [ramX, setRamX] = useState<string>('');
   const [sharpshooterX, setSharpshooterX] = useState<string>('');
   const [pierceX, setPierceX] = useState<string>('');
+  const [impactX, setImpactX] = useState<string>('');
   const [pointCost, setPointCost] = useState<string>('');
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
@@ -56,6 +57,7 @@ function App() {
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const coverXNum = coverX === '' ? 0 : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0));
   const armorXNum = armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0);
+  const impactXNum = impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -87,9 +89,10 @@ function App() {
         sharpshooterXNum,
         backup,
         armorXNum,
+        impactXNum,
         pierceXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, pierceXNum]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, impactXNum, pierceXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -106,6 +109,7 @@ function App() {
     setRamX('');
     setSharpshooterX('');
     setPierceX('');
+    setImpactX('');
     setPointCost('');
     setDefenseDieColor('red');
     setDefenseSurge('none');
