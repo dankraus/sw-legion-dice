@@ -1,7 +1,7 @@
 import type { SurgeConversion } from '../types';
 import './SurgeToggle.css';
 
-interface SurgeToggleProps {
+interface AttackSurgeToggleProps {
   value: SurgeConversion;
   onChange: (value: SurgeConversion) => void;
 }
@@ -12,10 +12,10 @@ const OPTIONS: { value: SurgeConversion; label: string }[] = [
   { value: 'crit', label: '\u2192 Crit' },
 ];
 
-export function SurgeToggle({ value, onChange }: SurgeToggleProps) {
+export function AttackSurgeToggle({ value, onChange }: AttackSurgeToggleProps) {
   return (
     <fieldset className="surge-toggle">
-      <legend className="surge-toggle__legend">Surge Conversion</legend>
+      <legend className="surge-toggle__legend">Attack Surge Conversion</legend>
       <div className="surge-toggle__options">
         {OPTIONS.map((opt) => (
           <label

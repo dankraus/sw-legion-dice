@@ -8,7 +8,7 @@ import type {
 } from './types';
 import { calculateAttackPool, calculateWounds } from './engine/probability';
 import { DiceSelector } from './components/DiceSelector';
-import { SurgeToggle } from './components/SurgeToggle';
+import { AttackSurgeToggle } from './components/AttackSurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
 import { DefenseDiceToggle } from './components/DefenseDiceToggle';
 import { CoverToggle } from './components/CoverToggle';
@@ -157,7 +157,7 @@ function App() {
             count={pool.white}
             onChange={(n) => setPool((p) => ({ ...p, white: n }))}
           />
-          <SurgeToggle value={surge} onChange={setSurge} />
+          <AttackSurgeToggle value={surge} onChange={setSurge} />
           <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
             id="surge-tokens"
@@ -247,8 +247,9 @@ function App() {
             />
           </div>
 
-          <h2 className="app__section-heading">Defense</h2>
+          <h2 className="app__section-heading">Defense Pool</h2>
           <DefenseDiceToggle value={defenseDieColor} onChange={setDefenseDieColor} />
+          <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <CoverToggle value={cover} onChange={setCover} />
           <CheckboxToggle
             id="low-profile"
@@ -276,6 +277,13 @@ function App() {
             disabled={cover === 'heavy'}
             guideAnchor="suppressed"
           />
+          <CheckboxToggle
+            id="impervious"
+            label="Impervious"
+            title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
+            checked={impervious}
+            onChange={setImpervious}
+          />
           <NumberInputWithControls
             id="cover-x"
             label="Cover"
@@ -295,14 +303,6 @@ function App() {
             title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
             guideAnchor="armor-x"
           />
-          <CheckboxToggle
-            id="impervious"
-            label="Impervious"
-            title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
-            checked={impervious}
-            onChange={setImpervious}
-          />
-          <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
           <NumberInputWithControls
             id="defense-surge-tokens"
