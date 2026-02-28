@@ -13,6 +13,7 @@
 ### Task 1: Engine – getDefenseDistributionForDiceCount (TDD)
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -57,7 +58,9 @@ export function getDefenseDistributionForDiceCount(
   surge: DefenseSurgeConversion
 ): DefenseResults {
   const pool: DefensePool =
-    color === 'red' ? { red: diceCount, white: 0 } : { red: 0, white: diceCount };
+    color === 'red'
+      ? { red: diceCount, white: 0 }
+      : { red: 0, white: diceCount };
   return calculateDefensePool(pool, surge);
 }
 ```
@@ -79,6 +82,7 @@ git commit -m "feat(engine): getDefenseDistributionForDiceCount for rule-accurat
 ### Task 2: Engine – calculateWounds new signature and rule-accurate implementation (TDD)
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -87,13 +91,16 @@ git commit -m "feat(engine): getDefenseDistributionForDiceCount for rule-accurat
 Add one test to the existing `describe('calculateWounds', ...)` that uses the new 3-argument signature so the test run fails (current signature is 2 args):
 
 ```ts
-  it('zero attack dice yields 0 wounds', () => {
-    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
-    const wounds = calculateWounds(attackResults, 'red', 'none');
-    expect(wounds.expectedWounds).toBe(0);
-    expect(wounds.distribution).toHaveLength(1);
-    expect(wounds.distribution[0]).toEqual({ total: 0, probability: 1 });
-  });
+it('zero attack dice yields 0 wounds', () => {
+  const attackResults = calculateAttackPool(
+    { red: 0, black: 0, white: 0 },
+    'none'
+  );
+  const wounds = calculateWounds(attackResults, 'red', 'none');
+  expect(wounds.expectedWounds).toBe(0);
+  expect(wounds.distribution).toHaveLength(1);
+  expect(wounds.distribution[0]).toEqual({ total: 0, probability: 1 });
+});
 ```
 
 **Step 2: Run tests – expect failures (old signature or wrong behavior)**
@@ -107,7 +114,7 @@ In `src/engine/probability.ts`:
 
 - Change signature to:
   `calculateWounds(attackResults: AttackResults, defenseDieColor: DefenseDieColor, defenseSurge: DefenseSurgeConversion): WoundsResults`
-- Replace body: iterate over `attackResults.distribution`. For each (attackTotal, attackProb), call `getDefenseDistributionForDiceCount(attackTotal, defenseDieColor, defenseSurge)`. For each (blocks, defProb) in that defense distribution, wounds = max(0, attackTotal - blocks), add attackProb * defProb to wounds distribution. Build expectedWounds, distribution array, and cumulative from that.
+- Replace body: iterate over `attackResults.distribution`. For each (attackTotal, attackProb), call `getDefenseDistributionForDiceCount(attackTotal, defenseDieColor, defenseSurge)`. For each (blocks, defProb) in that defense distribution, wounds = max(0, attackTotal - blocks), add attackProb \* defProb to wounds distribution. Build expectedWounds, distribution array, and cumulative from that.
 
 **Step 4: Update existing calculateWounds tests to new signature**
 
@@ -116,7 +123,10 @@ Replace the existing `describe('calculateWounds', () => { ... })` block with the
 ```ts
 describe('calculateWounds', () => {
   it('zero attack dice yields 0 wounds', () => {
-    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackResults = calculateAttackPool(
+      { red: 0, black: 0, white: 0 },
+      'none'
+    );
     const wounds = calculateWounds(attackResults, 'red', 'none');
     expect(wounds.expectedWounds).toBe(0);
     expect(wounds.distribution).toHaveLength(1);
@@ -124,7 +134,10 @@ describe('calculateWounds', () => {
   });
 
   it('attack always 1 success, red defense none: expected wounds 1 - 3/6', () => {
-    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackResults = calculateAttackPool(
+      { red: 0, black: 0, white: 0 },
+      'none'
+    );
     const attackDist = [
       { total: 0, probability: 0 },
       { total: 1, probability: 1 },
@@ -132,13 +145,19 @@ describe('calculateWounds', () => {
     ];
     const attackWithDist = { ...attackResults, distribution: attackDist };
     const wounds = calculateWounds(attackWithDist, 'red', 'none');
-    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    const sum = wounds.distribution.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
     expect(sum).toBeCloseTo(1);
     expect(wounds.expectedWounds).toBeCloseTo(1 - 3 / 6);
   });
 
   it('attack 50% 0 / 50% 2, red defense none: wounds distribution sums to 1', () => {
-    const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackResults = calculateAttackPool(
+      { red: 0, black: 0, white: 0 },
+      'none'
+    );
     const attackDist = [
       { total: 0, probability: 0.5 },
       { total: 1, probability: 0 },
@@ -146,21 +165,36 @@ describe('calculateWounds', () => {
     ];
     const attackWithDist = { ...attackResults, distribution: attackDist };
     const wounds = calculateWounds(attackWithDist, 'red', 'none');
-    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    const sum = wounds.distribution.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
     expect(sum).toBeCloseTo(1);
   });
 
   it('attack pool red 1 none: wounds distribution sums to 1', () => {
-    const attackResults = calculateAttackPool({ red: 1, black: 0, white: 0 }, 'none');
+    const attackResults = calculateAttackPool(
+      { red: 1, black: 0, white: 0 },
+      'none'
+    );
     const wounds = calculateWounds(attackResults, 'red', 'none');
-    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    const sum = wounds.distribution.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
     expect(sum).toBeCloseTo(1);
   });
 
   it('attack pool 2 red 1 black hit, red defense block: wounds distribution sums to 1', () => {
-    const attackResults = calculateAttackPool({ red: 2, black: 1, white: 0 }, 'hit');
+    const attackResults = calculateAttackPool(
+      { red: 2, black: 1, white: 0 },
+      'hit'
+    );
     const wounds = calculateWounds(attackResults, 'red', 'block');
-    const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    const sum = wounds.distribution.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
     expect(sum).toBeCloseTo(1);
   });
 });
@@ -185,6 +219,7 @@ git commit -m "feat(engine): rule-accurate calculateWounds(defenseDieColor, defe
 ### Task 3: Types – remove DefensePool from main flow (optional export keep)
 
 **Files:**
+
 - Modify: `src/types.ts`
 
 **Step 1:** Keep `DefensePool` and `DefenseResults` in types (engine still uses DefensePool internally for `calculateDefensePool` / `getDefenseDistributionForDiceCount`). No type file change required unless you want to document that DefensePool is internal. Skip or add a comment in types that DefensePool is for engine use only.
@@ -198,6 +233,7 @@ If you added a comment: `git add src/types.ts && git commit -m "docs(types): Def
 ### Task 4: UI – Defense die color control and remove pool selectors
 
 **Files:**
+
 - Modify: `src/App.tsx`
 - Modify: `src/App.css` (if needed for new control layout)
 
@@ -243,6 +279,7 @@ git commit -m "feat(ui): defense die color (red/white) only, remove pool selecto
 ### Task 5: Verification and docs
 
 **Files:**
+
 - Modify: `docs/plans/2026-02-25-defense-rule-accurate-design.md` (optional: add "Implemented" note)
 
 **Step 1: Full test run**
@@ -264,6 +301,7 @@ Expected: No errors.
 **Step 4: Optional doc update and commit**
 
 If you add "Implemented" to the design doc:
+
 ```bash
 git add docs/plans/2026-02-25-defense-rule-accurate-design.md
 git commit -m "docs: mark defense rule-accurate design as implemented"

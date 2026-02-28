@@ -13,6 +13,7 @@
 ### Task 1: Engine – Precise adds rerolls per Aim token (TDD)
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (calculateAttackPool signature and rerollCapacity)
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -24,17 +25,53 @@ Add a new describe block in `src/engine/__tests__/probability.test.ts` after the
 describe('Precise keyword', () => {
   it('1 Aim + Precise 1: reroll capacity 3 (higher expected total than 1 Aim + Precise 0)', () => {
     const pool: AttackPool = { red: 0, black: 0, white: 2 };
-    const oneAimNoPrecise = calculateAttackPool(pool, 'none', undefined, 0, 1, 0);
-    const oneAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 1);
-    expect(oneAimPrecise1.expectedTotal).toBeGreaterThan(oneAimNoPrecise.expectedTotal);
-    expect(oneAimPrecise1.expectedHits).toBeGreaterThan(oneAimNoPrecise.expectedHits);
+    const oneAimNoPrecise = calculateAttackPool(
+      pool,
+      'none',
+      undefined,
+      0,
+      1,
+      0
+    );
+    const oneAimPrecise1 = calculateAttackPool(
+      pool,
+      'none',
+      undefined,
+      0,
+      1,
+      0,
+      1
+    );
+    expect(oneAimPrecise1.expectedTotal).toBeGreaterThan(
+      oneAimNoPrecise.expectedTotal
+    );
+    expect(oneAimPrecise1.expectedHits).toBeGreaterThan(
+      oneAimNoPrecise.expectedHits
+    );
   });
 
   it('2 Aim + Precise 1: reroll capacity 6', () => {
     const pool: AttackPool = { red: 0, black: 0, white: 3 };
-    const twoAimPrecise0 = calculateAttackPool(pool, 'none', undefined, 0, 2, 0);
-    const twoAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 2, 0, 1);
-    expect(twoAimPrecise1.expectedTotal).toBeGreaterThan(twoAimPrecise0.expectedTotal);
+    const twoAimPrecise0 = calculateAttackPool(
+      pool,
+      'none',
+      undefined,
+      0,
+      2,
+      0
+    );
+    const twoAimPrecise1 = calculateAttackPool(
+      pool,
+      'none',
+      undefined,
+      0,
+      2,
+      0,
+      1
+    );
+    expect(twoAimPrecise1.expectedTotal).toBeGreaterThan(
+      twoAimPrecise0.expectedTotal
+    );
   });
 });
 ```
@@ -47,6 +84,7 @@ Expected: FAIL (e.g. calculateAttackPool does not accept 7 arguments, or expecte
 **Step 3: Implement minimal support**
 
 In `src/engine/probability.ts`:
+
 - Add optional parameter `precise?: number` to `calculateAttackPool` (after `observeTokens`).
 - After `const observe = normalizeTokenCount(observeTokens);`, add:
   - `const preciseVal = aim > 0 ? Math.max(0, Math.floor(precise ?? 0) || 0) : 0;`
@@ -70,6 +108,7 @@ git commit -m "feat(engine): Precise keyword adds extra rerolls per Aim token"
 ### Task 2: Engine – Precise has no effect when Aim is 0
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the failing test**
@@ -77,13 +116,21 @@ git commit -m "feat(engine): Precise keyword adds extra rerolls per Aim token"
 Add inside the same `describe('Precise keyword')` block:
 
 ```ts
-  it('0 Aim + Precise 1: same as 0 Aim (precise ignored)', () => {
-    const pool: AttackPool = { red: 0, black: 0, white: 2 };
-    const zeroAim = calculateAttackPool(pool, 'none', undefined, 0, 0, 0);
-    const zeroAimPrecise1 = calculateAttackPool(pool, 'none', undefined, 0, 0, 0, 1);
-    expect(zeroAimPrecise1.expectedHits).toBeCloseTo(zeroAim.expectedHits);
-    expect(zeroAimPrecise1.expectedCrits).toBeCloseTo(zeroAim.expectedCrits);
-  });
+it('0 Aim + Precise 1: same as 0 Aim (precise ignored)', () => {
+  const pool: AttackPool = { red: 0, black: 0, white: 2 };
+  const zeroAim = calculateAttackPool(pool, 'none', undefined, 0, 0, 0);
+  const zeroAimPrecise1 = calculateAttackPool(
+    pool,
+    'none',
+    undefined,
+    0,
+    0,
+    0,
+    1
+  );
+  expect(zeroAimPrecise1.expectedHits).toBeCloseTo(zeroAim.expectedHits);
+  expect(zeroAimPrecise1.expectedCrits).toBeCloseTo(zeroAim.expectedCrits);
+});
 ```
 
 **Step 2: Run test to verify it fails (or already passes)**
@@ -108,11 +155,13 @@ git commit -m "test(engine): Precise ignored when Aim is 0"
 ### Task 3: UI – Precise input and wiring
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, derived value, input, useMemo, placement after Aim Tokens)
 
 **Step 1: Add state and derived value**
 
 In `src/App.tsx`:
+
 - Add state: `const [precise, setPrecise] = useState<string>('');`
 - Add derived value after `observeTokensNum`: `const preciseNum = precise === '' ? 0 : Math.max(0, Math.floor(Number(precise)) || 0);`
 

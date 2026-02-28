@@ -15,6 +15,7 @@
 ### Task 1: Add seeded PRNG and default run count
 
 **Files:**
+
 - Create: `src/engine/rng.ts`
 - Modify: `src/engine/probability.ts` (add optional parameter or module-level config later; for now just add the RNG for use in sim)
 
@@ -100,6 +101,7 @@ git commit -m "feat(engine): add seeded PRNG and DEFAULT_RUNS"
 ### Task 2: Add roll-one-attack-die helper and test
 
 **Files:**
+
 - Create: `src/engine/simulate.ts` (will grow over tasks)
 - Create: `src/engine/__tests__/simulate.test.ts`
 - Use: `src/types.ts` (DieColor, etc.), `src/engine/probability.ts` (DICE)
@@ -129,7 +131,9 @@ describe('rollOneAttackDie', () => {
 
   it('with fixed seed red die produces deterministic sequence', () => {
     const rng = createSeededRng(1);
-    const results = Array.from({ length: 8 }, () => rollOneAttackDie('red', rng));
+    const results = Array.from({ length: 8 }, () =>
+      rollOneAttackDie('red', rng)
+    );
     expect(results).toHaveLength(8);
     // Red has 1 crit, 1 surge, 5 hit, 1 blank; over 8 rolls we should see variety
     const crits = results.filter((face) => face === 'crit').length;
@@ -158,10 +162,18 @@ export type AttackFace = 'crit' | 'surge' | 'hit' | 'blank';
 const SIDES = 8;
 
 /** Roll one attack die; returns face type. Uses rng() in [0,1). */
-export function rollOneAttackDie(color: DieColor, rng: () => number): AttackFace {
+export function rollOneAttackDie(
+  color: DieColor,
+  rng: () => number
+): AttackFace {
   const die = DICE[color];
   const value = rng() * SIDES; // [0, 8)
-  const cumul = [die.crit, die.crit + die.surge, die.crit + die.surge + die.hit, SIDES];
+  const cumul = [
+    die.crit,
+    die.crit + die.surge,
+    die.crit + die.surge + die.hit,
+    SIDES,
+  ];
   if (value < cumul[0]) return 'crit';
   if (value < cumul[1]) return 'surge';
   if (value < cumul[2]) return 'hit';
@@ -186,6 +198,7 @@ git commit -m "feat(engine): add rollOneAttackDie for simulation"
 ### Task 3: Add rollAttackPool (raw counts) and test
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
@@ -240,7 +253,10 @@ export interface RawAttackCounts {
   blank: number;
 }
 
-export function rollAttackPool(pool: AttackPool, rng: () => number): RawAttackCounts {
+export function rollAttackPool(
+  pool: AttackPool,
+  rng: () => number
+): RawAttackCounts {
   const counts: RawAttackCounts = { crit: 0, surge: 0, hit: 0, blank: 0 };
   const colors: DieColor[] = ['red', 'black', 'white'];
   for (const color of colors) {
@@ -271,6 +287,7 @@ git commit -m "feat(engine): add rollAttackPool for simulation"
 ### Task 4: Add resolveStep (Critical X, surge conversion, surge tokens) and test
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
@@ -345,12 +362,13 @@ git commit -m "feat(engine): add resolveStep for simulation"
 ### Task 5: Add reroll step (Aim/Observe/Precise) and test
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Write the failing test**
 
-Test: after resolve, we have some blanks; reroll capacity = aim*(2+precise)+observe; we reroll up to capacity blanks (each reroll is one die from pool mix), add hit/crit from reroll with surge conversion. One test: 1 white die, surge none, 1 observe token; seed that gives one blank; after reroll we get 0 or 1 extra success. Another: zero capacity → hits/crits unchanged.
+Test: after resolve, we have some blanks; reroll capacity = aim\*(2+precise)+observe; we reroll up to capacity blanks (each reroll is one die from pool mix), add hit/crit from reroll with surge conversion. One test: 1 white die, surge none, 1 observe token; seed that gives one blank; after reroll we get 0 or 1 extra success. Another: zero capacity → hits/crits unchanged.
 
 **Step 2: Run test to verify it fails**
 
@@ -371,6 +389,7 @@ git commit -m "feat(engine): add reroll step for Aim/Observe/Precise simulation"
 ### Task 6: Add Ram step and test
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
@@ -397,6 +416,7 @@ git commit -m "feat(engine): add Ram step for simulation"
 ### Task 7: Implement single-run attack simulation and aggregate to AttackResults
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
@@ -423,12 +443,13 @@ git commit -m "feat(engine): simulateAttackPool aggregates to AttackResults shap
 ### Task 8: Add rollDefenseDice and simulateDefensePool
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Write the failing test**
 
-Test: roll one defense die (red or white) returns block or blank. simulateDefensePool for 0 dice → 0 blocks. For n red dice, N runs, aggregate to distribution; expectedBlocks close to n * (3/6) for surge none.
+Test: roll one defense die (red or white) returns block or blank. simulateDefensePool for 0 dice → 0 blocks. For n red dice, N runs, aggregate to distribution; expectedBlocks close to n \* (3/6) for surge none.
 
 **Step 2: Run test to verify it fails**
 
@@ -449,6 +470,7 @@ git commit -m "feat(engine): add defense roll simulation and aggregate to Defens
 ### Task 9: Implement simulateWounds and aggregate to WoundsResults
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
@@ -475,6 +497,7 @@ git commit -m "feat(engine): simulateWounds aggregates to WoundsResults"
 ### Task 10: Wire probability.ts to simulation; keep same API
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Modify: `src/engine/simulate.ts` (export run count or accept optional runs/seed from probability if desired)
 
@@ -492,6 +515,7 @@ Expected: Many failures where tests expect exact equality (e.g. expectedTotal ex
 ### Task 11: Update probability tests to tolerance-based assertions
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Implement**
@@ -515,6 +539,7 @@ git commit -m "refactor(engine): switch to simulation; relax tests to tolerance"
 ### Task 12: Remove dead analytic code and export only what’s needed
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Modify: `src/engine/simulate.ts`
 
@@ -539,6 +564,7 @@ git commit -m "chore(engine): remove unused analytic code after simulation switc
 ### Task 13: Document simulation in design and README (if present)
 
 **Files:**
+
 - Modify: `docs/plans/2026-02-26-simulation-engine-design.md` (add "Implemented: 2026-02-26" and plan ref)
 - Modify: `README.md` (if it describes the calculator: add one line that results are simulation-based, typical/average)
 

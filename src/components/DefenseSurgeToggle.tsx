@@ -11,7 +11,10 @@ const OPTIONS: { value: DefenseSurgeConversion; label: string }[] = [
   { value: 'block', label: '\u2192 Block' },
 ];
 
-export function DefenseSurgeToggle({ value, onChange }: DefenseSurgeToggleProps) {
+export function DefenseSurgeToggle({
+  value,
+  onChange,
+}: DefenseSurgeToggleProps) {
   return (
     <fieldset className="surge-toggle">
       <legend className="surge-toggle__legend">Defense Surge Conversion</legend>

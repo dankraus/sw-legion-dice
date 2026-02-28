@@ -13,6 +13,7 @@
 ### Task 1: Engine – resolveDefenseRoll and face-level roll (TDD)
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (add `DefenseFace` type, `rollOneDefenseDieOutcome`, `resolveDefenseRoll`, `normalizeDefenseSurgeTokens`)
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -89,6 +90,7 @@ git commit -m "feat(engine): resolveDefenseRoll and rollOneDefenseDieOutcome for
 ### Task 2: Engine – Use resolve in wounds simulation and thread defenseSurgeTokens
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (simulateWounds, simulateWoundsFromAttackResults: roll defense by outcome, count blocks/surges, resolveDefenseRoll)
 - Modify: `src/engine/probability.ts` (calculateWounds: add defenseSurgeTokens?, pass to simulateWoundsFromAttackResults)
 
@@ -127,6 +129,7 @@ git commit -m "feat(engine): apply defense surge tokens in wounds simulation"
 ### Task 3: UI – Defense Surge Tokens input and wiring
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, parse, Surge input under Defense Tokens, pass to calculateWounds, Reset)
 
 **Step 1: Add state and parse**
@@ -165,6 +168,7 @@ git commit -m "feat(ui): Defense Surge Tokens input, disabled when Defense Surge
 ### Task 4: Optional – getDefenseDistributionForDiceCountSim / simulateDefensePool with defenseSurgeTokens
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (simulateDefensePool, getDefenseDistributionForDiceCountSim: add defenseSurgeTokens?, use rollOneDefenseDieOutcome + resolveDefenseRoll)
 - Modify: `src/engine/probability.ts` (getDefenseDistributionForDiceCount: add defenseSurgeTokens?, pass through)
 

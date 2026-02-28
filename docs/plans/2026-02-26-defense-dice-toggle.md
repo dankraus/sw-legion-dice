@@ -13,6 +13,7 @@
 ## Task 1: Create DefenseDiceToggle component
 
 **Files:**
+
 - Create: `src/components/DefenseDiceToggle.tsx`
 - Create: `src/components/DefenseDiceToggle.css`
 
@@ -25,6 +26,7 @@ Reference implementation pattern from `src/components/CoverToggle.tsx` (OPTIONS 
 **Step 2: Create minimal CSS file**
 
 Create `src/components/DefenseDiceToggle.css` with:
+
 - `.defense-dice-toggle .surge-toggle__option:first-child` — default: background `#fee2e2`, border `2px solid #ef4444`; active (when `.surge-toggle__option--active`): border `#b91c1c` (or `#dc2626`), ensure text color readable (e.g. `#991b1b`).
 - `.defense-dice-toggle .surge-toggle__option:last-child` — default: background `#f9fafb`, border `2px solid #d1d5db`; active: border `#9ca3af`, text e.g. `#374151`.
 
@@ -40,6 +42,7 @@ git commit -m "feat: add DefenseDiceToggle component with red/white styling"
 ## Task 2: Integrate DefenseDiceToggle in App
 
 **Files:**
+
 - Modify: `src/App.tsx` (import and replace inline Defense dice fieldset)
 
 **Step 1: Add import**

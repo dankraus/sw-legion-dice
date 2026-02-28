@@ -15,6 +15,7 @@
 ### Task 1: Failing sim test — Danger Sense X adds extra defense dice
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test for Danger Sense X in wounds simulation**
@@ -53,8 +54,8 @@ describe('Danger Sense X in wounds simulation', () => {
       0,
       0,
       false,
-      0,   // suppressionTokens
-      0,   // dangerSenseX
+      0, // suppressionTokens
+      0, // dangerSenseX
       runs,
       rng
     );
@@ -75,12 +76,14 @@ describe('Danger Sense X in wounds simulation', () => {
       0,
       0,
       false,
-      2,   // suppressionTokens
-      2,   // dangerSenseX
+      2, // suppressionTokens
+      2, // dangerSenseX
       runs,
       rng
     );
-    expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(woundsNone.expectedWounds);
+    expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(
+      woundsNone.expectedWounds
+    );
   });
 });
 ```
@@ -109,6 +112,7 @@ git commit -m "test(sim): Danger Sense X in wounds simulation"
 ### Task 2: Implement Danger Sense X in simulate.ts
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (signatures and wound pipeline for both `simulateWounds` and `simulateWoundsFromAttackResults`)
 
 **Step 1: Add suppressionTokens and dangerSenseX to simulateWoundsFromAttackResults**
@@ -148,6 +152,7 @@ git commit -m "feat(engine): Danger Sense X adds extra defense dice from suppres
 ### Task 3: Failing probability test — calculateWounds with suppressionTokens and dangerSenseX
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test for calculateWounds with Danger Sense**
@@ -178,6 +183,7 @@ git commit -m "test(probability): calculateWounds with suppressionTokens and dan
 ### Task 4: Wire suppressionTokens and dangerSenseX in probability.ts
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 
 **Step 1: Add parameters to calculateWounds**
@@ -204,6 +210,7 @@ git commit -m "feat(engine): calculateWounds accepts suppressionTokens and dange
 ### Task 5: UI state and wiring for Suppression tokens and Danger Sense X
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and normalized values**
@@ -232,6 +239,7 @@ git commit -m "feat(ui): state and wiring for suppression tokens and Danger Sens
 ### Task 6: UI controls for Suppression tokens and Danger Sense X
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add number inputs in Defense section**
@@ -258,6 +266,7 @@ git commit -m "feat(ui): Suppression tokens and Danger Sense X inputs in Defense
 ### Task 7: Optional — cap test for Danger Sense X
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test that extra dice are capped at X**

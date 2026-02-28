@@ -58,7 +58,10 @@ export function NumberInputWithControls({
   );
 
   const control = (
-    <div className={`num-input${disabled ? ' num-input--disabled' : ''}`} title={title}>
+    <div
+      className={`num-input${disabled ? ' num-input--disabled' : ''}`}
+      title={title}
+    >
       <label className="num-input__label" htmlFor={id}>
         {labelContent}
       </label>

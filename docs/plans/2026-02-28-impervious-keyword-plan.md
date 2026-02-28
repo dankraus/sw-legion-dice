@@ -15,6 +15,7 @@
 ### Task 1: Failing sim test — Impervious adds extra defense dice
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test for Impervious in wounds simulation**
@@ -51,7 +52,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
-      2,   // pierceX
+      2, // pierceX
       false, // impervious
       runs,
       rng
@@ -71,12 +72,14 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
-      2,   // pierceX
-      true,  // impervious
+      2, // pierceX
+      true, // impervious
       runs,
       rng
     );
-    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(
+      woundsNoImpervious.expectedWounds
+    );
   });
 
   it('impervious with pierce 0 yields same expected wounds as no impervious', () => {
@@ -105,7 +108,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
-      0,   // pierceX
+      0, // pierceX
       false,
       runs,
       rng
@@ -125,12 +128,15 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
-      0,   // pierceX
+      0, // pierceX
       true,
       runs,
       rng
     );
-    expect(woundsImpervious.expectedWounds).toBeCloseTo(woundsNoImpervious.expectedWounds, 10);
+    expect(woundsImpervious.expectedWounds).toBeCloseTo(
+      woundsNoImpervious.expectedWounds,
+      10
+    );
   });
 });
 ```
@@ -159,6 +165,7 @@ git commit -m "test(sim): Impervious in wounds simulation"
 ### Task 2: Implement Impervious in simulate.ts
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (signatures and defense-dice step for both `simulateWounds` and `simulateWoundsFromAttackResults`)
 
 **Step 1: Add impervious to simulateWoundsFromAttackResults**
@@ -193,6 +200,7 @@ git commit -m "feat(engine): Impervious adds extra defense dice in wounds simula
 ### Task 3: Failing probability test — calculateWounds with impervious
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test for calculateWounds with impervious**
@@ -220,7 +228,7 @@ it('impervious true with pierce 2 yields lower or equal expected wounds than imp
     false,
     0,
     0,
-    2,   // pierceX
+    2, // pierceX
     false // impervious
   );
   const woundsImpervious = calculateWounds(
@@ -238,10 +246,12 @@ it('impervious true with pierce 2 yields lower or equal expected wounds than imp
     false,
     0,
     0,
-    2,   // pierceX
-    true  // impervious
+    2, // pierceX
+    true // impervious
   );
-  expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
+  expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(
+    woundsNoImpervious.expectedWounds
+  );
 });
 ```
 
@@ -269,6 +279,7 @@ git commit -m "test(probability): calculateWounds with impervious"
 ### Task 4: Wire impervious in probability.ts
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 
 **Step 1: Add impervious to calculateWounds**
@@ -294,6 +305,7 @@ git commit -m "feat(engine): calculateWounds accepts impervious"
 ### Task 5: UI state and wiring for Impervious
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state**
@@ -325,6 +337,7 @@ git commit -m "feat(ui): state and wiring for Impervious"
 ### Task 6: Impervious checkbox in Defense section
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add Impervious checkbox**

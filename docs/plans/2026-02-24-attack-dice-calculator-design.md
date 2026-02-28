@@ -9,7 +9,7 @@ A web-based probability calculator for Star Wars: Legion attack dice. Users conf
 All dice are 8-sided.
 
 | Die   | Crit | Surge | Hit | Blank |
-|-------|------|-------|-----|-------|
+| ----- | ---- | ----- | --- | ----- |
 | Red   | 1/8  | 1/8   | 5/8 | 1/8   |
 | Black | 1/8  | 1/8   | 3/8 | 3/8   |
 | White | 1/8  | 1/8   | 1/8 | 5/8   |
@@ -25,12 +25,14 @@ Three modes, mutually exclusive:
 ## Data Model
 
 **Attack pool state:**
+
 - `redCount: number` (0+)
 - `blackCount: number` (0+)
 - `whiteCount: number` (0+)
 - `surgeConversion: 'none' | 'hit' | 'crit'`
 
 **Computed results:**
+
 - `expectedHits: number`
 - `expectedCrits: number`
 - `expectedTotal: number`
@@ -42,6 +44,7 @@ Three modes, mutually exclusive:
 Pure TypeScript module with no React dependencies.
 
 **Per-die effective probabilities:** Given a die type and surge conversion, compute:
+
 - Crit probability = base crit + (surge if surge-to-crit, else 0)
 - Hit probability = base hit + (surge if surge-to-hit, else 0)
 - Blank probability = remainder

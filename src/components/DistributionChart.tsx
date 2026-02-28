@@ -1,4 +1,12 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 interface DistributionChartProps {
   distribution: { total: number; probability: number }[];
@@ -22,7 +30,10 @@ export function DistributionChart({
     <div>
       <h3>{title}</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+        >
           <XAxis
             dataKey="total"
             label={{ value: xAxisLabel, position: 'insideBottom', offset: -15 }}

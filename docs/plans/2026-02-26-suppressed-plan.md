@@ -15,6 +15,7 @@
 ## Task 1: getEffectiveCover — add suppressed and tests
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (getEffectiveCover signature and body)
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -23,12 +24,12 @@
 In `src/engine/__tests__/simulate.test.ts`, inside `describe('getEffectiveCover', ...)`, add a new `it` block for Suppressed (after the "negative X treated as 0" test):
 
 ```ts
-  it('suppressed true: improves cover by 1 then sharpshooter applies', () => {
-    expect(getEffectiveCover('none', 0, true)).toBe('light');
-    expect(getEffectiveCover('light', 0, true)).toBe('heavy');
-    expect(getEffectiveCover('heavy', 0, true)).toBe('heavy');
-    expect(getEffectiveCover('light', 1, true)).toBe('light'); // heavy then sharpshooter 1 → light
-  });
+it('suppressed true: improves cover by 1 then sharpshooter applies', () => {
+  expect(getEffectiveCover('none', 0, true)).toBe('light');
+  expect(getEffectiveCover('light', 0, true)).toBe('heavy');
+  expect(getEffectiveCover('heavy', 0, true)).toBe('heavy');
+  expect(getEffectiveCover('light', 1, true)).toBe('light'); // heavy then sharpshooter 1 → light
+});
 ```
 
 **Step 2: Run test to verify it fails**
@@ -49,7 +50,12 @@ export function getEffectiveCover(
 ): CoverLevel {
   let effective: CoverLevel = cover;
   if (suppressed) {
-    effective = effective === 'none' ? 'light' : effective === 'light' ? 'heavy' : 'heavy';
+    effective =
+      effective === 'none'
+        ? 'light'
+        : effective === 'light'
+          ? 'heavy'
+          : 'heavy';
   }
   const steps = Math.max(0, Math.floor(sharpshooterX));
   for (let i = 0; i < steps && effective !== 'none'; i++) {
@@ -76,6 +82,7 @@ git commit -m "feat(simulate): add suppressed to getEffectiveCover"
 ## Task 2: applyCover — add suppressed and test
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (applyCover signature and body)
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -84,13 +91,13 @@ git commit -m "feat(simulate): add suppressed to getEffectiveCover"
 In `src/engine/__tests__/simulate.test.ts`, inside `describe('applyCover', ...)`, add:
 
 ```ts
-  it('suppressed true: none behaves like light', () => {
-    const rng1 = createSeededRng(200);
-    const rng2 = createSeededRng(200);
-    const noneSuppressed = applyCover(2, 1, 'none', rng1, 0, true);
-    const lightNoSuppressed = applyCover(2, 1, 'light', rng2, 0);
-    expect(noneSuppressed).toEqual(lightNoSuppressed);
-  });
+it('suppressed true: none behaves like light', () => {
+  const rng1 = createSeededRng(200);
+  const rng2 = createSeededRng(200);
+  const noneSuppressed = applyCover(2, 1, 'none', rng1, 0, true);
+  const lightNoSuppressed = applyCover(2, 1, 'light', rng2, 0);
+  expect(noneSuppressed).toEqual(lightNoSuppressed);
+});
 ```
 
 **Step 2: Run test to verify it fails**
@@ -135,6 +142,7 @@ git commit -m "feat(simulate): add suppressed to applyCover"
 ## Task 3: simulateWounds and simulateWoundsFromAttackResults — add suppressed
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (both function signatures and bodies; pass suppressed into applyCover)
 - Modify: `src/engine/__tests__/simulate.test.ts` (add `false` for suppressed in every call between lowProfile and sharpshooterX)
 
@@ -172,6 +180,7 @@ git commit -m "feat(simulate): add suppressed to simulateWounds and simulateWoun
 ## Task 4: calculateWounds and probability tests
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (add suppressed to calculateWounds, pass to simulateWoundsFromAttackResults)
 - Modify: `src/engine/__tests__/probability.test.ts` (add suppressed to any calculateWounds calls if needed; add one test that suppressed changes wounds for cover none/light)
 
@@ -205,6 +214,7 @@ git commit -m "feat(probability): add suppressed to calculateWounds"
 ## Task 5: App state, UI, and wiring
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, reset, calculateWounds args, useMemo deps, Suppressed checkbox)
 
 **Step 1: Add state and reset**
@@ -220,14 +230,14 @@ In the `calculateWounds(...)` call, add `suppressed` after `lowProfile`, before 
 In the Defense section, after the Low Profile CheckboxToggle, add:
 
 ```tsx
-          <CheckboxToggle
-            id="suppressed"
-            label="Suppressed"
-            title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
-            checked={suppressed}
-            onChange={setSuppressed}
-            disabled={cover === 'heavy'}
-          />
+<CheckboxToggle
+  id="suppressed"
+  label="Suppressed"
+  title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
+  checked={suppressed}
+  onChange={setSuppressed}
+  disabled={cover === 'heavy'}
+/>
 ```
 
 **Step 4: Run app and tests**
@@ -247,6 +257,7 @@ git commit -m "feat(ui): add Suppressed defense toggle"
 ## Task 6: Wounds simulation test for suppressed
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test in cover-in-wounds describe**

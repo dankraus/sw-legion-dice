@@ -22,36 +22,36 @@ Users can share links that open the app with the same inputs and selections. Set
 
 ## Key names and encoding
 
-| State | Key | Serialized | Default (omit when equal) |
-|-------|-----|------------|----------------------------|
-| pool.red | `r` | integer string | `0` |
-| pool.black | `b` | integer string | `0` |
-| pool.white | `w` | integer string | `0` |
-| surge | `surge` | `none`, `hit`, `crit` | `none` |
-| criticalX | `crit` | string | `""` |
-| surgeTokens | `sTok` | integer string | `""` / 0 |
-| aimTokens | `aim` | integer string | `""` / 0 |
-| observeTokens | `obs` | integer string | `""` / 0 |
-| preciseX | `precise` | integer string | `""` / 0 |
-| ramX | `ram` | integer string | `""` / 0 |
-| sharpshooterX | `sharp` | integer string | `""` / 0 |
-| pierceX | `pierce` | integer string | `""` / 0 |
-| impactX | `impact` | integer string | `""` / 0 |
-| pointCost | `cost` | string | `""` |
-| defenseDieColor | `dColor` | `red`, `white` | `red` |
-| defenseSurge | `dSurge` | `none`, `block` | `none` |
-| defenseSurgeTokens | `dSurgeTok` | integer string | `""` / 0 |
-| dodgeTokens | `dodge` | integer string | `""` / 0 |
-| outmaneuver | `out` | `1` / `0` | `0` |
-| cover | `cover` | `none`, `light`, `heavy` | `none` |
-| lowProfile | `lowProf` | `1` / `0` | `0` |
-| suppressed | `sup` | `1` / `0` | `0` |
-| coverX | `coverX` | integer string | `""` / 0 |
-| armorX | `armor` | integer string | `""` / 0 |
-| impervious | `imp` | `1` / `0` | `0` |
-| suppressionTokens | `suppTok` | integer string | `""` / 0 |
-| dangerSenseX | `danger` | integer string | `""` / 0 |
-| backup | `backup` | `1` / `0` | `0` |
+| State              | Key         | Serialized               | Default (omit when equal) |
+| ------------------ | ----------- | ------------------------ | ------------------------- |
+| pool.red           | `r`         | integer string           | `0`                       |
+| pool.black         | `b`         | integer string           | `0`                       |
+| pool.white         | `w`         | integer string           | `0`                       |
+| surge              | `surge`     | `none`, `hit`, `crit`    | `none`                    |
+| criticalX          | `crit`      | string                   | `""`                      |
+| surgeTokens        | `sTok`      | integer string           | `""` / 0                  |
+| aimTokens          | `aim`       | integer string           | `""` / 0                  |
+| observeTokens      | `obs`       | integer string           | `""` / 0                  |
+| preciseX           | `precise`   | integer string           | `""` / 0                  |
+| ramX               | `ram`       | integer string           | `""` / 0                  |
+| sharpshooterX      | `sharp`     | integer string           | `""` / 0                  |
+| pierceX            | `pierce`    | integer string           | `""` / 0                  |
+| impactX            | `impact`    | integer string           | `""` / 0                  |
+| pointCost          | `cost`      | string                   | `""`                      |
+| defenseDieColor    | `dColor`    | `red`, `white`           | `red`                     |
+| defenseSurge       | `dSurge`    | `none`, `block`          | `none`                    |
+| defenseSurgeTokens | `dSurgeTok` | integer string           | `""` / 0                  |
+| dodgeTokens        | `dodge`     | integer string           | `""` / 0                  |
+| outmaneuver        | `out`       | `1` / `0`                | `0`                       |
+| cover              | `cover`     | `none`, `light`, `heavy` | `none`                    |
+| lowProfile         | `lowProf`   | `1` / `0`                | `0`                       |
+| suppressed         | `sup`       | `1` / `0`                | `0`                       |
+| coverX             | `coverX`    | integer string           | `""` / 0                  |
+| armorX             | `armor`     | integer string           | `""` / 0                  |
+| impervious         | `imp`       | `1` / `0`                | `0`                       |
+| suppressionTokens  | `suppTok`   | integer string           | `""` / 0                  |
+| dangerSenseX       | `danger`    | integer string           | `""` / 0                  |
+| backup             | `backup`    | `1` / `0`                | `0`                       |
 
 - **Build:** For each key, if value equals default, skip. Otherwise append `key=encodeURIComponent(value)`; join with `&`; use as `location.hash` (with leading `#`).
 - **Parse:** Strip `#`, parse with `URLSearchParams`. Unknown keys ignored. Coerce to correct type; invalid or out-of-range values fall back to default for that key.

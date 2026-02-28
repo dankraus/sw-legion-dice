@@ -15,6 +15,7 @@
 ## Task 1: Effective-cover helper and tests
 
 **Files:**
+
 - Create (logic in simulate.ts): add `getEffectiveCover(cover, sharpshooterX)` and test it in simulate.test.ts
 - Modify: `src/engine/simulate.ts` (add helper)
 - Test: `src/engine/__tests__/simulate.test.ts`
@@ -99,6 +100,7 @@ git commit -m "feat(simulate): add getEffectiveCover for Sharpshooter X"
 ## Task 2: Extend applyCover with sharpshooterX
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (applyCover signature and body)
 - Modify: `src/engine/__tests__/simulate.test.ts` (pass sharpshooterX in applyCover tests; add Sharpshooter-specific tests)
 
@@ -125,7 +127,9 @@ export function applyCover(
     else if (face === 'surge') surgeCount++;
   }
   const hitsCancelled =
-    effective === 'light' ? blockCount : Math.min(hits, blockCount + surgeCount);
+    effective === 'light'
+      ? blockCount
+      : Math.min(hits, blockCount + surgeCount);
   return { hits: Math.max(0, hits - hitsCancelled), crits };
 }
 ```
@@ -133,6 +137,7 @@ export function applyCover(
 **Step 2: Update existing applyCover call sites in simulate.ts**
 
 In `src/engine/simulate.ts`:
+
 - Line ~422: `applyCover(final.hits, final.crits, cover, rng)` → `applyCover(final.hits, final.crits, cover, rng, sharpshooterX)` (add param once you add `sharpshooterX` to the function that contains this call).
 - Line ~496: same → `applyCover(hits, crits, cover, rng, sharpshooterX)`.
 
@@ -170,6 +175,7 @@ git commit -m "feat(simulate): apply Sharpshooter X inside applyCover; thread pa
 ## Task 3: Public API and probability.ts
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (add sharpshooterX to calculateWounds, pass to simulateWoundsFromAttackResults)
 
 **Step 1: Update calculateWounds**
@@ -193,6 +199,7 @@ git commit -m "feat(probability): add sharpshooterX to calculateWounds"
 ## Task 4: App state and UI
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, derive number, pass to calculateWounds, add input, reset)
 
 **Step 1: Add state and derived value**
@@ -239,6 +246,7 @@ git commit -m "feat(ui): add Sharpshooter X keyword input and wire to wounds"
 ## Task 5: Wounds simulation test for Sharpshooter
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test**
@@ -251,20 +259,48 @@ it('sharpshooter 1 with heavy cover yields higher expected wounds than no sharps
     expectedHits: 2,
     expectedCrits: 0,
     expectedTotal: 2,
-    distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 0 }, { total: 2, probability: 1 }],
+    distribution: [
+      { total: 0, probability: 0 },
+      { total: 1, probability: 0 },
+      { total: 2, probability: 1 },
+    ],
     distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
-    cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }, { total: 2, probability: 0 }],
+    cumulative: [
+      { total: 0, probability: 1 },
+      { total: 1, probability: 0 },
+      { total: 2, probability: 0 },
+    ],
   };
   const runs = 10_000;
   const rngNoSharp = createSeededRng(300);
   const rngSharp = createSeededRng(300);
   const noSharpshooter = simulateWoundsFromAttackResults(
-    attackResults, 'red', 'none', 0, false, 0, 'heavy', 0, runs, rngNoSharp
+    attackResults,
+    'red',
+    'none',
+    0,
+    false,
+    0,
+    'heavy',
+    0,
+    runs,
+    rngNoSharp
   );
   const withSharpshooter1 = simulateWoundsFromAttackResults(
-    attackResults, 'red', 'none', 0, false, 0, 'heavy', 1, runs, rngSharp
+    attackResults,
+    'red',
+    'none',
+    0,
+    false,
+    0,
+    'heavy',
+    1,
+    runs,
+    rngSharp
   );
-  expect(withSharpshooter1.expectedWounds).toBeGreaterThan(noSharpshooter.expectedWounds);
+  expect(withSharpshooter1.expectedWounds).toBeGreaterThan(
+    noSharpshooter.expectedWounds
+  );
 });
 ```
 

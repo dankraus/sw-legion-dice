@@ -13,6 +13,7 @@
 ### Task 1: getEffectiveCover – add coverX and improve-by-value logic
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (getEffectiveCover)
 
 **Step 1: Write the failing test**
@@ -62,6 +63,7 @@ git commit -m "feat(engine): add coverX to getEffectiveCover, improve by X cap a
 ### Task 2: applyCover – pass coverX to getEffectiveCover
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (applyCover)
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -87,6 +89,7 @@ Expected: FAIL (applyCover does not accept 7th argument)
 **Step 3: Implement applyCover with coverX**
 
 In `src/engine/simulate.ts`, `applyCover`:
+
 - Add optional parameter `coverX?: number` after `suppressed?`.
 - Call `getEffectiveCover(cover, sharpshooterX ?? 0, suppressed, coverX)` and use result for the rest. No other logic change.
 
@@ -107,6 +110,7 @@ git commit -m "feat(engine): pass coverX through applyCover to getEffectiveCover
 ### Task 3: simulateWounds and simulateWoundsFromAttackResults – add coverX and pass to applyCover
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (simulateWounds, simulateWoundsFromAttackResults)
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -144,7 +148,7 @@ it('cover none + coverX 1 yields lower expected wounds than cover none + coverX 
     'none',
     false,
     false,
-    0,  // coverX
+    0, // coverX
     0,
     false,
     0,
@@ -161,14 +165,16 @@ it('cover none + coverX 1 yields lower expected wounds than cover none + coverX 
     'none',
     false,
     false,
-    1,  // coverX
+    1, // coverX
     0,
     false,
     0,
     10_000,
     rng
   );
-  expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(woundsNoneCover0.expectedWounds);
+  expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(
+    woundsNoneCover0.expectedWounds
+  );
 });
 ```
 
@@ -191,6 +197,7 @@ git commit -m "feat(engine): add coverX to simulateWounds paths and cover-in-wou
 ### Task 4: calculateWounds – add coverX and pass to sim
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (calculateWounds)
 - Test: `src/engine/__tests__/probability.test.ts` (if any direct calculateWounds calls)
 
@@ -219,6 +226,7 @@ git commit -m "feat(probability): add coverX to calculateWounds and pass to sim"
 ### Task 5: UI – state, Cover input, wiring, reset
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and normalization**

@@ -129,7 +129,13 @@ export function calculateDefensePool(
   defenseSurgeTokens?: number
 ): DefenseResults {
   const rng = createSeededRng(SEED);
-  return simulateDefensePool(pool, surge, defenseSurgeTokens, DEFAULT_RUNS, rng);
+  return simulateDefensePool(
+    pool,
+    surge,
+    defenseSurgeTokens,
+    DEFAULT_RUNS,
+    rng
+  );
 }
 
 export function calculateWounds(
@@ -156,7 +162,10 @@ export function calculateWounds(
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX ?? 0)));
   const normalizedArmorX = Math.max(0, Math.floor(armorX ?? 0));
   const normalizedImpactX = Math.max(0, Math.floor(impactX ?? 0));
-  const normalizedSuppressionTokens = Math.max(0, Math.floor(suppressionTokens ?? 0));
+  const normalizedSuppressionTokens = Math.max(
+    0,
+    Math.floor(suppressionTokens ?? 0)
+  );
   const normalizedDangerSenseX = Math.max(0, Math.floor(dangerSenseX ?? 0));
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(

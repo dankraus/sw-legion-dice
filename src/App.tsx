@@ -1,29 +1,29 @@
-import { useState, useMemo, useEffect } from "react";
-import { parseFragment, buildFragment, type UrlState } from "./urlState";
+import { useState, useMemo, useEffect } from 'react';
+import { parseFragment, buildFragment, type UrlState } from './urlState';
 import type {
   AttackPool,
   SurgeConversion,
   DefenseDieColor,
   DefenseSurgeConversion,
   CoverLevel,
-} from "./types";
-import { calculateAttackPool, calculateWounds } from "./engine/probability";
-import { DiceSelector } from "./components/DiceSelector";
-import { AttackSurgeToggle } from "./components/AttackSurgeToggle";
-import { DefenseSurgeToggle } from "./components/DefenseSurgeToggle";
-import { DefenseDiceToggle } from "./components/DefenseDiceToggle";
-import { CoverToggle } from "./components/CoverToggle";
-import { CheckboxToggle } from "./components/CheckboxToggle";
-import { NumberInputWithControls } from "./components/NumberInputWithControls";
-import { StatsSummary } from "./components/StatsSummary";
-import { DistributionChart } from "./components/DistributionChart";
-import { CumulativeTable } from "./components/CumulativeTable";
-import "./App.css";
+} from './types';
+import { calculateAttackPool, calculateWounds } from './engine/probability';
+import { DiceSelector } from './components/DiceSelector';
+import { AttackSurgeToggle } from './components/AttackSurgeToggle';
+import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
+import { DefenseDiceToggle } from './components/DefenseDiceToggle';
+import { CoverToggle } from './components/CoverToggle';
+import { CheckboxToggle } from './components/CheckboxToggle';
+import { NumberInputWithControls } from './components/NumberInputWithControls';
+import { StatsSummary } from './components/StatsSummary';
+import { DistributionChart } from './components/DistributionChart';
+import { CumulativeTable } from './components/CumulativeTable';
+import './App.css';
 
 function App() {
   const initialFromUrl = useMemo(() => {
     const hash = window.location.hash;
-    if (hash === "" || hash === "#") return null;
+    if (hash === '' || hash === '#') return null;
     return parseFragment(hash);
   }, []);
 
@@ -33,146 +33,146 @@ function App() {
     white: initialFromUrl?.w ?? 0,
   }));
   const [surge, setSurge] = useState<SurgeConversion>(
-    () => initialFromUrl?.surge ?? "none",
+    () => initialFromUrl?.surge ?? 'none'
   );
   const [criticalX, setCriticalX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.crit === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.crit)
-      : "",
+      : ''
   );
   const [surgeTokens, setSurgeTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.sTok === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.sTok)
-      : "",
+      : ''
   );
   const [aimTokens, setAimTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.aim === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.aim)
-      : "",
+      : ''
   );
   const [observeTokens, setObserveTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.obs === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.obs)
-      : "",
+      : ''
   );
   const [preciseX, setPreciseX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.precise === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.precise)
-      : "",
+      : ''
   );
   const [ramX, setRamX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.ram === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.ram)
-      : "",
+      : ''
   );
   const [sharpshooterX, setSharpshooterX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.sharp === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.sharp)
-      : "",
+      : ''
   );
   const [pierceX, setPierceX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.pierce === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.pierce)
-      : "",
+      : ''
   );
   const [impactX, setImpactX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.impact === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.impact)
-      : "",
+      : ''
   );
   const [pointCost, setPointCost] = useState<string>(
-    () => initialFromUrl?.cost ?? "",
+    () => initialFromUrl?.cost ?? ''
   );
   const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>(
-    () => initialFromUrl?.dColor ?? "red",
+    () => initialFromUrl?.dColor ?? 'red'
   );
   const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>(
-    () => initialFromUrl?.dSurge ?? "none",
+    () => initialFromUrl?.dSurge ?? 'none'
   );
   const [defenseSurgeTokens, setDefenseSurgeTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.dSurgeTok === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.dSurgeTok)
-      : "",
+      : ''
   );
   const [dodgeTokens, setDodgeTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.dodge === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.dodge)
-      : "",
+      : ''
   );
   const [shieldTokens, setShieldTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.shield === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.shield)
-      : "",
+      : ''
   );
   const [outmaneuver, setOutmaneuver] = useState<boolean>(
-    () => initialFromUrl?.out ?? false,
+    () => initialFromUrl?.out ?? false
   );
   const [cover, setCover] = useState<CoverLevel>(
-    () => initialFromUrl?.cover ?? "none",
+    () => initialFromUrl?.cover ?? 'none'
   );
   const [lowProfile, setLowProfile] = useState<boolean>(
-    () => initialFromUrl?.lowProf ?? false,
+    () => initialFromUrl?.lowProf ?? false
   );
   const [suppressed, setSuppressed] = useState<boolean>(
-    () => initialFromUrl?.sup ?? false,
+    () => initialFromUrl?.sup ?? false
   );
   const [coverX, setCoverX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.coverX === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.coverX)
-      : "",
+      : ''
   );
   const [armorX, setArmorX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.armor === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.armor)
-      : "",
+      : ''
   );
   const [impervious, setImpervious] = useState<boolean>(
-    () => initialFromUrl?.imp ?? false,
+    () => initialFromUrl?.imp ?? false
   );
   const [suppressionTokens, setSuppressionTokens] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.suppTok === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.suppTok)
-      : "",
+      : ''
   );
   const [dangerSenseX, setDangerSenseX] = useState<string>(() =>
     initialFromUrl
       ? initialFromUrl.danger === 0
-        ? ""
+        ? ''
         : String(initialFromUrl.danger)
-      : "",
+      : ''
   );
   const [backup, setBackup] = useState<boolean>(
-    () => initialFromUrl?.backup ?? false,
+    () => initialFromUrl?.backup ?? false
   );
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
@@ -183,41 +183,41 @@ function App() {
       w: pool.white,
       surge,
       crit:
-        criticalX === "" ? 0 : Math.max(0, Math.floor(Number(criticalX)) || 0),
+        criticalX === '' ? 0 : Math.max(0, Math.floor(Number(criticalX)) || 0),
       sTok:
-        surgeTokens === ""
+        surgeTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(surgeTokens)) || 0),
       aim:
-        aimTokens === "" ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0),
+        aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0),
       obs:
-        observeTokens === ""
+        observeTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(observeTokens)) || 0),
       precise:
-        preciseX === "" ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0),
-      ram: ramX === "" ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0),
+        preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0),
+      ram: ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0),
       sharp:
-        sharpshooterX === ""
+        sharpshooterX === ''
           ? 0
           : Math.max(0, Math.floor(Number(sharpshooterX)) || 0),
       pierce:
-        pierceX === "" ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0),
+        pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0),
       impact:
-        impactX === "" ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0),
+        impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0),
       cost: pointCost,
       dColor: defenseDieColor,
       dSurge: defenseSurge,
       dSurgeTok:
-        defenseSurgeTokens === ""
+        defenseSurgeTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0),
       dodge:
-        dodgeTokens === ""
+        dodgeTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(dodgeTokens)) || 0),
       shield:
-        shieldTokens === ""
+        shieldTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(shieldTokens)) || 0),
       out: outmaneuver,
@@ -225,17 +225,17 @@ function App() {
       lowProf: lowProfile,
       sup: suppressed,
       coverX:
-        coverX === ""
+        coverX === ''
           ? 0
           : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0)),
-      armor: armorX === "" ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0),
+      armor: armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0),
       imp: impervious,
       suppTok:
-        suppressionTokens === ""
+        suppressionTokens === ''
           ? 0
           : Math.max(0, Math.floor(Number(suppressionTokens)) || 0),
       danger:
-        dangerSenseX === ""
+        dangerSenseX === ''
           ? 0
           : Math.max(0, Math.floor(Number(dangerSenseX)) || 0),
       backup,
@@ -270,7 +270,7 @@ function App() {
       suppressionTokens,
       dangerSenseX,
       backup,
-    ],
+    ]
   );
 
   useEffect(() => {
@@ -278,57 +278,57 @@ function App() {
     const url =
       window.location.pathname +
       window.location.search +
-      (fragment ? "#" + fragment : "");
-    window.history.replaceState(undefined, "", url);
+      (fragment ? '#' + fragment : '');
+    window.history.replaceState(undefined, '', url);
   }, [urlState]);
 
   const criticalXNum =
-    criticalX === ""
+    criticalX === ''
       ? undefined
       : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum =
-    surgeTokens === "" ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
+    surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
   const aimTokensNum =
-    aimTokens === "" ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
+    aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
   const observeTokensNum =
-    observeTokens === ""
+    observeTokens === ''
       ? 0
       : Math.max(0, Math.floor(Number(observeTokens)) || 0);
   const preciseXNum =
-    preciseX === "" ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
-  const ramXNum = ramX === "" ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
+    preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
+  const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
   const sharpshooterXNum =
-    sharpshooterX === ""
+    sharpshooterX === ''
       ? 0
       : Math.max(0, Math.floor(Number(sharpshooterX)) || 0);
   const pierceXNum =
-    pierceX === "" ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0);
+    pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0);
   const defenseSurgeTokensNum =
-    defenseSurgeTokens === ""
+    defenseSurgeTokens === ''
       ? 0
       : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
   const dodgeTokensNum =
-    dodgeTokens === "" ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
+    dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const shieldTokensNum =
-    shieldTokens === ""
+    shieldTokens === ''
       ? 0
       : Math.max(0, Math.floor(Number(shieldTokens)) || 0);
   const coverXNum =
-    coverX === ""
+    coverX === ''
       ? 0
       : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0));
   const armorXNum =
-    armorX === "" ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0);
+    armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0);
   const suppressionTokensNum =
-    suppressionTokens === ""
+    suppressionTokens === ''
       ? 0
       : Math.max(0, Math.floor(Number(suppressionTokens)) || 0);
   const dangerSenseXNum =
-    dangerSenseX === ""
+    dangerSenseX === ''
       ? 0
       : Math.max(0, Math.floor(Number(dangerSenseX)) || 0);
   const impactXNum =
-    impactX === "" ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0);
+    impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
@@ -339,7 +339,7 @@ function App() {
         aimTokensNum,
         observeTokensNum,
         preciseXNum,
-        ramXNum,
+        ramXNum
       ),
     [
       pool,
@@ -350,7 +350,7 @@ function App() {
       observeTokensNum,
       preciseXNum,
       ramXNum,
-    ],
+    ]
   );
 
   const woundsResults = useMemo(
@@ -374,7 +374,7 @@ function App() {
         pierceXNum,
         impervious,
         suppressionTokensNum,
-        dangerSenseXNum,
+        dangerSenseXNum
       ),
     [
       results,
@@ -396,7 +396,7 @@ function App() {
       impervious,
       suppressionTokensNum,
       dangerSenseXNum,
-    ],
+    ]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -409,38 +409,38 @@ function App() {
           setCopyFeedback(true);
           window.setTimeout(() => setCopyFeedback(false), 2000);
         },
-        () => {},
+        () => {}
       );
     }
   };
 
   const handleReset = () => {
     setPool({ red: 0, black: 0, white: 0 });
-    setSurge("none");
-    setCriticalX("");
-    setSurgeTokens("");
-    setAimTokens("");
-    setObserveTokens("");
-    setPreciseX("");
-    setRamX("");
-    setSharpshooterX("");
-    setPierceX("");
-    setImpactX("");
-    setPointCost("");
-    setDefenseDieColor("red");
-    setDefenseSurge("none");
-    setDefenseSurgeTokens("");
-    setDodgeTokens("");
-    setShieldTokens("");
+    setSurge('none');
+    setCriticalX('');
+    setSurgeTokens('');
+    setAimTokens('');
+    setObserveTokens('');
+    setPreciseX('');
+    setRamX('');
+    setSharpshooterX('');
+    setPierceX('');
+    setImpactX('');
+    setPointCost('');
+    setDefenseDieColor('red');
+    setDefenseSurge('none');
+    setDefenseSurgeTokens('');
+    setDodgeTokens('');
+    setShieldTokens('');
     setOutmaneuver(false);
-    setCover("none");
+    setCover('none');
     setLowProfile(false);
     setSuppressed(false);
-    setCoverX("");
-    setArmorX("");
+    setCoverX('');
+    setArmorX('');
     setImpervious(false);
-    setSuppressionTokens("");
-    setDangerSenseX("");
+    setSuppressionTokens('');
+    setDangerSenseX('');
     setBackup(false);
   };
 
@@ -458,7 +458,7 @@ function App() {
             onClick={handleCopyLink}
             title="Copy URL with current settings"
           >
-            {copyFeedback ? "Copied!" : "Copy link"}
+            {copyFeedback ? 'Copied!' : 'Copy link'}
           </button>
           <button type="button" className="app__reset" onClick={handleReset}>
             Reset
@@ -617,7 +617,7 @@ function App() {
               title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
               checked={suppressed}
               onChange={setSuppressed}
-              disabled={cover === "heavy"}
+              disabled={cover === 'heavy'}
               guideAnchor="suppressed"
             />
             <CheckboxToggle
@@ -736,28 +736,28 @@ function App() {
       </div>
 
       <p className="app__github-note">
-        Spotted a problem?{" "}
+        Spotted a problem?{' '}
         <a
           href="https://github.com/dskraus/legion-dice/issues"
           target="_blank"
           rel="noopener noreferrer"
         >
           Open an issue on the Github page
-        </a>{" "}
+        </a>{' '}
         and let me know.
       </p>
 
       <a href="https://ko-fi.com/E1E31V2I7V" target="_blank">
         <img
           height="36"
-          style={{ border: "0px", height: "36px" }}
+          style={{ border: '0px', height: '36px' }}
           src="https://storage.ko-fi.com/cdn/kofi3.png?v=6"
           alt="Support Legion Roller on Ko-fi"
         />
       </a>
 
       <footer className="app__footer">
-        Made in Massachusetts by{" "}
+        Made in Massachusetts by{' '}
         <a
           href="http://www.dskraus.com"
           target="_blank"

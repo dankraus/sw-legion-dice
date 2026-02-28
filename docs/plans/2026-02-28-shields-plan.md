@@ -13,6 +13,7 @@
 ## Task 1: Engine – shields-first then dodge in simulate
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (add param and logic in `simulateWounds` and `simulateWoundsFromAttackResults`)
 - Modify: `src/engine/__tests__/simulate.test.ts` (add one failing test, then fix all call sites)
 
@@ -35,7 +36,7 @@ In `src/engine/simulate.ts`:
 - After computing `hitsAfterBackup` and using `afterCover.crits`, compute:
   - `critsAfterShields = Math.max(0, afterCover.crits - normalizedShields)`
   - `hitsAfterShields = Math.max(0, hitsAfterBackup - Math.max(0, normalizedShields - afterCover.crits))`
-- Then apply dodge to the *remaining* hits/crits (outmaneuver only affects dodge):
+- Then apply dodge to the _remaining_ hits/crits (outmaneuver only affects dodge):
   - `defenseDice = outmaneuver ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge) : critsAfterShields + Math.max(0, hitsAfterShields - normalizedDodge)`
 - Replace the current `defenseDice = outmaneuver ? ... : ...` block (lines 474–476) with the above two-step (shields then dodge).
 
@@ -63,6 +64,7 @@ git commit -m "feat(engine): shield tokens applied before dodge in wounds sim"
 ## Task 2: calculateWounds API and probability tests
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (add `shieldTokens?: number` to `calculateWounds`, pass to simulate)
 - Modify: `src/engine/__tests__/probability.test.ts` (regression test for 0 shields; optional shields test)
 
@@ -91,6 +93,7 @@ git commit -m "feat(engine): expose shieldTokens in calculateWounds; tests"
 ## Task 3: URL state for shields
 
 **Files:**
+
 - Modify: `src/urlState.ts` (add `shield`, default 0; parse in parseFragment)
 - Reference: `.cursor/rules/url-state-new-inputs.mdc`
 
@@ -115,6 +118,7 @@ git commit -m "feat(url): add shield to URL state"
 ## Task 4: App state, URL sync, reset, and Shields control
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, urlState, reset, woundsResults deps, Shields input, calculateWounds args)
 
 **Step 1: State and URL init**
@@ -167,6 +171,7 @@ git commit -m "feat(ui): add Shields token input and URL sync"
 ## Task 5: Optional probability test for shields + dodge
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test**

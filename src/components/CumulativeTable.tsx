@@ -5,7 +5,10 @@ interface CumulativeTableProps {
   title?: string;
 }
 
-export function CumulativeTable({ cumulative, title = 'Cumulative Probabilities' }: CumulativeTableProps) {
+export function CumulativeTable({
+  cumulative,
+  title = 'Cumulative Probabilities',
+}: CumulativeTableProps) {
   return (
     <div>
       <h3>{title}</h3>

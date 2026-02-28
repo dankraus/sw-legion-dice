@@ -15,6 +15,7 @@
 ### Task 1: Failing sim test — Impact X increases wounds when defender has armor
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test for Impact X in wounds simulation**
@@ -50,9 +51,9 @@ describe('Impact X in wounds simulation', () => {
       0,
       0,
       false,
-      3,   // armorX
-      0,   // impactX
-      0,   // pierceX
+      3, // armorX
+      0, // impactX
+      0, // pierceX
       runs,
       rng0
     );
@@ -69,13 +70,15 @@ describe('Impact X in wounds simulation', () => {
       0,
       0,
       false,
-      3,   // armorX
-      2,   // impactX
-      0,   // pierceX
+      3, // armorX
+      2, // impactX
+      0, // pierceX
       runs,
       rng2
     );
-    expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
+    expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(
+      woundsImpact0.expectedWounds
+    );
   });
 });
 ```
@@ -104,6 +107,7 @@ git commit -m "test(sim): Impact X in wounds simulation"
 ### Task 2: Implement Impact X in simulate.ts
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (signatures and wound pipeline for both `simulateWounds` and `simulateWoundsFromAttackResults`)
 
 **Step 1: Add impactX to simulateWoundsFromAttackResults**
@@ -138,6 +142,7 @@ git commit -m "feat(engine): Impact X in wounds simulation (effective armor = ar
 ### Task 3: Failing probability test — calculateWounds with impactX
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test for calculateWounds with impactX**
@@ -167,9 +172,9 @@ it('impactX increases expected wounds when defender has armor (impactX 2 >= impa
     0,
     0,
     false,
-    3,  // armorX
-    0,  // impactX
-    0   // pierceX
+    3, // armorX
+    0, // impactX
+    0 // pierceX
   );
   const woundsImpact2 = calculateWounds(
     attackWithHits,
@@ -184,11 +189,13 @@ it('impactX increases expected wounds when defender has armor (impactX 2 >= impa
     0,
     0,
     false,
-    3,  // armorX
-    2,  // impactX
-    0   // pierceX
+    3, // armorX
+    2, // impactX
+    0 // pierceX
   );
-  expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
+  expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(
+    woundsImpact0.expectedWounds
+  );
 });
 ```
 
@@ -216,6 +223,7 @@ git commit -m "test(probability): calculateWounds with impactX"
 ### Task 4: Wire impactX in probability.ts
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 
 **Step 1: Add impactX to calculateWounds**
@@ -242,6 +250,7 @@ git commit -m "feat(engine): calculateWounds accepts impactX"
 ### Task 5: UI state and wiring for Impact X
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and normalized value**
@@ -274,6 +283,7 @@ git commit -m "feat(ui): state and wiring for Impact X"
 ### Task 6: Impact control in Attack section
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add Impact number input**

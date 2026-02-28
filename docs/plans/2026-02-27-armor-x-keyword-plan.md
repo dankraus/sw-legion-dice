@@ -15,6 +15,7 @@
 ### Task 1: Failing sim test — Armor X reduces hits after cover
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add test for Armor X in wounds simulation**
@@ -49,7 +50,7 @@ describe('Armor X in wounds simulation', () => {
       0,
       0,
       false,
-      0,   // armorX
+      0, // armorX
       0,
       runs,
       rng
@@ -67,12 +68,14 @@ describe('Armor X in wounds simulation', () => {
       0,
       0,
       false,
-      3,   // armorX
+      3, // armorX
       0,
       runs,
       rng
     );
-    expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(woundsArmor0.expectedWounds);
+    expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(
+      woundsArmor0.expectedWounds
+    );
   });
 });
 ```
@@ -101,6 +104,7 @@ git commit -m "test(sim): Armor X in wounds simulation"
 ### Task 2: Implement Armor X in simulate.ts
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (signatures and wound pipeline for both `simulateWounds` and `simulateWoundsFromAttackResults`)
 
 **Step 1: Add armorX to simulateWoundsFromAttackResults**
@@ -135,6 +139,7 @@ git commit -m "feat(engine): Armor X in wounds simulation (after cover, before b
 ### Task 3: Failing probability test — calculateWounds with armorX
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test for calculateWounds with armorX**
@@ -165,6 +170,7 @@ git commit -m "test(probability): calculateWounds with armorX"
 ### Task 4: Wire armorX in probability.ts
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 
 **Step 1: Add armorX to calculateWounds**
@@ -191,6 +197,7 @@ git commit -m "feat(engine): calculateWounds accepts armorX"
 ### Task 5: UI state and wiring for Armor X
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and normalized value**
@@ -223,6 +230,7 @@ git commit -m "feat(ui): state and wiring for Armor X"
 ### Task 6: Armor control in Defense section
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add Armor number input**
@@ -251,6 +259,7 @@ git commit -m "feat(ui): Armor X input in Defense section"
 ### Task 7: Optional — deterministic Armor X test
 
 **Files:**
+
 - Modify: `src/engine/__tests__/simulate.test.ts`
 
 **Step 1: Add deterministic case (optional)**

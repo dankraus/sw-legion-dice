@@ -15,12 +15,14 @@
 ### Task 1: urlState module — types, defaults, parseFragment, buildFragment
 
 **Files:**
+
 - Create: `src/urlState.ts`
 - Create: `src/urlState.test.ts`
 
 **Step 1: Add tests for parseFragment and buildFragment**
 
 In `src/urlState.test.ts`, add tests that:
+
 - `parseFragment('')` or `parseFragment('#')` returns default state (all defaults).
 - `parseFragment('#r=2&b=1')` returns state with `r: 2`, `b: 1`, and the rest default.
 - `buildFragment(defaultState)` returns `''` (or empty fragment).
@@ -59,6 +61,7 @@ git commit -m "feat: add urlState parseFragment and buildFragment"
 ### Task 2: App — initialize state from hash on mount
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Read hash on mount and apply to state**
@@ -85,6 +88,7 @@ git commit -m "feat: initialize state from URL fragment on load"
 ### Task 3: App — sync state to URL fragment on change
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Build UrlState from React state**
@@ -111,6 +115,7 @@ git commit -m "feat: sync state to URL fragment on change"
 ### Task 4: Copy link button in header
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add Copy link button**
@@ -137,6 +142,7 @@ git commit -m "feat: add Copy link button in header"
 ### Task 5: Lint and final verification
 
 **Files:**
+
 - Run: `npm run lint`
 - Run: `npm run test`
 - Run: `npm run build`

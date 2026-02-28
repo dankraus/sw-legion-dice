@@ -35,7 +35,9 @@ describe('rollOneAttackDie', () => {
 
   it('with fixed seed red die produces deterministic sequence', () => {
     const rng = createSeededRng(1);
-    const results = Array.from({ length: 8 }, () => rollOneAttackDie('red', rng));
+    const results = Array.from({ length: 8 }, () =>
+      rollOneAttackDie('red', rng)
+    );
     expect(results).toHaveLength(8);
     const crits = results.filter((face) => face === 'crit').length;
     const hits = results.filter((face) => face === 'hit').length;
@@ -169,7 +171,10 @@ describe('simulateAttackPool', () => {
     expect(result.expectedTotal).toBeCloseTo(6 / 8, 1);
     expect(result.expectedHits).toBeCloseTo(5 / 8, 1);
     expect(result.expectedCrits).toBeCloseTo(1 / 8, 1);
-    const sumProb = result.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+    const sumProb = result.distribution.reduce(
+      (acc, entry) => acc + entry.probability,
+      0
+    );
     expect(sumProb).toBeCloseTo(1, 2);
   });
 });
@@ -223,14 +228,27 @@ describe('defense simulation', () => {
 
   it('simulateDefensePool 0 dice returns 0 blocks', () => {
     const rng = createSeededRng(1);
-    const result = simulateDefensePool({ red: 0, white: 0 }, 'none', undefined, 100, rng);
+    const result = simulateDefensePool(
+      { red: 0, white: 0 },
+      'none',
+      undefined,
+      100,
+      rng
+    );
     expect(result.expectedBlocks).toBe(0);
     expect(result.distribution[0].probability).toBeCloseTo(1, 2);
   });
 
   it('getDefenseDistributionForDiceCountSim 1 red die surge none: expectedBlocks close to 3/6', () => {
     const rng = createSeededRng(1);
-    const result = getDefenseDistributionForDiceCountSim(1, 'red', 'none', undefined, 10_000, rng);
+    const result = getDefenseDistributionForDiceCountSim(
+      1,
+      'red',
+      'none',
+      undefined,
+      10_000,
+      rng
+    );
     expect(result.expectedBlocks).toBeCloseTo(3 / 6, 1);
   });
 });
@@ -282,7 +300,10 @@ describe('applyCover', () => {
   it('none: returns hits and crits unchanged', () => {
     const rng = createSeededRng(42);
     expect(applyCover(3, 1, 'none', rng, 0)).toEqual({ hits: 3, crits: 1 });
-    expect(applyCover(0, 2, 'none', rng, undefined)).toEqual({ hits: 0, crits: 2 });
+    expect(applyCover(0, 2, 'none', rng, undefined)).toEqual({
+      hits: 0,
+      crits: 2,
+    });
   });
   it('zero hits: returns 0 hits and crits unchanged', () => {
     const rng = createSeededRng(99);
@@ -413,9 +434,15 @@ describe('defense surge tokens in wounds simulation', () => {
       expectedHits: 1,
       expectedCrits: 0,
       expectedTotal: 1,
-      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 1 },
+      ],
       distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
-      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+      ],
     };
     const runs = 10_000;
     const rngZero = createSeededRng(100);
@@ -478,9 +505,15 @@ describe('cover in wounds simulation', () => {
       expectedHits: 1,
       expectedCrits: 0,
       expectedTotal: 1,
-      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 1 },
+      ],
       distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
-      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+      ],
     };
     const runs = 10_000;
     const rngNone = createSeededRng(200);
@@ -671,7 +704,9 @@ describe('cover in wounds simulation', () => {
       runs,
       rngSharp
     );
-    expect(withSharpshooter1.expectedWounds).toBeGreaterThan(noSharpshooter.expectedWounds);
+    expect(withSharpshooter1.expectedWounds).toBeGreaterThan(
+      noSharpshooter.expectedWounds
+    );
   });
   it('cover none with Suppressed on yields lower expected wounds than Suppressed off', () => {
     const attackResults = {
@@ -794,7 +829,9 @@ describe('cover in wounds simulation', () => {
       10_000,
       rng
     );
-    expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(woundsNoneCover0.expectedWounds);
+    expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(
+      woundsNoneCover0.expectedWounds
+    );
   });
 });
 
@@ -878,9 +915,15 @@ describe('Pierce X in wounds simulation', () => {
       expectedHits: 1,
       expectedCrits: 0,
       expectedTotal: 1,
-      distribution: [{ total: 0, probability: 0 }, { total: 1, probability: 1 }],
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 1 },
+      ],
       distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }],
-      cumulative: [{ total: 0, probability: 1 }, { total: 1, probability: 0 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+      ],
     };
     const runs = 5_000;
     const rng = createSeededRng(900);
@@ -1079,7 +1122,9 @@ describe('Armor X in wounds simulation', () => {
       runs,
       rngArmor3
     );
-    expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(woundsArmor0.expectedWounds);
+    expect(woundsArmor3.expectedWounds).toBeLessThanOrEqual(
+      woundsArmor0.expectedWounds
+    );
   });
 });
 
@@ -1156,7 +1201,9 @@ describe('Impact X in wounds simulation', () => {
       runs,
       rngImpact2
     );
-    expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(woundsImpact0.expectedWounds);
+    expect(woundsImpact2.expectedWounds).toBeGreaterThanOrEqual(
+      woundsImpact0.expectedWounds
+    );
   });
 });
 
@@ -1218,7 +1265,9 @@ describe('Impervious in wounds simulation', () => {
       runs,
       rng
     );
-    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(woundsNoImpervious.expectedWounds);
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(
+      woundsNoImpervious.expectedWounds
+    );
   });
 
   it('impervious with pierce 0 yields same expected wounds as no impervious', () => {
@@ -1279,7 +1328,10 @@ describe('Impervious in wounds simulation', () => {
       runs,
       rngImpervious
     );
-    expect(woundsImpervious.expectedWounds).toBeCloseTo(woundsNoImpervious.expectedWounds, 10);
+    expect(woundsImpervious.expectedWounds).toBeCloseTo(
+      woundsNoImpervious.expectedWounds,
+      10
+    );
   });
 });
 
@@ -1341,7 +1393,9 @@ describe('Danger Sense X in wounds simulation', () => {
       runs,
       rng
     );
-    expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(woundsNone.expectedWounds);
+    expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(
+      woundsNone.expectedWounds
+    );
   });
 
   it('Danger Sense 2 caps extra dice at 2: 3 tokens and 2 tokens yield same expected wounds', () => {
@@ -1403,6 +1457,9 @@ describe('Danger Sense X in wounds simulation', () => {
       runs,
       rngThreeTokens
     );
-    expect(woundsThreeTokens.expectedWounds).toBeCloseTo(woundsTwoTokens.expectedWounds, 5);
+    expect(woundsThreeTokens.expectedWounds).toBeCloseTo(
+      woundsTwoTokens.expectedWounds,
+      5
+    );
   });
 });

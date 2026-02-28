@@ -15,6 +15,7 @@
 ## Task 1: Engine – simulate.ts defense dice with outmaneuver
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (simulateWounds, simulateWoundsFromAttackResults)
 
 **Step 1: Add outmaneuver parameter and defense-dice branch in simulateWounds**
@@ -58,7 +59,7 @@ const result = simulateWounds(
   'red',
   'none',
   0,
-  false,  // outmaneuver
+  false, // outmaneuver
   20_000,
   rng
 );
@@ -81,6 +82,7 @@ git commit -m "feat(engine): add outmaneuver to simulateWounds and simulateWound
 ## Task 2: Engine – probability.ts calculateWounds accepts outmaneuver
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (calculateWounds)
 
 **Step 1: Add optional outmaneuver parameter and pass to sim**
@@ -125,6 +127,7 @@ git commit -m "feat(engine): calculateWounds accepts optional outmaneuver"
 ## Task 3: Tests – Outmaneuver on vs off
 
 **Files:**
+
 - Modify: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Add test: outmaneuver on, 1 hit 1 crit 1 dodge → 1 defense die**
@@ -169,7 +172,13 @@ it('outmaneuver on reduces expected wounds vs off when crits and dodge present',
     distribution: [{ total: 2, probability: 1 }],
     distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
   };
-  const woundsOff = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, false);
+  const woundsOff = calculateWounds(
+    attackWithHitsCrits,
+    'red',
+    'none',
+    1,
+    false
+  );
   const woundsOn = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, true);
   expect(woundsOn.expectedWounds).toBeLessThan(woundsOff.expectedWounds);
 });
@@ -192,6 +201,7 @@ git commit -m "test: outmaneuver on/off and wounds difference"
 ## Task 4: UI – Outmaneuver state, checkbox, Reset, wiring
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and wire calculateWounds**
@@ -205,14 +215,24 @@ git commit -m "test: outmaneuver on/off and wounds difference"
 In the Defense section, after the Dodge `NumberInputWithControls` (before the closing `</section>` of the Defense section), add:
 
 ```tsx
-<label className="app__checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+<label
+  className="app__checkbox-label"
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginTop: '0.5rem',
+  }}
+>
   <input
     type="checkbox"
     id="outmaneuver"
     checked={outmaneuver}
     onChange={(e) => setOutmaneuver(e.target.checked)}
-            />
-  <span title="Dodge tokens can cancel crits as well as hits.">Outmaneuver</span>
+  />
+  <span title="Dodge tokens can cancel crits as well as hits.">
+    Outmaneuver
+  </span>
 </label>
 ```
 

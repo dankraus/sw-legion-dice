@@ -13,11 +13,13 @@
 ### Task 1: Scaffold the Vite + React + TypeScript project
 
 **Files:**
+
 - Create: `package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`, `src/main.tsx`, `src/App.tsx`, `src/App.css`
 
 **Step 1: Scaffold the project**
 
 Run:
+
 ```bash
 npm create vite@latest . -- --template react-ts
 ```
@@ -27,6 +29,7 @@ If prompted about existing files, proceed (the docs folder won't conflict).
 **Step 2: Install dependencies**
 
 Run:
+
 ```bash
 npm install
 npm install recharts
@@ -39,8 +42,8 @@ Add to `vite.config.ts`:
 
 ```typescript
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
@@ -49,13 +52,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test-setup.ts',
   },
-})
+});
 ```
 
 Create `src/test-setup.ts`:
 
 ```typescript
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
 ```
 
 Add to `tsconfig.json` under `compilerOptions`:
@@ -90,6 +93,7 @@ git commit -m "chore: scaffold Vite + React + TypeScript project with Vitest"
 ### Task 2: Define shared types
 
 **Files:**
+
 - Create: `src/types.ts`
 
 **Step 1: Write the types file**
@@ -138,6 +142,7 @@ git commit -m "feat: add shared type definitions"
 ### Task 3: Build the probability engine -- dice definitions and effective probabilities
 
 **Files:**
+
 - Create: `src/engine/probability.ts`
 - Create: `src/engine/__tests__/probability.test.ts`
 
@@ -206,7 +211,7 @@ Expected: FAIL -- module not found.
 import { DieColor, DieFaces, SurgeConversion } from '../types';
 
 export const DICE: Record<DieColor, DieFaces> = {
-  red:   { crit: 1, surge: 1, hit: 5, blank: 1 },
+  red: { crit: 1, surge: 1, hit: 5, blank: 1 },
   black: { crit: 1, surge: 1, hit: 3, blank: 3 },
   white: { crit: 1, surge: 1, hit: 1, blank: 5 },
 };
@@ -261,6 +266,7 @@ git commit -m "feat: add dice definitions and effective probability calculation"
 ### Task 4: Build the probability engine -- convolution and pool calculation
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Modify: `src/engine/__tests__/probability.test.ts`
 
@@ -302,7 +308,7 @@ describe('calculateAttackPool', () => {
   it('two red dice expected total is double one red die', () => {
     const pool: AttackPool = { red: 2, black: 0, white: 0 };
     const result = calculateAttackPool(pool, 'none');
-    expect(result.expectedTotal).toBeCloseTo(2 * 6 / 8);
+    expect(result.expectedTotal).toBeCloseTo((2 * 6) / 8);
   });
 
   it('distribution probabilities sum to 1', () => {
@@ -426,6 +432,7 @@ git commit -m "feat: add convolution-based pool probability calculation"
 ### Task 5: Build the DiceSelector component
 
 **Files:**
+
 - Create: `src/components/DiceSelector.tsx`
 - Create: `src/components/DiceSelector.css`
 
@@ -558,6 +565,7 @@ git commit -m "feat: add DiceSelector component"
 ### Task 6: Build the SurgeToggle component
 
 **Files:**
+
 - Create: `src/components/SurgeToggle.tsx`
 - Create: `src/components/SurgeToggle.css`
 
@@ -668,6 +676,7 @@ git commit -m "feat: add SurgeToggle component"
 ### Task 7: Build the StatsSummary component
 
 **Files:**
+
 - Create: `src/components/StatsSummary.tsx`
 - Create: `src/components/StatsSummary.css`
 
@@ -684,7 +693,11 @@ interface StatsSummaryProps {
   expectedTotal: number;
 }
 
-export function StatsSummary({ expectedHits, expectedCrits, expectedTotal }: StatsSummaryProps) {
+export function StatsSummary({
+  expectedHits,
+  expectedCrits,
+  expectedTotal,
+}: StatsSummaryProps) {
   return (
     <div className="stats-summary">
       <div className="stats-summary__stat">
@@ -761,12 +774,21 @@ git commit -m "feat: add StatsSummary component"
 ### Task 8: Build the DistributionChart component
 
 **Files:**
+
 - Create: `src/components/DistributionChart.tsx`
 
 **Step 1: Write the component**
 
 ```tsx
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 interface DistributionChartProps {
   distribution: { total: number; probability: number }[];
@@ -782,10 +804,17 @@ export function DistributionChart({ distribution }: DistributionChartProps) {
     <div>
       <h3>Probability Distribution</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+        >
           <XAxis
             dataKey="total"
-            label={{ value: 'Total Successes', position: 'insideBottom', offset: -15 }}
+            label={{
+              value: 'Total Successes',
+              position: 'insideBottom',
+              offset: -15,
+            }}
           />
           <YAxis
             tickFormatter={(v: number) => `${v}%`}
@@ -821,6 +850,7 @@ git commit -m "feat: add DistributionChart component"
 ### Task 9: Build the CumulativeTable component
 
 **Files:**
+
 - Create: `src/components/CumulativeTable.tsx`
 - Create: `src/components/CumulativeTable.css`
 
@@ -911,6 +941,7 @@ git commit -m "feat: add CumulativeTable component"
 ### Task 10: Wire everything together in App
 
 **Files:**
+
 - Modify: `src/App.tsx`
 - Modify: `src/App.css`
 
@@ -933,7 +964,10 @@ function App() {
   const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
   const [surge, setSurge] = useState<SurgeConversion>('none');
 
-  const results = useMemo(() => calculateAttackPool(pool, surge), [pool, surge]);
+  const results = useMemo(
+    () => calculateAttackPool(pool, surge),
+    [pool, surge]
+  );
 
   const totalDice = pool.red + pool.black + pool.white;
 
@@ -996,7 +1030,10 @@ Replace the contents of `src/App.css`:
   max-width: 960px;
   margin: 0 auto;
   padding: 1rem;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .app__header {

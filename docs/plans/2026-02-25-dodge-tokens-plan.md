@@ -15,6 +15,7 @@
 ### Task 1: Add distributionByHitsCrits type and stub
 
 **Files:**
+
 - Modify: `src/types.ts`
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -23,7 +24,12 @@
 In `src/types.ts`, add to `AttackResults`:
 
 ```ts
-distributionByHitsCrits: { hits: number; crits: number; probability: number }[];
+distributionByHitsCrits: {
+  hits: number;
+  crits: number;
+  probability: number;
+}
+[];
 ```
 
 **Step 2: Write a failing test that expects distributionByHitsCrits on attack results**
@@ -34,7 +40,10 @@ In `src/engine/__tests__/probability.test.ts`, add a test (e.g. in or near the d
 it('returns distributionByHitsCrits that sums to 1 and matches total distribution', () => {
   const result = calculateAttackPool({ red: 1, black: 0, white: 0 }, 'none');
   expect(result.distributionByHitsCrits).toBeDefined();
-  const sum = result.distributionByHitsCrits.reduce((acc, entry) => acc + entry.probability, 0);
+  const sum = result.distributionByHitsCrits.reduce(
+    (acc, entry) => acc + entry.probability,
+    0
+  );
   expect(sum).toBeCloseTo(1);
   // Marginal: total = hits + crits should match distribution by total
   const byTotal: Record<number, number> = {};
@@ -56,6 +65,7 @@ Expected: FAIL (AttackResults has no distributionByHitsCrits / calculateAttackPo
 **Step 4: Implement minimal return in calculateAttackPool**
 
 In `src/engine/probability.ts`:
+
 - Add a structure in the loop over `distribution` (where hitsFinal/critsFinal are computed): e.g. `const hitsCritsKey = `${hitsFinal},${critsFinal}`; totalProbByHitsCrits.set(hitsCritsKey, (totalProbByHitsCrits.get(hitsCritsKey) ?? 0) + prob);`. Initialize `totalProbByHitsCrits` as `new Map<string, number>()` before the loop.
 - After the loop, build `distributionByHitsCrits` array from the map: `Array.from(totalProbByHitsCrits.entries()).map(([key, probability]) => { const [hits, crits] = key.split(',').map(Number); return { hits, crits, probability }; })`.
 - Add `distributionByHitsCrits` to the returned object of `calculateAttackPool`.
@@ -77,6 +87,7 @@ git commit -m "feat: add distributionByHitsCrits to AttackResults and calculateA
 ### Task 2: calculateWounds accepts dodgeTokens and uses distributionByHitsCrits
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -86,29 +97,54 @@ In `src/engine/__tests__/probability.test.ts`, inside describe('calculateWounds'
 
 ```ts
 it('dodge 0 matches no-dodge wounds', () => {
-  const attackResults = calculateAttackPool({ red: 2, black: 0, white: 0 }, 'none');
+  const attackResults = calculateAttackPool(
+    { red: 2, black: 0, white: 0 },
+    'none'
+  );
   const woundsNoDodge = calculateWounds(attackResults, 'red', 'none');
   const woundsDodge0 = calculateWounds(attackResults, 'red', 'none', 0);
   expect(woundsDodge0.expectedWounds).toBeCloseTo(woundsNoDodge.expectedWounds);
-  expect(woundsDodge0.distribution.length).toBe(woundsNoDodge.distribution.length);
+  expect(woundsDodge0.distribution.length).toBe(
+    woundsNoDodge.distribution.length
+  );
 });
 
 it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice (2 hits + 1 crit)', () => {
-  const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+  const attackResults = calculateAttackPool(
+    { red: 0, black: 0, white: 0 },
+    'none'
+  );
   const distributionByHitsCrits = [{ hits: 3, crits: 1, probability: 1 }];
-  const attackWithHitsCrits = { ...attackResults, distribution: [{ total: 4, probability: 1 }], distributionByHitsCrits };
+  const attackWithHitsCrits = {
+    ...attackResults,
+    distribution: [{ total: 4, probability: 1 }],
+    distributionByHitsCrits,
+  };
   const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1);
   expect(wounds.expectedWounds).toBeDefined();
-  const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+  const sum = wounds.distribution.reduce(
+    (acc, entry) => acc + entry.probability,
+    0
+  );
   expect(sum).toBeCloseTo(1);
 });
 
 it('one outcome 1 hit 2 crits, 5 dodge: 2 defense dice (crits only)', () => {
-  const attackResults = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+  const attackResults = calculateAttackPool(
+    { red: 0, black: 0, white: 0 },
+    'none'
+  );
   const distributionByHitsCrits = [{ hits: 1, crits: 2, probability: 1 }];
-  const attackWithHitsCrits = { ...attackResults, distribution: [{ total: 3, probability: 1 }], distributionByHitsCrits };
+  const attackWithHitsCrits = {
+    ...attackResults,
+    distribution: [{ total: 3, probability: 1 }],
+    distributionByHitsCrits,
+  };
   const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 5);
-  const sum = wounds.distribution.reduce((acc, entry) => acc + entry.probability, 0);
+  const sum = wounds.distribution.reduce(
+    (acc, entry) => acc + entry.probability,
+    0
+  );
   expect(sum).toBeCloseTo(1);
 });
 ```
@@ -121,6 +157,7 @@ Expected: FAIL (calculateWounds does not accept 4th argument / does not use dodg
 **Step 3: Implement calculateWounds with dodgeTokens**
 
 In `src/engine/probability.ts`:
+
 - Add optional parameter `dodgeTokens?: number` to `calculateWounds`. Normalize: `const normalizedDodge = Math.max(0, Math.floor(dodgeTokens ?? 0));` (or reuse a small helper).
 - Replace the loop over `attackResults.distribution` with a loop over `attackResults.distributionByHitsCrits`. For each `{ hits, crits, probability }`: `const defenseDice = crits + Math.max(0, hits - normalizedDodge);` then `getDefenseDistributionForDiceCount(defenseDice, defenseDieColor, defenseSurge)`. Attack total for wounds is still `hits + crits`. So for each defense outcome: `wounds = max(0, (hits + crits) - defenseTotal)`; merge with weight `probability * defenseProb`.
 - Keep the same wounds aggregation (woundsProbByTotal, expectedWounds, distribution, cumulative).
@@ -128,6 +165,7 @@ In `src/engine/probability.ts`:
 **Step 4: Fix existing calculateWounds tests that fabricate attack results**
 
 Existing tests that pass a custom object like `{ ...attackResults, distribution: attackDist }` do not include `distributionByHitsCrits`. Either:
+
 - Have those tests add a matching `distributionByHitsCrits` (e.g. for "attack always 1 success" use `distributionByHitsCrits: [{ hits: 1, crits: 0, probability: 1 }]` or `[{ hits: 0, crits: 1, probability: 1 }]` so the single outcome has total 1), or
 - For "zero attack dice" the attack results from calculateAttackPool will already have distributionByHitsCrits (from Task 1); ensure zero-dice pool returns distributionByHitsCrits (e.g. `[{ hits: 0, crits: 0, probability: 1 }]`). Other fabricated tests: add distributionByHitsCrits that matches the 1D distribution they use.
 
@@ -148,6 +186,7 @@ git commit -m "feat: wounds use distributionByHitsCrits and optional dodgeTokens
 ### Task 3: Defense UI – Dodge state, control, Reset, wire to wounds
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 **Step 1: Add state and parsing**

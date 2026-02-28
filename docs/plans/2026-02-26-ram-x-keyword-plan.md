@@ -13,6 +13,7 @@
 ### Task 1: Engine – Ram X converts blanks then hits to crits (TDD)
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (calculateAttackPool, add ramX parameter and post-reroll logic)
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -62,6 +63,7 @@ Expected: FAIL (calculateAttackPool does not accept 8 arguments)
 **Step 3: Implement minimal support**
 
 In `src/engine/probability.ts`:
+
 - Add optional parameter `ramX?: number` to `calculateAttackPool` (after `precise`).
 - Normalize: `const ram = normalizeTokenCount(ramX);`
 - After computing `hitsFinal` and `critsFinal` (post-reroll), add:
@@ -94,6 +96,7 @@ git commit -m "feat(engine): Ram X keyword converts blanks then hits to crits af
 ### Task 2: Engine – Ram X = 0 or undefined has no effect
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the test**
@@ -101,24 +104,33 @@ git commit -m "feat(engine): Ram X keyword converts blanks then hits to crits af
 Add inside `describe('Ram X keyword')`:
 
 ```ts
-  it('Ram 0 or undefined: same as no Ram', () => {
-    const pool: AttackPool = { red: 1, black: 0, white: 1 };
-    const noRam = calculateAttackPool(pool, 'hit');
-    const ram0 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 0);
-    const ramUndef = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, undefined);
-    expect(ram0.expectedHits).toBeCloseTo(noRam.expectedHits);
-    expect(ram0.expectedCrits).toBeCloseTo(noRam.expectedCrits);
-    expect(ramUndef.expectedHits).toBeCloseTo(noRam.expectedHits);
-    expect(ramUndef.expectedCrits).toBeCloseTo(noRam.expectedCrits);
-  });
+it('Ram 0 or undefined: same as no Ram', () => {
+  const pool: AttackPool = { red: 1, black: 0, white: 1 };
+  const noRam = calculateAttackPool(pool, 'hit');
+  const ram0 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 0);
+  const ramUndef = calculateAttackPool(
+    pool,
+    'hit',
+    undefined,
+    0,
+    0,
+    0,
+    0,
+    undefined
+  );
+  expect(ram0.expectedHits).toBeCloseTo(noRam.expectedHits);
+  expect(ram0.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+  expect(ramUndef.expectedHits).toBeCloseTo(noRam.expectedHits);
+  expect(ramUndef.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+});
 
-  it('negative ramX treated as 0', () => {
-    const pool: AttackPool = { red: 1, black: 0, white: 0 };
-    const noRam = calculateAttackPool(pool, 'hit');
-    const negRam = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, -1);
-    expect(negRam.expectedCrits).toBeCloseTo(noRam.expectedCrits);
-    expect(negRam.expectedHits).toBeCloseTo(noRam.expectedHits);
-  });
+it('negative ramX treated as 0', () => {
+  const pool: AttackPool = { red: 1, black: 0, white: 0 };
+  const noRam = calculateAttackPool(pool, 'hit');
+  const negRam = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, -1);
+  expect(negRam.expectedCrits).toBeCloseTo(noRam.expectedCrits);
+  expect(negRam.expectedHits).toBeCloseTo(noRam.expectedHits);
+});
 ```
 
 **Step 2: Run test**
@@ -138,6 +150,7 @@ git commit -m "test(engine): Ram X 0/undefined/negative has no effect"
 ### Task 3: Engine – Ram X with Aim rerolls (Ram applies after rerolls)
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the test**
@@ -145,24 +158,33 @@ git commit -m "test(engine): Ram X 0/undefined/negative has no effect"
 Add inside `describe('Ram X keyword')`:
 
 ```ts
-  it('Ram 1 + 1 Aim with white dice: Ram applies after rerolls, converts a remaining blank', () => {
-    const pool: AttackPool = { red: 0, black: 0, white: 3 };
-    const aimOnly = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 0, 0);
-    const aimPlusRam = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 0, 1);
-    // Ram converts one remaining blank (after Aim rerolls) to a crit
-    expect(aimPlusRam.expectedCrits).toBeGreaterThan(aimOnly.expectedCrits);
-    expect(aimPlusRam.expectedTotal).toBeGreaterThan(aimOnly.expectedTotal);
-  });
+it('Ram 1 + 1 Aim with white dice: Ram applies after rerolls, converts a remaining blank', () => {
+  const pool: AttackPool = { red: 0, black: 0, white: 3 };
+  const aimOnly = calculateAttackPool(pool, 'none', undefined, 0, 1, 0, 0, 0);
+  const aimPlusRam = calculateAttackPool(
+    pool,
+    'none',
+    undefined,
+    0,
+    1,
+    0,
+    0,
+    1
+  );
+  // Ram converts one remaining blank (after Aim rerolls) to a crit
+  expect(aimPlusRam.expectedCrits).toBeGreaterThan(aimOnly.expectedCrits);
+  expect(aimPlusRam.expectedTotal).toBeGreaterThan(aimOnly.expectedTotal);
+});
 
-  it('Ram works with any Surge Conversion', () => {
-    const pool: AttackPool = { red: 0, black: 0, white: 2 };
-    const hitNoRam = calculateAttackPool(pool, 'hit');
-    const hitRam1 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 1);
-    expect(hitRam1.expectedCrits).toBeGreaterThan(hitNoRam.expectedCrits);
-    const critNoRam = calculateAttackPool(pool, 'crit');
-    const critRam1 = calculateAttackPool(pool, 'crit', undefined, 0, 0, 0, 0, 1);
-    expect(critRam1.expectedCrits).toBeGreaterThan(critNoRam.expectedCrits);
-  });
+it('Ram works with any Surge Conversion', () => {
+  const pool: AttackPool = { red: 0, black: 0, white: 2 };
+  const hitNoRam = calculateAttackPool(pool, 'hit');
+  const hitRam1 = calculateAttackPool(pool, 'hit', undefined, 0, 0, 0, 0, 1);
+  expect(hitRam1.expectedCrits).toBeGreaterThan(hitNoRam.expectedCrits);
+  const critNoRam = calculateAttackPool(pool, 'crit');
+  const critRam1 = calculateAttackPool(pool, 'crit', undefined, 0, 0, 0, 0, 1);
+  expect(critRam1.expectedCrits).toBeGreaterThan(critNoRam.expectedCrits);
+});
 ```
 
 **Step 2: Run test**
@@ -182,6 +204,7 @@ git commit -m "test(engine): Ram X applies after rerolls and works with all surg
 ### Task 4: Engine – Ram X with Critical X (compose naturally)
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the test**
@@ -189,15 +212,15 @@ git commit -m "test(engine): Ram X applies after rerolls and works with all surg
 Add inside `describe('Ram X keyword')`:
 
 ```ts
-  it('Critical X + Ram X: both apply (surges become crits via Critical, blanks via Ram)', () => {
-    const pool: AttackPool = { red: 0, black: 0, white: 2 };
-    const noKeywords = calculateAttackPool(pool, 'none');
-    const critOnly = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 0);
-    const critPlusRam = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 1);
-    expect(critPlusRam.expectedCrits).toBeGreaterThan(critOnly.expectedCrits);
-    expect(critPlusRam.expectedTotal).toBeGreaterThan(critOnly.expectedTotal);
-    expect(critPlusRam.expectedTotal).toBeGreaterThan(noKeywords.expectedTotal);
-  });
+it('Critical X + Ram X: both apply (surges become crits via Critical, blanks via Ram)', () => {
+  const pool: AttackPool = { red: 0, black: 0, white: 2 };
+  const noKeywords = calculateAttackPool(pool, 'none');
+  const critOnly = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 0);
+  const critPlusRam = calculateAttackPool(pool, 'none', 1, 0, 0, 0, 0, 1);
+  expect(critPlusRam.expectedCrits).toBeGreaterThan(critOnly.expectedCrits);
+  expect(critPlusRam.expectedTotal).toBeGreaterThan(critOnly.expectedTotal);
+  expect(critPlusRam.expectedTotal).toBeGreaterThan(noKeywords.expectedTotal);
+});
 ```
 
 **Step 2: Run test**
@@ -222,11 +245,13 @@ git commit -m "test(engine): Critical X + Ram X compose correctly"
 ### Task 5: UI – Ram X input and wiring
 
 **Files:**
+
 - Modify: `src/App.tsx` (state, derived value, input, useMemo)
 
 **Step 1: Add state and derived value**
 
 In `src/App.tsx`:
+
 - Add state: `const [ramX, setRamX] = useState<string>('');`
 - Add derived value after `preciseNum`: `const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);`
 

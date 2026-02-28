@@ -6,7 +6,7 @@
 
 - **Place in flow:** Attack → (optional Low Profile) → cover roll → **Backup** → dodge/outmaneuver → defense dice count → defense roll → wounds.
 - **Effect:** `hitsAfterBackup = backup ? max(0, afterCover.hits - 2) : afterCover.hits`; crits unchanged. Defense dice (and thus wounds) are computed from `(hitsAfterBackup, afterCover.crits)`.
-- **Availability:** Backup is always available in the UI (not gated by cover). The tooltip notes: *"Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."*
+- **Availability:** Backup is always available in the UI (not gated by cover). The tooltip notes: _"Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."_
 
 ## Data and API
 

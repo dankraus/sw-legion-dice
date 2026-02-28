@@ -13,6 +13,7 @@
 ### Task 1: Engine – Surge Tokens in resolve and calculateAttackPool (TDD)
 
 **Files:**
+
 - Modify: `src/engine/probability.ts` (resolve, normalizeCriticalX or new normalizer, calculateAttackPool)
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -41,6 +42,7 @@ Expected: FAIL (e.g. calculateAttackPool does not accept 4 arguments, or expecte
 **Step 3: Implement minimal support**
 
 In `src/engine/probability.ts`:
+
 - Add a normalizer for surge tokens (e.g. `normalizeSurgeTokens(t?: number): number` returning 0 for undefined/null/non-finite/negative, else `Math.floor(t)`).
 - Add parameter `surgeTokens?: number` to `resolve()`; when `surge === 'none'`, after computing `surgesRemaining`, set `hits += Math.min(normalizeSurgeTokens(surgeTokens), surgesRemaining)`.
 - Add optional 4th parameter `surgeTokens?: number` to `calculateAttackPool`; pass normalized value into each `resolve()` call.
@@ -62,6 +64,7 @@ git commit -m "feat(engine): surge tokens convert surges to hits when surge conv
 ### Task 2: Engine – Surge Tokens ignored when Surge → Hit or Surge → Crit
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the failing test**
@@ -69,21 +72,21 @@ git commit -m "feat(engine): surge tokens convert surges to hits when surge conv
 Add inside the same `describe('Surge Tokens')` block:
 
 ```ts
-  it('surge to hit: surgeTokens do not affect result', () => {
-    const pool: AttackPool = { red: 1, black: 0, white: 0 };
-    const zero = calculateAttackPool(pool, 'hit', undefined, 0);
-    const five = calculateAttackPool(pool, 'hit', undefined, 5);
-    expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
-    expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
-  });
+it('surge to hit: surgeTokens do not affect result', () => {
+  const pool: AttackPool = { red: 1, black: 0, white: 0 };
+  const zero = calculateAttackPool(pool, 'hit', undefined, 0);
+  const five = calculateAttackPool(pool, 'hit', undefined, 5);
+  expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
+  expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
+});
 
-  it('surge to crit: surgeTokens do not affect result', () => {
-    const pool: AttackPool = { red: 1, black: 0, white: 0 };
-    const zero = calculateAttackPool(pool, 'crit', undefined, 0);
-    const five = calculateAttackPool(pool, 'crit', undefined, 5);
-    expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
-    expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
-  });
+it('surge to crit: surgeTokens do not affect result', () => {
+  const pool: AttackPool = { red: 1, black: 0, white: 0 };
+  const zero = calculateAttackPool(pool, 'crit', undefined, 0);
+  const five = calculateAttackPool(pool, 'crit', undefined, 5);
+  expect(five.expectedHits).toBeCloseTo(zero.expectedHits);
+  expect(five.expectedCrits).toBeCloseTo(zero.expectedCrits);
+});
 ```
 
 **Step 2: Run test to verify it fails or passes**
@@ -108,6 +111,7 @@ git commit -m "test(engine): surge tokens ignored when surge conversion is hit o
 ### Task 3: Engine – Critical X + Surge Tokens (tokens apply to remaining surges only)
 
 **Files:**
+
 - Test: `src/engine/__tests__/probability.test.ts`
 
 **Step 1: Write the failing test**
@@ -115,13 +119,17 @@ git commit -m "test(engine): surge tokens ignored when surge conversion is hit o
 Add inside `describe('Surge Tokens')`:
 
 ```ts
-  it('Critical 1 + 1 token, surge none: token applies only to surges left after Critical X', () => {
-    const pool: AttackPool = { red: 0, black: 0, white: 2 };
-    const noKeywordNoToken = calculateAttackPool(pool, 'none');
-    const critical1OneToken = calculateAttackPool(pool, 'none', 1, 1);
-    expect(critical1OneToken.expectedCrits).toBeGreaterThan(noKeywordNoToken.expectedCrits);
-    expect(critical1OneToken.expectedHits).toBeGreaterThan(noKeywordNoToken.expectedHits);
-  });
+it('Critical 1 + 1 token, surge none: token applies only to surges left after Critical X', () => {
+  const pool: AttackPool = { red: 0, black: 0, white: 2 };
+  const noKeywordNoToken = calculateAttackPool(pool, 'none');
+  const critical1OneToken = calculateAttackPool(pool, 'none', 1, 1);
+  expect(critical1OneToken.expectedCrits).toBeGreaterThan(
+    noKeywordNoToken.expectedCrits
+  );
+  expect(critical1OneToken.expectedHits).toBeGreaterThan(
+    noKeywordNoToken.expectedHits
+  );
+});
 ```
 
 **Step 2: Run test**
@@ -141,12 +149,14 @@ git commit -m "test(engine): Critical X + surge tokens use remaining surges only
 ### Task 4: UI – Surge Tokens input and wiring
 
 **Files:**
+
 - Modify: `src/App.tsx`
 - Modify: `src/App.css` (if needed for layout/label)
 
 **Step 1: Add state and input**
 
 In `src/App.tsx`:
+
 - Add state: `const [surgeTokens, setSurgeTokens] = useState<string>('');`
 - Parse for calculation: `surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);`
 - In the `useMemo` for `results`, pass 4th argument: `calculateAttackPool(pool, surge, criticalXNum, surgeTokensNum)`
@@ -179,6 +189,7 @@ git commit -m "feat(ui): Surge Tokens input, disabled when surge conversion is n
 ### Task 5: Verification and docs
 
 **Files:**
+
 - Modify: `docs/plans/2026-02-25-surge-tokens-design.md` (optional: add “Implemented” note)
 - No code changes unless verification fails
 

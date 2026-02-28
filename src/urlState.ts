@@ -79,7 +79,11 @@ function parseNumber(value: string | null, defaultVal: number): number {
   return Math.floor(parsed);
 }
 
-function parseEnum<T extends string>(value: string | null, options: readonly T[], defaultVal: T): T {
+function parseEnum<T extends string>(
+  value: string | null,
+  options: readonly T[],
+  defaultVal: T
+): T {
   if (value === null || value === '') return defaultVal;
   return options.includes(value as T) ? (value as T) : defaultVal;
 }
@@ -120,7 +124,10 @@ export function parseFragment(hash: string): UrlState {
     cover: parseEnum(get('cover'), COVER_VALUES, DEFAULT_URL_STATE.cover),
     lowProf: parseBoolean(get('lowProf')),
     sup: parseBoolean(get('sup')),
-    coverX: Math.min(2, Math.max(0, parseNumber(get('coverX'), DEFAULT_URL_STATE.coverX))),
+    coverX: Math.min(
+      2,
+      Math.max(0, parseNumber(get('coverX'), DEFAULT_URL_STATE.coverX))
+    ),
     armor: parseNumber(get('armor'), DEFAULT_URL_STATE.armor),
     imp: parseBoolean(get('imp')),
     suppTok: parseNumber(get('suppTok'), DEFAULT_URL_STATE.suppTok),
@@ -129,11 +136,17 @@ export function parseFragment(hash: string): UrlState {
   };
 }
 
-function isDefault(key: keyof UrlState, value: UrlState[keyof UrlState]): boolean {
+function isDefault(
+  key: keyof UrlState,
+  value: UrlState[keyof UrlState]
+): boolean {
   const defaultVal = DEFAULT_URL_STATE[key];
-  if (typeof value === 'number' && typeof defaultVal === 'number') return value === defaultVal;
-  if (typeof value === 'boolean' && typeof defaultVal === 'boolean') return value === defaultVal;
-  if (typeof value === 'string' && typeof defaultVal === 'string') return value === defaultVal;
+  if (typeof value === 'number' && typeof defaultVal === 'number')
+    return value === defaultVal;
+  if (typeof value === 'boolean' && typeof defaultVal === 'boolean')
+    return value === defaultVal;
+  if (typeof value === 'string' && typeof defaultVal === 'string')
+    return value === defaultVal;
   return value === defaultVal;
 }
 
@@ -143,7 +156,8 @@ export function buildFragment(state: UrlState): string {
   for (const key of keys) {
     const value = state[key];
     if (!isDefault(key, value)) {
-      const serialized = typeof value === 'boolean' ? (value ? '1' : '0') : String(value);
+      const serialized =
+        typeof value === 'boolean' ? (value ? '1' : '0') : String(value);
       entries.push(`${key}=${encodeURIComponent(serialized)}`);
     }
   }

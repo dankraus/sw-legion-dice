@@ -9,7 +9,9 @@ interface TooltipProps {
 
 export function Tooltip({ title, children, fullWidth }: TooltipProps) {
   return (
-    <div className={`tooltip-wrapper${fullWidth ? ' tooltip-wrapper--full' : ''}`}>
+    <div
+      className={`tooltip-wrapper${fullWidth ? ' tooltip-wrapper--full' : ''}`}
+    >
       {children}
       <span className="tooltip" role="tooltip">
         {title}
