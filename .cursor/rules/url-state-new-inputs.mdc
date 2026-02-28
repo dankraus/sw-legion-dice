@@ -1,0 +1,32 @@
+---
+description: Add new keywords, tokens, and inputs to URL fragment handling so shared links stay in sync
+globs: src/App.tsx, src/urlState.ts
+alwaysApply: false
+---
+
+# URL State for New Inputs
+
+**Apply this rule every time you add a new keyword, token, or input value** (e.g. a new number input, toggle, or dice-pool option).
+
+Whenever you add state in `App.tsx` that affects the calculator configuration, also wire it into URL fragment handling so "Copy link" and shared URLs include the new value.
+
+## Checklist
+
+1. **`src/urlState.ts`**
+   - Add a **short key** to the `UrlState` interface (e.g. `crit`, `sTok`, `armor`, `backup`). Prefer the key names in `docs/plans/2026-02-28-url-fragment-share-design.md` if the design doc has a suggested key.
+   - Add the **default** for that key to `DEFAULT_URL_STATE`.
+   - In **`parseFragment`**: parse the key from `params` (e.g. `parseNumber(get('myKey'), DEFAULT_URL_STATE.myKey)`, `parseEnum(...)`, or `parseBoolean(get('myKey'))`). For new enums, add a `*_VALUES` array and use `parseEnum`.
+
+2. **`src/App.tsx`**
+   - **Init from URL:** In the lazy initializer for the new `useState`, read from `initialFromUrl` (e.g. `initialFromUrl?.myKey ?? default`). For numeric string state use `initialFromUrl ? (initialFromUrl.myKey === 0 ? '' : String(initialFromUrl.myKey)) : ''` when the UI uses `''` for zero.
+   - **Sync to URL:** In the `urlState` `useMemo`, add the field that maps React state to the new `UrlState` key, and add the relevant dependency to the dependency array.
+   - **Reset:** Ensure `handleReset` sets the new state to its default (you typically add this when adding the state).
+
+## Types
+
+- **Number (count or X):** `number` in UrlState, default `0`; parse with `parseNumber`; optional clamp (e.g. `coverX` 0–2).
+- **Enum:** string union in UrlState; add `OPTION_VALUES` array; parse with `parseEnum(get('key'), OPTION_VALUES, default)`.
+- **Boolean:** `boolean` in UrlState, default `false`; parse with `parseBoolean(get('key'))`; serialize as `'1'`/`'0'` in `buildFragment` (handled by existing code).
+- **Free string (e.g. point cost):** `string` in UrlState, default `''`; use `get('key') ?? default` in parse.
+
+After adding a new field, run `npm run test` and open a URL with the new param to confirm init and sync.
