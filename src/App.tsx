@@ -313,8 +313,6 @@ function App() {
             label="Surge"
             value={surgeTokens}
             onChange={setSurgeTokens}
-            disabled={surge !== 'none'}
-            title={surge !== 'none' ? 'Surge Tokens only apply when Surge Conversion is None.' : undefined}
             guideAnchor="surge-tokens"
           />
           <NumberInputWithControls
@@ -347,8 +345,7 @@ function App() {
             label="Precise"
             value={preciseX}
             onChange={setPreciseX}
-            disabled={aimTokensNum === 0}
-            title={aimTokensNum === 0 ? 'Precise only applies when using Aim tokens. Increases the dice rerolled with an Aim token by X.' : 'Extra rerolls per Aim token when using Aim.'}
+            title="Extra rerolls per Aim token when using Aim."
             guideAnchor="precise-x"
           />
           <NumberInputWithControls
@@ -410,7 +407,6 @@ function App() {
             title="When in cover, cancel one hit before rolling cover dice."
             checked={lowProfile}
             onChange={setLowProfile}
-            disabled={cover === 'none'}
             guideAnchor="low-profile"
           />
           <CheckboxToggle
@@ -488,12 +484,6 @@ function App() {
             value={defenseSurgeTokens}
             onChange={setDefenseSurgeTokens}
             min={0}
-            disabled={defenseSurge === 'block'}
-            title={
-              defenseSurge === 'block'
-                ? 'Defense Surge Tokens only apply when Defense Surge is None.'
-                : undefined
-            }
             guideAnchor="surge-tokens"
           />
           <NumberInputWithControls
