@@ -546,6 +546,14 @@ describe('calculateWounds', () => {
     expect(dodgeZero.distribution).toHaveLength(noDodge.distribution.length);
   });
 
+  it('shield 0 matches no-shield wounds', () => {
+    const attackResults = calculateAttackPool({ red: 2, black: 0, white: 0 }, 'none');
+    const noShield = calculateWounds(attackResults, 'red', 'none');
+    const shieldZero = calculateWounds(attackResults, 'red', 'none', 0, 0);
+    expect(shieldZero.expectedWounds).toBeCloseTo(noShield.expectedWounds);
+    expect(shieldZero.distribution).toHaveLength(noShield.distribution.length);
+  });
+
   it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice, effective attack total 3', () => {
     const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
     const attackWithHitsCrits = {
@@ -591,7 +599,7 @@ describe('calculateWounds', () => {
       distribution: [{ total: 2, probability: 1 }],
       distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
     };
-    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, true);
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, 0, true);
     expect(wounds.expectedWounds).toBeCloseTo(0.5); // 1 die, expected blocks 0.5
   });
 
@@ -602,7 +610,7 @@ describe('calculateWounds', () => {
       distribution: [{ total: 2, probability: 1 }],
       distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
     };
-    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, false);
+    const wounds = calculateWounds(attackWithHitsCrits, 'red', 'none', 1, 0, false);
     expect(wounds.expectedWounds).toBeCloseTo(0.5); // 1 die (crit only), expected blocks 0.5
   });
 
@@ -614,8 +622,8 @@ describe('calculateWounds', () => {
       distribution: [{ total: 2, probability: 1 }],
       distributionByHitsCrits: [{ hits: 1, crits: 1, probability: 1 }],
     };
-    const woundsOff = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, false);
-    const woundsOn = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, true);
+    const woundsOff = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, 0, false);
+    const woundsOn = calculateWounds(attackWithHitsCrits, 'red', 'none', 2, 0, true);
     expect(woundsOn.expectedWounds).toBeLessThan(woundsOff.expectedWounds);
   });
 
@@ -633,6 +641,7 @@ describe('calculateWounds', () => {
       undefined,
       undefined,
       undefined,
+      undefined,
       'none',
       false,
       false // suppressed false: no effective cover
@@ -641,6 +650,7 @@ describe('calculateWounds', () => {
       attackWithHits,
       'red',
       'none',
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -663,6 +673,7 @@ describe('calculateWounds', () => {
       'red',
       'none',
       0,
+      0,
       false,
       0,
       'none',
@@ -679,6 +690,7 @@ describe('calculateWounds', () => {
       attackWithHits,
       'red',
       'none',
+      0,
       0,
       false,
       0,
@@ -707,6 +719,7 @@ describe('calculateWounds', () => {
       'red',
       'none',
       0,
+      0,
       false,
       0,
       'none',
@@ -723,6 +736,7 @@ describe('calculateWounds', () => {
       attackWithHits,
       'red',
       'none',
+      0,
       0,
       false,
       0,
@@ -747,6 +761,7 @@ describe('calculateWounds', () => {
       'red',
       'none',
       0,
+      0,
       false,
       0,
       'none',
@@ -764,6 +779,7 @@ describe('calculateWounds', () => {
       attackResults,
       'red',
       'none',
+      0,
       0,
       false,
       0,
@@ -793,6 +809,7 @@ describe('calculateWounds', () => {
       'red',
       'none',
       0,
+      0,
       false,
       0,
       'none',
@@ -812,6 +829,7 @@ describe('calculateWounds', () => {
       attackWithHits,
       'red',
       'none',
+      0,
       0,
       false,
       0,

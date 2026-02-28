@@ -137,6 +137,7 @@ export function calculateWounds(
   defenseDieColor: DefenseDieColor,
   defenseSurge: DefenseSurgeConversion,
   dodgeTokens?: number,
+  shieldTokens?: number,
   outmaneuver?: boolean,
   defenseSurgeTokens?: number,
   cover?: CoverLevel,
@@ -163,7 +164,7 @@ export function calculateWounds(
     defenseDieColor,
     defenseSurge,
     dodgeTokens ?? 0,
-    0, // shieldTokens (Task 2 will add param to calculateWounds)
+    shieldTokens ?? 0,
     outmaneuver ?? false,
     defenseSurgeTokens ?? 0,
     cover ?? 'none',
