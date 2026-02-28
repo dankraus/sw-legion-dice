@@ -251,6 +251,7 @@ function App() {
             checked={suppressed}
             onChange={setSuppressed}
             disabled={cover === 'heavy'}
+            guideAnchor="suppressed"
           />
           <NumberInputWithControls
             id="cover-x"
@@ -260,6 +261,7 @@ function App() {
             min={0}
             max={2}
             title="Improve cover by X for cover rolls (none=0, light=1, heavy=2); cannot exceed heavy."
+            guideAnchor="cover-x"
           />
           <NumberInputWithControls
             id="armor-x"
@@ -268,6 +270,7 @@ function App() {
             onChange={setArmorX}
             min={0}
             title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
+            guideAnchor="armor-x"
           />
           <CheckboxToggle
             id="backup"

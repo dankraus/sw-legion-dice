@@ -6,13 +6,15 @@ alwaysApply: false
 
 # Link Keywords and Modifiers to Legion Quick Guide
 
+**Apply this rule every time you add a new keyword, token, or modifier** (e.g. Armor X, Cover X, Suppressed, or any future keyword/toggle/control).
+
 Whenever you add a new keyword, toggle, or control that adjusts attack/defense dice pools or outcomes:
 
-1. **Look up the rule** at [Legion Quick Guide](https://legionquickguide.com/). Find the matching entry (e.g. Critical X, Backup, Low Profile). Anchor format is lowercase with hyphens: `critical-x`, `low-profile`, `surge-tokens`.
+1. **Look up the rule** at [Legion Quick Guide](https://legionquickguide.com/). Find the matching entry (e.g. Critical X, Backup, Low Profile, Armor X, Cover X, Suppressed). Anchor format is lowercase with hyphens: `critical-x`, `low-profile`, `surge-tokens`, `armor-x`, `cover-x`, `suppressed`.
 
 2. **Add the link in the UI** using the existing pattern:
-   - For `NumberInputWithControls`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="critical-x"`).
-   - For `CheckboxToggle`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="backup"`).
+   - For `NumberInputWithControls`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="critical-x"`, `guideAnchor="armor-x"`, `guideAnchor="cover-x"`).
+   - For `CheckboxToggle`: pass `guideAnchor="anchor-name"` (e.g. `guideAnchor="backup"`, `guideAnchor="suppressed"`).
    - Links open in a new tab (`target="_blank"`); use `legionQuickGuideHref(anchor)` from `src/legionQuickGuide.ts`.
 
 3. **If the term is not on Legion Quick Guide**, omit `guideAnchor`; do not link to the homepage. Add a link only when there is a specific anchor for that rule.
