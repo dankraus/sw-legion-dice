@@ -142,10 +142,12 @@ export function calculateWounds(
   cover?: CoverLevel,
   lowProfile?: boolean,
   suppressed?: boolean,
+  coverX?: number,
   sharpshooterX?: number,
   backup?: boolean,
   pierceX?: number
 ): WoundsResults {
+  const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX ?? 0)));
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
     attackResults,
@@ -157,6 +159,7 @@ export function calculateWounds(
     cover ?? 'none',
     lowProfile ?? false,
     suppressed ?? false,
+    normalizedCoverX,
     sharpshooterX ?? 0,
     backup ?? false,
     pierceX ?? 0,
