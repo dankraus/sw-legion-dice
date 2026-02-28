@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { parseFragment } from './urlState';
 import type {
   AttackPool,
   SurgeConversion,
@@ -46,6 +47,38 @@ function App() {
   const [suppressionTokens, setSuppressionTokens] = useState<string>('');
   const [dangerSenseX, setDangerSenseX] = useState<string>('');
   const [backup, setBackup] = useState<boolean>(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === '' || hash === '#') return;
+    const parsed = parseFragment(hash);
+    setPool({ red: parsed.r, black: parsed.b, white: parsed.w });
+    setSurge(parsed.surge);
+    setCriticalX(parsed.crit === 0 ? '' : String(parsed.crit));
+    setSurgeTokens(parsed.sTok === 0 ? '' : String(parsed.sTok));
+    setAimTokens(parsed.aim === 0 ? '' : String(parsed.aim));
+    setObserveTokens(parsed.obs === 0 ? '' : String(parsed.obs));
+    setPreciseX(parsed.precise === 0 ? '' : String(parsed.precise));
+    setRamX(parsed.ram === 0 ? '' : String(parsed.ram));
+    setSharpshooterX(parsed.sharp === 0 ? '' : String(parsed.sharp));
+    setPierceX(parsed.pierce === 0 ? '' : String(parsed.pierce));
+    setImpactX(parsed.impact === 0 ? '' : String(parsed.impact));
+    setPointCost(parsed.cost);
+    setDefenseDieColor(parsed.dColor);
+    setDefenseSurge(parsed.dSurge);
+    setDefenseSurgeTokens(parsed.dSurgeTok === 0 ? '' : String(parsed.dSurgeTok));
+    setDodgeTokens(parsed.dodge === 0 ? '' : String(parsed.dodge));
+    setOutmaneuver(parsed.out);
+    setCover(parsed.cover);
+    setLowProfile(parsed.lowProf);
+    setSuppressed(parsed.sup);
+    setCoverX(parsed.coverX === 0 ? '' : String(parsed.coverX));
+    setArmorX(parsed.armor === 0 ? '' : String(parsed.armor));
+    setImpervious(parsed.imp);
+    setSuppressionTokens(parsed.suppTok === 0 ? '' : String(parsed.suppTok));
+    setDangerSenseX(parsed.danger === 0 ? '' : String(parsed.danger));
+    setBackup(parsed.backup);
+  }, []);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
   const surgeTokensNum = surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
