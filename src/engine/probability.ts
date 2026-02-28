@@ -147,7 +147,8 @@ export function calculateWounds(
   backup?: boolean,
   armorX?: number,
   impactX?: number,
-  pierceX?: number
+  pierceX?: number,
+  impervious?: boolean
 ): WoundsResults {
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX ?? 0)));
   const normalizedArmorX = Math.max(0, Math.floor(armorX ?? 0));
@@ -169,6 +170,7 @@ export function calculateWounds(
     normalizedArmorX,
     normalizedImpactX,
     pierceX ?? 0,
+    impervious ?? false,
     DEFAULT_RUNS,
     rng
   );
