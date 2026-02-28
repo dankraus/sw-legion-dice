@@ -554,6 +554,18 @@ describe('calculateWounds', () => {
     expect(shieldZero.distribution).toHaveLength(noShield.distribution.length);
   });
 
+  it('more shield tokens reduces expected wounds', () => {
+    const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
+    const attackWithHitsCrits = {
+      ...emptyPool,
+      distribution: [{ total: 3, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 2, crits: 1, probability: 1 }],
+    };
+    const woundsNoShield = calculateWounds(attackWithHitsCrits, 'red', 'none', 0, 0);
+    const woundsOneShield = calculateWounds(attackWithHitsCrits, 'red', 'none', 0, 1);
+    expect(woundsOneShield.expectedWounds).toBeLessThan(woundsNoShield.expectedWounds);
+  });
+
   it('one outcome 3 hits 1 crit, 1 dodge: 3 defense dice, effective attack total 3', () => {
     const emptyPool = calculateAttackPool({ red: 0, black: 0, white: 0 }, 'none');
     const attackWithHitsCrits = {
