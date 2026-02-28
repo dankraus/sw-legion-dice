@@ -43,6 +43,8 @@ function App() {
   const [coverX, setCoverX] = useState<string>('');
   const [armorX, setArmorX] = useState<string>('');
   const [impervious, setImpervious] = useState<boolean>(false);
+  const [suppressionTokens, setSuppressionTokens] = useState<string>('');
+  const [dangerSenseX, setDangerSenseX] = useState<string>('');
   const [backup, setBackup] = useState<boolean>(false);
 
   const criticalXNum = criticalX === '' ? undefined : Math.max(0, Math.floor(Number(criticalX)) || 0);
@@ -58,6 +60,8 @@ function App() {
   const dodgeTokensNum = dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
   const coverXNum = coverX === '' ? 0 : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0));
   const armorXNum = armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0);
+  const suppressionTokensNum = suppressionTokens === '' ? 0 : Math.max(0, Math.floor(Number(suppressionTokens)) || 0);
+  const dangerSenseXNum = dangerSenseX === '' ? 0 : Math.max(0, Math.floor(Number(dangerSenseX)) || 0);
   const impactXNum = impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0);
   const results = useMemo(
     () =>
@@ -92,9 +96,11 @@ function App() {
         armorXNum,
         impactXNum,
         pierceXNum,
-        impervious
+        impervious,
+        suppressionTokensNum,
+        dangerSenseXNum
       ),
-    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, impactXNum, pierceXNum, impervious]
+    [results, defenseDieColor, defenseSurge, dodgeTokensNum, outmaneuver, defenseSurgeTokensNum, cover, lowProfile, suppressed, coverXNum, sharpshooterXNum, backup, armorXNum, impactXNum, pierceXNum, impervious, suppressionTokensNum, dangerSenseXNum]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
@@ -124,6 +130,8 @@ function App() {
     setCoverX('');
     setArmorX('');
     setImpervious(false);
+    setSuppressionTokens('');
+    setDangerSenseX('');
     setBackup(false);
   };
 
@@ -254,6 +262,8 @@ function App() {
           <DefenseDiceToggle value={defenseDieColor} onChange={setDefenseDieColor} />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <CoverToggle value={cover} onChange={setCover} />
+
+          <h3 className="app__section-heading">Keywords</h3>
           <CheckboxToggle
             id="low-profile"
             label="Low Profile"
