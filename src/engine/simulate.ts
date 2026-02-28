@@ -420,6 +420,7 @@ export function simulateWounds(
   sharpshooterX: number = 0,
   backup: boolean = false,
   armorX: number = 0,
+  impactX: number = 0,
   pierceX: number = 0,
   runs: number,
   rng: () => number
@@ -461,7 +462,9 @@ export function simulateWounds(
       cover !== 'none' && lowProfile ? Math.max(0, final.hits - 1) : final.hits;
     const afterCover = applyCover(hitsForCover, final.crits, cover, rng, sharpshooterX, suppressed, normalizedCoverX);
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
-    const hitsAfterArmor = Math.max(0, afterCover.hits - normalizedArmorX);
+    const normalizedImpactX = Math.max(0, Math.floor(impactX));
+    const effectiveArmor = Math.max(0, normalizedArmorX - normalizedImpactX);
+    const hitsAfterArmor = Math.max(0, afterCover.hits - effectiveArmor);
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
@@ -517,6 +520,7 @@ export function simulateWoundsFromAttackResults(
   sharpshooterX: number = 0,
   backup: boolean = false,
   armorX: number = 0,
+  impactX: number = 0,
   pierceX: number = 0,
   runs: number,
   rng: () => number
@@ -552,7 +556,9 @@ export function simulateWoundsFromAttackResults(
       cover !== 'none' && lowProfile ? Math.max(0, hits - 1) : hits;
     const afterCover = applyCover(hitsForCover, crits, cover, rng, sharpshooterX, suppressed, normalizedCoverX);
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
-    const hitsAfterArmor = Math.max(0, afterCover.hits - normalizedArmorX);
+    const normalizedImpactX = Math.max(0, Math.floor(impactX));
+    const effectiveArmor = Math.max(0, normalizedArmorX - normalizedImpactX);
+    const hitsAfterArmor = Math.max(0, afterCover.hits - effectiveArmor);
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
