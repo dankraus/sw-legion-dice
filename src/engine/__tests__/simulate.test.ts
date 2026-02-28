@@ -1275,4 +1275,64 @@ describe('Danger Sense X in wounds simulation', () => {
     );
     expect(woundsDangerSense2.expectedWounds).toBeLessThanOrEqual(woundsNone.expectedWounds);
   });
+
+  it('Danger Sense 2 caps extra dice at 2: 3 tokens and 2 tokens yield same expected wounds', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 3,
+      expectedCrits: 1,
+      expectedTotal: 4,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 3, crits: 1, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const seed = 100;
+    const rngTwoTokens = createSeededRng(seed);
+    const rngThreeTokens = createSeededRng(seed);
+    const woundsTwoTokens = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      2, // suppressionTokens
+      2, // dangerSenseX
+      runs,
+      rngTwoTokens
+    );
+    const woundsThreeTokens = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      3, // suppressionTokens
+      2, // dangerSenseX
+      runs,
+      rngThreeTokens
+    );
+    expect(woundsThreeTokens.expectedWounds).toBeCloseTo(woundsTwoTokens.expectedWounds, 5);
+  });
 });
