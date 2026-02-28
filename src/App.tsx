@@ -349,7 +349,7 @@ function App() {
               />
               <h3 className="app__results-heading">Wounds</h3>
               <div className="stats-summary">
-                <div className="stats-summary__stat stats-summary__stat--total">
+                <div className="stats-summary__stat stats-summary__stat--wounds">
                   <span className="stats-summary__value">
                     {woundsResults.expectedWounds.toFixed(2)}
                   </span>
@@ -360,6 +360,7 @@ function App() {
                 distribution={woundsResults.distribution}
                 title="Wounds Distribution"
                 xAxisLabel="Wounds"
+                barColor="#dc2626"
               />
               <CumulativeTable
                 cumulative={woundsResults.cumulative}

@@ -24,6 +24,11 @@
   border-color: #22c55e;
 }
 
+.stats-summary__stat--wounds {
+  background: #fee2e2;
+  border-color: #dc2626;
+}
+
 .stats-summary__value {
   display: block;
   font-size: 2rem;

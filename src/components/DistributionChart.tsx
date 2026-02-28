@@ -4,12 +4,14 @@ interface DistributionChartProps {
   distribution: { total: number; probability: number }[];
   title?: string;
   xAxisLabel?: string;
+  barColor?: string;
 }
 
 export function DistributionChart({
   distribution,
   title = 'Probability Distribution',
   xAxisLabel = 'Total Successes',
+  barColor = '#3b82f6',
 }: DistributionChartProps) {
   const data = distribution.map((d) => ({
     ...d,
@@ -32,7 +34,7 @@ export function DistributionChart({
           <Tooltip formatter={(v) => [`${v}%`, 'Probability']} />
           <Bar dataKey="percent" radius={[4, 4, 0, 0]}>
             {data.map((_, index) => (
-              <Cell key={index} fill="#3b82f6" />
+              <Cell key={index} fill={barColor} />
             ))}
           </Bar>
         </BarChart>
