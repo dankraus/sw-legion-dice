@@ -57,7 +57,7 @@ describe('urlState', () => {
       const result = parseFragment('#r=1&unknown=foo&b=2');
       expect(result.r).toBe(1);
       expect(result.b).toBe(2);
-      expect((result as Record<string, unknown>)['unknown']).toBeUndefined();
+      expect('unknown' in result).toBe(false);
     });
   });
 

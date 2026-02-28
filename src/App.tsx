@@ -21,65 +21,73 @@ import { CumulativeTable } from './components/CumulativeTable';
 import './App.css';
 
 function App() {
-  const [pool, setPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
-  const [surge, setSurge] = useState<SurgeConversion>('none');
-  const [criticalX, setCriticalX] = useState<string>('');
-  const [surgeTokens, setSurgeTokens] = useState<string>('');
-  const [aimTokens, setAimTokens] = useState<string>('');
-  const [observeTokens, setObserveTokens] = useState<string>('');
-  const [preciseX, setPreciseX] = useState<string>('');
-  const [ramX, setRamX] = useState<string>('');
-  const [sharpshooterX, setSharpshooterX] = useState<string>('');
-  const [pierceX, setPierceX] = useState<string>('');
-  const [impactX, setImpactX] = useState<string>('');
-  const [pointCost, setPointCost] = useState<string>('');
-  const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>('red');
-  const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>('none');
-  const [defenseSurgeTokens, setDefenseSurgeTokens] = useState<string>('');
-  const [dodgeTokens, setDodgeTokens] = useState<string>('');
-  const [outmaneuver, setOutmaneuver] = useState<boolean>(false);
-  const [cover, setCover] = useState<CoverLevel>('none');
-  const [lowProfile, setLowProfile] = useState<boolean>(false);
-  const [suppressed, setSuppressed] = useState<boolean>(false);
-  const [coverX, setCoverX] = useState<string>('');
-  const [armorX, setArmorX] = useState<string>('');
-  const [impervious, setImpervious] = useState<boolean>(false);
-  const [suppressionTokens, setSuppressionTokens] = useState<string>('');
-  const [dangerSenseX, setDangerSenseX] = useState<string>('');
-  const [backup, setBackup] = useState<boolean>(false);
-  const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
-
-  useEffect(() => {
+  const initialFromUrl = useMemo(() => {
     const hash = window.location.hash;
-    if (hash === '' || hash === '#') return;
-    const parsed = parseFragment(hash);
-    setPool({ red: parsed.r, black: parsed.b, white: parsed.w });
-    setSurge(parsed.surge);
-    setCriticalX(parsed.crit === 0 ? '' : String(parsed.crit));
-    setSurgeTokens(parsed.sTok === 0 ? '' : String(parsed.sTok));
-    setAimTokens(parsed.aim === 0 ? '' : String(parsed.aim));
-    setObserveTokens(parsed.obs === 0 ? '' : String(parsed.obs));
-    setPreciseX(parsed.precise === 0 ? '' : String(parsed.precise));
-    setRamX(parsed.ram === 0 ? '' : String(parsed.ram));
-    setSharpshooterX(parsed.sharp === 0 ? '' : String(parsed.sharp));
-    setPierceX(parsed.pierce === 0 ? '' : String(parsed.pierce));
-    setImpactX(parsed.impact === 0 ? '' : String(parsed.impact));
-    setPointCost(parsed.cost);
-    setDefenseDieColor(parsed.dColor);
-    setDefenseSurge(parsed.dSurge);
-    setDefenseSurgeTokens(parsed.dSurgeTok === 0 ? '' : String(parsed.dSurgeTok));
-    setDodgeTokens(parsed.dodge === 0 ? '' : String(parsed.dodge));
-    setOutmaneuver(parsed.out);
-    setCover(parsed.cover);
-    setLowProfile(parsed.lowProf);
-    setSuppressed(parsed.sup);
-    setCoverX(parsed.coverX === 0 ? '' : String(parsed.coverX));
-    setArmorX(parsed.armor === 0 ? '' : String(parsed.armor));
-    setImpervious(parsed.imp);
-    setSuppressionTokens(parsed.suppTok === 0 ? '' : String(parsed.suppTok));
-    setDangerSenseX(parsed.danger === 0 ? '' : String(parsed.danger));
-    setBackup(parsed.backup);
+    if (hash === '' || hash === '#') return null;
+    return parseFragment(hash);
   }, []);
+
+  const [pool, setPool] = useState<AttackPool>(() => ({
+    red: initialFromUrl?.r ?? 0,
+    black: initialFromUrl?.b ?? 0,
+    white: initialFromUrl?.w ?? 0,
+  }));
+  const [surge, setSurge] = useState<SurgeConversion>(() => initialFromUrl?.surge ?? 'none');
+  const [criticalX, setCriticalX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.crit === 0 ? '' : String(initialFromUrl.crit)) : ''
+  );
+  const [surgeTokens, setSurgeTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.sTok === 0 ? '' : String(initialFromUrl.sTok)) : ''
+  );
+  const [aimTokens, setAimTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.aim === 0 ? '' : String(initialFromUrl.aim)) : ''
+  );
+  const [observeTokens, setObserveTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.obs === 0 ? '' : String(initialFromUrl.obs)) : ''
+  );
+  const [preciseX, setPreciseX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.precise === 0 ? '' : String(initialFromUrl.precise)) : ''
+  );
+  const [ramX, setRamX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.ram === 0 ? '' : String(initialFromUrl.ram)) : ''
+  );
+  const [sharpshooterX, setSharpshooterX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.sharp === 0 ? '' : String(initialFromUrl.sharp)) : ''
+  );
+  const [pierceX, setPierceX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.pierce === 0 ? '' : String(initialFromUrl.pierce)) : ''
+  );
+  const [impactX, setImpactX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.impact === 0 ? '' : String(initialFromUrl.impact)) : ''
+  );
+  const [pointCost, setPointCost] = useState<string>(() => initialFromUrl?.cost ?? '');
+  const [defenseDieColor, setDefenseDieColor] = useState<DefenseDieColor>(() => initialFromUrl?.dColor ?? 'red');
+  const [defenseSurge, setDefenseSurge] = useState<DefenseSurgeConversion>(() => initialFromUrl?.dSurge ?? 'none');
+  const [defenseSurgeTokens, setDefenseSurgeTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.dSurgeTok === 0 ? '' : String(initialFromUrl.dSurgeTok)) : ''
+  );
+  const [dodgeTokens, setDodgeTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.dodge === 0 ? '' : String(initialFromUrl.dodge)) : ''
+  );
+  const [outmaneuver, setOutmaneuver] = useState<boolean>(() => initialFromUrl?.out ?? false);
+  const [cover, setCover] = useState<CoverLevel>(() => initialFromUrl?.cover ?? 'none');
+  const [lowProfile, setLowProfile] = useState<boolean>(() => initialFromUrl?.lowProf ?? false);
+  const [suppressed, setSuppressed] = useState<boolean>(() => initialFromUrl?.sup ?? false);
+  const [coverX, setCoverX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.coverX === 0 ? '' : String(initialFromUrl.coverX)) : ''
+  );
+  const [armorX, setArmorX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.armor === 0 ? '' : String(initialFromUrl.armor)) : ''
+  );
+  const [impervious, setImpervious] = useState<boolean>(() => initialFromUrl?.imp ?? false);
+  const [suppressionTokens, setSuppressionTokens] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.suppTok === 0 ? '' : String(initialFromUrl.suppTok)) : ''
+  );
+  const [dangerSenseX, setDangerSenseX] = useState<string>(() =>
+    initialFromUrl ? (initialFromUrl.danger === 0 ? '' : String(initialFromUrl.danger)) : ''
+  );
+  const [backup, setBackup] = useState<boolean>(() => initialFromUrl?.backup ?? false);
+  const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
   const urlState = useMemo<UrlState>(
     () => ({
