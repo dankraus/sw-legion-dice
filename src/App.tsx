@@ -257,6 +257,14 @@ function App() {
             guideAnchor="low-profile"
           />
           <CheckboxToggle
+            id="backup"
+            label="Backup"
+            title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
+            checked={backup}
+            onChange={setBackup}
+            guideAnchor="backup"
+          />
+          <CheckboxToggle
             id="suppressed"
             label="Suppressed"
             title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
@@ -283,14 +291,6 @@ function App() {
             min={0}
             title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
             guideAnchor="armor-x"
-          />
-          <CheckboxToggle
-            id="backup"
-            label="Backup"
-            title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
-            checked={backup}
-            onChange={setBackup}
-            guideAnchor="backup"
           />
           <DefenseSurgeToggle value={defenseSurge} onChange={setDefenseSurge} />
           <h3 className="app__section-heading">Tokens</h3>
