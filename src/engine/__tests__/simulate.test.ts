@@ -382,6 +382,7 @@ describe('simulateWounds', () => {
       false, // lowProfile
       false, // suppressed
       0, // coverX
+      false, // dugIn
       0, // sharpshooterX
       false, // backup
       0, // armorX
@@ -421,6 +422,7 @@ describe('shield tokens in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -467,6 +469,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -490,6 +493,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -538,6 +542,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -561,6 +566,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -610,6 +616,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -633,6 +640,7 @@ describe('cover in wounds simulation', () => {
       true,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -678,6 +686,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -701,6 +710,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       1,
       false,
       0,
@@ -750,6 +760,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0, // coverX
+      false,
       0,
       false,
       0,
@@ -773,6 +784,7 @@ describe('cover in wounds simulation', () => {
       false,
       true,
       0, // coverX
+      false,
       0,
       false,
       0,
@@ -803,6 +815,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       0, // coverX
+      false,
       0,
       false,
       0,
@@ -826,6 +839,7 @@ describe('cover in wounds simulation', () => {
       false,
       false,
       1, // coverX
+      false,
       0,
       false,
       0,
@@ -839,6 +853,73 @@ describe('cover in wounds simulation', () => {
     );
     expect(woundsNoneCover1.expectedWounds).toBeLessThanOrEqual(
       woundsNoneCover0.expectedWounds
+    );
+  });
+});
+
+describe('Dug In in wounds simulation', () => {
+  it('dugIn true with light cover yields lower or equal expected wounds than dugIn false', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const rng = createSeededRng(42);
+    const woundsDugInOff = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'light',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      runs,
+      rng
+    );
+    const rngDugIn = createSeededRng(42);
+    const woundsDugInOn = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'light',
+      false,
+      false,
+      0,
+      true,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      runs,
+      rngDugIn
+    );
+    expect(woundsDugInOn.expectedWounds).toBeLessThanOrEqual(
+      woundsDugInOff.expectedWounds
     );
   });
 });
@@ -878,6 +959,7 @@ describe('backup in wounds simulation', () => {
       false,
       false,
       0, // coverX
+      false,
       0,
       false,
       0,
@@ -901,6 +983,7 @@ describe('backup in wounds simulation', () => {
       false,
       false,
       0, // coverX
+      false,
       0,
       true,
       0,
@@ -947,6 +1030,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -971,6 +1055,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1019,6 +1104,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1042,6 +1128,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       false,
       0, // coverX
+      false,
       0,
       false,
       0,
@@ -1096,6 +1183,7 @@ describe('Armor X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1119,6 +1207,7 @@ describe('Armor X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       3,
@@ -1175,6 +1264,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       3, // armorX
@@ -1198,6 +1288,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       3, // armorX
@@ -1239,6 +1330,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1262,6 +1354,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1302,6 +1395,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1325,6 +1419,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1367,6 +1462,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1390,6 +1486,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1431,6 +1528,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,
@@ -1454,6 +1552,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       false,
       0,
+      false,
       0,
       false,
       0,

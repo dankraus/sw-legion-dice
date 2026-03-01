@@ -443,6 +443,7 @@ export function simulateWounds(
   lowProfile: boolean,
   suppressed: boolean = false,
   coverX: number = 0,
+  dugIn: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
   armorX: number = 0,
@@ -460,6 +461,7 @@ export function simulateWounds(
     normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
+  const coverDieColor: DefenseDieColor = dugIn ? 'red' : 'white';
   const aim = normalizeTokenCount(aimTokens);
   const observe = normalizeTokenCount(observeTokens);
   const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
@@ -498,7 +500,8 @@ export function simulateWounds(
       rng,
       sharpshooterX,
       suppressed,
-      normalizedCoverX
+      normalizedCoverX,
+      coverDieColor
     );
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
     const normalizedImpactX = Math.max(0, Math.floor(impactX));
@@ -574,6 +577,7 @@ export function simulateWoundsFromAttackResults(
   lowProfile: boolean,
   suppressed: boolean = false,
   coverX: number = 0,
+  dugIn: boolean = false,
   sharpshooterX: number = 0,
   backup: boolean = false,
   armorX: number = 0,
@@ -591,6 +595,7 @@ export function simulateWoundsFromAttackResults(
     normalizeDefenseSurgeTokens(defenseSurgeTokens);
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
+  const coverDieColor: DefenseDieColor = dugIn ? 'red' : 'white';
   const normalizedSuppressionTokens = Math.max(
     0,
     Math.floor(suppressionTokens)
@@ -634,7 +639,8 @@ export function simulateWoundsFromAttackResults(
       rng,
       sharpshooterX,
       suppressed,
-      normalizedCoverX
+      normalizedCoverX,
+      coverDieColor
     );
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
     const normalizedImpactX = Math.max(0, Math.floor(impactX));
