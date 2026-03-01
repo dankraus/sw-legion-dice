@@ -25,6 +25,7 @@ export interface UrlState {
   shield: number;
   out: boolean;
   cover: CoverOption;
+  dugIn: boolean;
   lowProf: boolean;
   sup: boolean;
   coverX: number;
@@ -57,6 +58,7 @@ export const DEFAULT_URL_STATE: UrlState = {
   shield: 0,
   out: false,
   cover: 'none',
+  dugIn: false,
   lowProf: false,
   sup: false,
   coverX: 0,
@@ -122,6 +124,7 @@ export function parseFragment(hash: string): UrlState {
     shield: parseNumber(get('shield'), DEFAULT_URL_STATE.shield),
     out: parseBoolean(get('out')),
     cover: parseEnum(get('cover'), COVER_VALUES, DEFAULT_URL_STATE.cover),
+    dugIn: parseBoolean(get('dug')),
     lowProf: parseBoolean(get('lowProf')),
     sup: parseBoolean(get('sup')),
     coverX: Math.min(
@@ -153,12 +156,14 @@ function isDefault(
 export function buildFragment(state: UrlState): string {
   const entries: string[] = [];
   const keys = Object.keys(DEFAULT_URL_STATE) as (keyof UrlState)[];
+  const fragmentKey = (key: keyof UrlState) =>
+    key === 'dugIn' ? 'dug' : key;
   for (const key of keys) {
     const value = state[key];
     if (!isDefault(key, value)) {
       const serialized =
         typeof value === 'boolean' ? (value ? '1' : '0') : String(value);
-      entries.push(`${key}=${encodeURIComponent(serialized)}`);
+      entries.push(`${fragmentKey(key)}=${encodeURIComponent(serialized)}`);
     }
   }
   return entries.join('&');
