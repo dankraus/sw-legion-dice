@@ -760,14 +760,25 @@ function App() {
       </a>
 
       <footer className="app__footer">
-        Made in Massachusetts by{' '}
-        <a
-          href="http://www.dskraus.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Dan Kraus
-        </a>
+        <p className="app__footer-tagline">
+          Legion Roller is a dice simulator and probability calculator for Star
+          Wars Legion by Atomic Mass Games.
+        </p>
+        <p className="app__footer-disclaimer">
+          This site is not affiliated with, endorsed by, or connected with
+          Atomic Mass Games or The Walt Disney Company. Star Wars Legion and
+          related marks are trademarks of their respective owners.
+        </p>
+        <p>
+          Made in Massachusetts by{' '}
+          <a
+            href="http://www.dskraus.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Dan Kraus
+          </a>
+        </p>
       </footer>
     </div>
   );

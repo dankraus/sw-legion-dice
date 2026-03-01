@@ -173,6 +173,24 @@
   color: #6b7280;
 }
 
+.app__footer p {
+  margin: 0 0 0.5rem;
+}
+
+.app__footer p:last-child {
+  margin-bottom: 0;
+}
+
+.app__footer-tagline {
+  font-weight: 500;
+  color: #374151;
+}
+
+.app__footer-disclaimer {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
 .app__footer a {
   color: #3b82f6;
   text-decoration: none;
