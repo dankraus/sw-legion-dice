@@ -135,7 +135,7 @@ export function getEffectiveCover(
   return improved;
 }
 
-/** Apply cover: roll hits white dice; light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. Sharpshooter X reduces effective cover before rolling. */
+/** Apply cover: roll hits with given defense die color (default white); light = blocks cancel hits, heavy = blocks+surges cancel hits; crits unchanged. Sharpshooter X reduces effective cover before rolling. */
 export function applyCover(
   hits: number,
   crits: number,
@@ -143,7 +143,8 @@ export function applyCover(
   rng: () => number,
   sharpshooterX?: number,
   suppressed?: boolean,
-  coverX?: number
+  coverX?: number,
+  coverDieColor?: DefenseDieColor
 ): { hits: number; crits: number } {
   const effective = getEffectiveCover(
     cover,
@@ -155,7 +156,7 @@ export function applyCover(
   let blockCount = 0;
   let surgeCount = 0;
   for (let i = 0; i < hits; i++) {
-    const face = rollOneDefenseDieOutcome('white', rng);
+    const face = rollOneDefenseDieOutcome(coverDieColor ?? 'white', rng);
     if (face === 'block') blockCount++;
     else if (face === 'surge') surgeCount++;
   }

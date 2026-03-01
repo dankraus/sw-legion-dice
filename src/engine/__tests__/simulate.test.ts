@@ -348,6 +348,14 @@ describe('applyCover', () => {
     const lightNoCoverX = applyCover(2, 1, 'light', rng2, 0);
     expect(noneCover1).toEqual(lightNoCoverX);
   });
+  it('coverDieColor red: with same seed can cancel more hits than white (red has more blocks)', () => {
+    const rngWhite = createSeededRng(777);
+    const rngRed = createSeededRng(777);
+    const withWhite = applyCover(4, 2, 'heavy', rngWhite, 0);
+    const withRed = applyCover(4, 2, 'heavy', rngRed, 0, false, undefined, 'red');
+    // Red die has 3 block faces vs white 1; so red should cancel at least as many hits
+    expect(withRed.hits).toBeLessThanOrEqual(withWhite.hits);
+  });
 });
 
 describe('simulateWounds', () => {
