@@ -595,6 +595,13 @@ function App() {
               onChange={setDefenseSurge}
             />
             <CoverToggle value={cover} onChange={setCover} />
+            <CheckboxToggle
+              id="dug-in"
+              label="Dug In"
+              title="When in cover, roll red defense dice for the cover roll instead of white."
+              checked={dugIn}
+              onChange={setDugIn}
+            />
 
             <h3 className="app__section-heading">Keywords</h3>
             <CheckboxToggle
