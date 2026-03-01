@@ -738,28 +738,33 @@ function App() {
         </section>
       </div>
 
-      <p className="app__github-note">
-        Spotted a problem?{' '}
-        <a
-          href="https://github.com/dskraus/legion-dice/issues"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open an issue on the Github page
-        </a>{' '}
-        and let me know.
-      </p>
-
-      <a href="https://ko-fi.com/E1E31V2I7V" target="_blank">
-        <img
-          height="36"
-          style={{ border: '0px', height: '36px' }}
-          src="https://storage.ko-fi.com/cdn/kofi3.png?v=6"
-          alt="Support Legion Roller on Ko-fi"
-        />
-      </a>
-
       <footer className="app__footer">
+        <div className="app__footer-bar">
+          <a
+            className="app__footer-kofi"
+            href="https://ko-fi.com/E1E31V2I7V"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              height="36"
+              style={{ border: '0px', height: '36px' }}
+              src="https://storage.ko-fi.com/cdn/kofi3.png?v=6"
+              alt="Support Legion Roller on Ko-fi"
+            />
+          </a>
+          <p className="app__footer-links">
+            Spotted a problem?{' '}
+            <a
+              href="https://github.com/dskraus/legion-dice/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open an issue on the Github page
+            </a>{' '}
+            and let me know.
+          </p>
+        </div>
         <p className="app__footer-tagline">
           Legion Roller is a dice simulator and probability calculator for Star
           Wars Legion by Atomic Mass Games.
@@ -769,7 +774,7 @@ function App() {
           Atomic Mass Games or The Walt Disney Company. Star Wars Legion and
           related marks are trademarks of their respective owners.
         </p>
-        <p>
+        <p className="app__footer-credit">
           Made in Massachusetts by{' '}
           <a
             href="http://www.dskraus.com"

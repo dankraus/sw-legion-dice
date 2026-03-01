@@ -150,27 +150,30 @@
   padding: 3rem 0;
 }
 
-.app__github-note {
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
+.app__footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #d1d5db;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.app__footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.app__footer-links {
+  margin: 0;
   font-size: 0.95rem;
   color: #6b7280;
 }
 
-.app__github-note a {
-  color: #3b82f6;
-  text-decoration: none;
-}
-
-.app__github-note a:hover {
-  text-decoration: underline;
-}
-
-.app__footer {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-size: 0.9rem;
-  color: #6b7280;
+.app__footer-kofi {
+  flex-shrink: 0;
 }
 
 .app__footer p {
@@ -189,6 +192,10 @@
 .app__footer-disclaimer {
   font-size: 0.8rem;
   color: #9ca3af;
+}
+
+.app__footer-credit {
+  margin-top: 0.25rem;
 }
 
 .app__footer a {
