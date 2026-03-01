@@ -134,6 +134,9 @@ function App() {
   const [cover, setCover] = useState<CoverLevel>(
     () => initialFromUrl?.cover ?? 'none'
   );
+  const [dugIn, setDugIn] = useState<boolean>(
+    () => initialFromUrl?.dugIn ?? false
+  );
   const [lowProfile, setLowProfile] = useState<boolean>(
     () => initialFromUrl?.lowProf ?? false
   );
@@ -222,6 +225,7 @@ function App() {
           : Math.max(0, Math.floor(Number(shieldTokens)) || 0),
       out: outmaneuver,
       cover,
+      dugIn,
       lowProf: lowProfile,
       sup: suppressed,
       coverX:
@@ -262,6 +266,7 @@ function App() {
       shieldTokens,
       outmaneuver,
       cover,
+      dugIn,
       lowProfile,
       suppressed,
       coverX,
@@ -367,6 +372,7 @@ function App() {
         lowProfile,
         suppressed,
         coverXNum,
+        dugIn,
         sharpshooterXNum,
         backup,
         armorXNum,
@@ -388,6 +394,7 @@ function App() {
       lowProfile,
       suppressed,
       coverXNum,
+      dugIn,
       sharpshooterXNum,
       backup,
       armorXNum,
@@ -434,6 +441,7 @@ function App() {
     setShieldTokens('');
     setOutmaneuver(false);
     setCover('none');
+    setDugIn(false);
     setLowProfile(false);
     setSuppressed(false);
     setCoverX('');
@@ -629,6 +637,7 @@ function App() {
               title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
               checked={impervious}
               onChange={setImpervious}
+              guideAnchor="impervious"
             />
             <NumberInputWithControls
               id="cover-x"
@@ -656,6 +665,7 @@ function App() {
               onChange={setDangerSenseX}
               min={0}
               title="While defending, roll one extra defense die per suppression token, up to X extra dice."
+              guideAnchor="danger-sense-x"
             />
             <h3 className="app__section-heading">Tokens</h3>
             <NumberInputWithControls
@@ -673,6 +683,7 @@ function App() {
               onChange={setShieldTokens}
               min={0}
               title="Cancel one hit or one crit per token before rolling defense (applied after cover, before dodge)."
+              guideAnchor="shield-tokens"
             />
             <NumberInputWithControls
               id="dodge-tokens"
@@ -689,6 +700,7 @@ function App() {
               onChange={setSuppressionTokens}
               min={0}
               title="Number of suppression tokens on the defender; used by Danger Sense X for extra defense dice."
+              guideAnchor="suppression"
             />
           </div>
         </section>
