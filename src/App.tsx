@@ -510,7 +510,7 @@ function App() {
               label="Aim"
               value={aimTokens}
               onChange={setAimTokens}
-              title="Reroll up to 2 blank dice per Aim token"
+              title="Each Aim token: reroll up to 2 blanks"
               guideAnchor="aim"
             />
             <NumberInputWithControls
@@ -518,7 +518,7 @@ function App() {
               label="Observe"
               value={observeTokens}
               onChange={setObserveTokens}
-              title="Reroll up to 1 blank die per Observe token"
+              title="Each Observe token: reroll 1 blank."
               guideAnchor="observe-x"
             />
             <h3 className="app__section-heading">Keywords</h3>

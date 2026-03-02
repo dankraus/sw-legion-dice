@@ -253,7 +253,14 @@ describe('Aim and Observe tokens', () => {
     expect(oneObserve.expectedCrits).toBeCloseTo(1 / 8 + (5 / 8) * (1 / 8), 1);
   });
 
-  it('1 Aim token with 1 white die: reroll capacity 2, only 1 blank so same as 1 Observe', () => {
+  it('2 Observe with 1 white die: two rounds so can reroll that blank again if still blank', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 1 };
+    const oneObserve = calculateAttackPool(pool, 'none', undefined, 0, 0, 1);
+    const twoObserve = calculateAttackPool(pool, 'none', undefined, 0, 0, 2);
+    expect(twoObserve.expectedTotal).toBeGreaterThan(oneObserve.expectedTotal);
+  });
+
+  it('1 Aim token with 1 white die: one round, up to 2 dice, only 1 blank so same as 1 Observe', () => {
     const pool: AttackPool = { red: 0, black: 0, white: 1 };
     const oneObserve = calculateAttackPool(pool, 'none', undefined, 0, 0, 1);
     const oneAim = calculateAttackPool(pool, 'none', undefined, 0, 1, 0);

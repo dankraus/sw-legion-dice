@@ -45,6 +45,12 @@ export interface RawAttackCounts {
   blank: number;
 }
 
+/** Per-die outcome for one attack die (used for repeated rerolls). */
+export interface DieOutcome {
+  color: DieColor;
+  face: AttackFace;
+}
+
 export function rollAttackPool(
   pool: AttackPool,
   rng: () => number
@@ -57,6 +63,34 @@ export function rollAttackPool(
       const face = rollOneAttackDie(color, rng);
       counts[face]++;
     }
+  }
+  return counts;
+}
+
+/** Roll attack pool and return per-die outcomes (order: reds, blacks, whites). */
+export function rollAttackPoolDetailed(
+  pool: AttackPool,
+  rng: () => number
+): DieOutcome[] {
+  const outcomes: DieOutcome[] = [];
+  const colors: DieColor[] = ['red', 'black', 'white'];
+  for (const color of colors) {
+    const number = pool[color];
+    for (let i = 0; i < number; i++) {
+      outcomes.push({
+        color,
+        face: rollOneAttackDie(color, rng),
+      });
+    }
+  }
+  return outcomes;
+}
+
+/** Sum per-die outcomes to raw (crit, surge, hit, blank) counts. */
+export function aggregateToRawCounts(outcomes: DieOutcome[]): RawAttackCounts {
+  const counts: RawAttackCounts = { crit: 0, surge: 0, hit: 0, blank: 0 };
+  for (const outcome of outcomes) {
+    counts[outcome.face]++;
   }
   return counts;
 }
@@ -197,7 +231,67 @@ function normalizeTokenCount(value: number | undefined | null): number {
   return Math.floor(num);
 }
 
-/** Apply rerolls: up to capacity blanks are rerolled (one die from pool per reroll), outcomes added via surge conversion. */
+/**
+ * Reroll rounds: each Aim token = one round in which you may reroll up to (2 + preciseX) dice
+ * simultaneously; each Observe token = one round in which you may reroll 1 die.
+ * In a round you cannot reroll the same die twice; a die can be rerolled again in a later round.
+ */
+export function getRerollRounds(
+  aimTokens: number,
+  observeTokens: number,
+  preciseX: number
+): number[] {
+  const aim = normalizeTokenCount(aimTokens);
+  const observe = normalizeTokenCount(observeTokens);
+  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
+  const aimCapacity = 2 + preciseXVal;
+  const rounds: number[] = [];
+  for (let i = 0; i < aim; i++) rounds.push(aimCapacity);
+  for (let i = 0; i < observe; i++) rounds.push(1);
+  return rounds;
+}
+
+/** Reroll priority by color: red (most hit faces) first, then black, then white. */
+const REROLL_PRIORITY: Record<DieColor, number> = {
+  red: 0,
+  black: 1,
+  white: 2,
+};
+
+/**
+ * Apply rerolls by rounds: each round you may reroll up to roundCapacity dice (simultaneously).
+ * Blanks are chosen by color priority: red first, then black, then white.
+ * A die can be rerolled again in a later round but at most once per round.
+ * Mutates outcomes in place.
+ */
+export function applyRerollsByRounds(
+  outcomes: DieOutcome[],
+  roundCapacities: number[],
+  rng: () => number
+): void {
+  for (const roundCapacity of roundCapacities) {
+    if (roundCapacity <= 0) continue;
+    const blankIndices: number[] = [];
+    for (let index = 0; index < outcomes.length; index++) {
+      if (outcomes[index].face === 'blank') blankIndices.push(index);
+    }
+    if (blankIndices.length === 0) continue;
+    blankIndices.sort(
+      (indexA, indexB) =>
+        REROLL_PRIORITY[outcomes[indexA]!.color] -
+        REROLL_PRIORITY[outcomes[indexB]!.color]
+    );
+    const numToReroll = Math.min(roundCapacity, blankIndices.length);
+    for (let i = 0; i < numToReroll; i++) {
+      const chosenIndex = blankIndices[i] as number;
+      const chosen = outcomes[chosenIndex];
+      if (chosen === undefined) continue;
+      chosen.face = rollOneAttackDie(chosen.color, rng);
+    }
+  }
+}
+
+/** Apply rerolls (by-round rules): used when callers have raw counts + pool. */
 export function applyRerolls(
   rawCounts: RawAttackCounts,
   resolveResult: { hits: number; crits: number },
@@ -208,38 +302,36 @@ export function applyRerolls(
   preciseX: number,
   rng: () => number
 ): { hits: number; crits: number } {
-  const aim = normalizeTokenCount(aimTokens);
-  const observe = normalizeTokenCount(observeTokens);
-  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
-  const capacity = aim * (2 + preciseXVal) + observe;
-  const blanks = rawCounts.blank;
-  const numRerolls = Math.min(capacity, blanks);
-  let hits = resolveResult.hits;
-  let crits = resolveResult.crits;
+  const roundCapacities = getRerollRounds(aimTokens, observeTokens, preciseX);
   const totalDice = pool.red + pool.black + pool.white;
-  if (totalDice === 0 || numRerolls <= 0) return { hits, crits };
+  if (totalDice === 0 || roundCapacities.length === 0) return { ...resolveResult };
   const colors: DieColor[] = ['red', 'black', 'white'];
-  for (let i = 0; i < numRerolls; i++) {
-    const index = Math.floor(rng() * totalDice);
-    let remaining = index;
-    let chosenColor: DieColor = 'white';
-    for (const color of colors) {
-      const count = pool[color];
-      if (remaining < count) {
-        chosenColor = color;
-        break;
-      }
-      remaining -= count;
-    }
-    const face = rollOneAttackDie(chosenColor, rng);
-    if (face === 'crit') crits += 1;
-    else if (face === 'hit') hits += 1;
-    else if (face === 'surge') {
-      if (surge === 'crit') crits += 1;
-      else if (surge === 'hit') hits += 1;
+  const outcomes: DieOutcome[] = [];
+  let critIndex = 0;
+  let surgeIndex = 0;
+  let hitIndex = 0;
+  let blankIndex = 0;
+  for (const color of colors) {
+    const count = pool[color];
+    for (let i = 0; i < count; i++) {
+      const which =
+        critIndex < rawCounts.crit
+          ? 'crit'
+          : surgeIndex < rawCounts.surge
+            ? 'surge'
+            : hitIndex < rawCounts.hit
+              ? 'hit'
+              : 'blank';
+      if (which === 'crit') critIndex++;
+      else if (which === 'surge') surgeIndex++;
+      else if (which === 'hit') hitIndex++;
+      else blankIndex++;
+      outcomes.push({ color, face: which as AttackFace });
     }
   }
-  return { hits, crits };
+  applyRerollsByRounds(outcomes, roundCapacities, rng);
+  const after = aggregateToRawCounts(outcomes);
+  return resolveStep(after, undefined, surge, undefined);
 }
 
 /** Apply Ram X: convert up to X blanks to crits, then up to remaining X hits to crits. */
@@ -279,29 +371,17 @@ export function simulateAttackPool(
   const totalHistogram: Record<number, number> = {};
   const hitsCritsHistogram = new Map<string, number>();
 
-  const aim = normalizeTokenCount(aimTokens);
-  const observe = normalizeTokenCount(observeTokens);
-  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
-  const capacity = aim * (2 + preciseXVal) + observe;
+  const roundCapacities = getRerollRounds(aimTokens, observeTokens, preciseX);
 
   for (let run = 0; run < runs; run++) {
-    const raw = rollAttackPool(pool, rng);
+    const outcomes = rollAttackPoolDetailed(pool, rng);
+    applyRerollsByRounds(outcomes, roundCapacities, rng);
+    const raw = aggregateToRawCounts(outcomes);
     const resolved = resolveStep(raw, criticalX, surge, surgeTokens);
-    const afterRerolls = applyRerolls(
-      raw,
-      resolved,
-      pool,
-      surge,
-      aimTokens,
-      observeTokens,
-      preciseX,
-      rng
-    );
-    const numRerolls = Math.min(capacity, raw.blank);
-    const blanksAfterReroll = raw.blank - numRerolls;
+    const blanksAfterReroll = raw.blank;
     const final = applyRam(
-      afterRerolls.hits,
-      afterRerolls.crits,
+      resolved.hits,
+      resolved.crits,
       blanksAfterReroll,
       ram
     );
@@ -462,32 +542,20 @@ export function simulateWounds(
   const normalizedPierceX = Math.max(0, Math.floor(pierceX));
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX)));
   const coverDieColor: DefenseDieColor = dugIn ? 'red' : 'white';
-  const aim = normalizeTokenCount(aimTokens);
-  const observe = normalizeTokenCount(observeTokens);
-  const preciseXVal = aim > 0 ? Math.max(0, Math.floor(preciseX) || 0) : 0;
-  const capacity = aim * (2 + preciseXVal) + observe;
+  const roundCapacities = getRerollRounds(aimTokens, observeTokens, preciseX);
 
   const woundsHistogram: Record<number, number> = {};
   let sumWounds = 0;
 
   for (let run = 0; run < runs; run++) {
-    const raw = rollAttackPool(pool, rng);
+    const outcomes = rollAttackPoolDetailed(pool, rng);
+    applyRerollsByRounds(outcomes, roundCapacities, rng);
+    const raw = aggregateToRawCounts(outcomes);
     const resolved = resolveStep(raw, criticalX, surge, surgeTokens);
-    const afterRerolls = applyRerolls(
-      raw,
-      resolved,
-      pool,
-      surge,
-      aimTokens,
-      observeTokens,
-      preciseX,
-      rng
-    );
-    const numRerolls = Math.min(capacity, raw.blank);
-    const blanksAfterReroll = raw.blank - numRerolls;
+    const blanksAfterReroll = raw.blank;
     const final = applyRam(
-      afterRerolls.hits,
-      afterRerolls.crits,
+      resolved.hits,
+      resolved.crits,
       blanksAfterReroll,
       ram
     );

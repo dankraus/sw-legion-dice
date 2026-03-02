@@ -105,7 +105,7 @@ describe('resolveStep', () => {
 });
 
 describe('applyRerolls', () => {
-  it('zero capacity leaves hits and crits unchanged', () => {
+  it('zero reroll rounds (no Aim or Observe) leaves hits and crits unchanged', () => {
     const rng = createSeededRng(1);
     const result = applyRerolls(
       { crit: 0, surge: 0, hit: 1, blank: 2 },
