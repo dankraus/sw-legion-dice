@@ -742,6 +742,14 @@ function App() {
                     </span>
                     <span className="stats-summary__label">Avg Wounds</span>
                   </div>
+                  {parsedCost > 0 && woundsResults.expectedWounds > 0 && (
+                    <div className="stats-summary__stat stats-summary__stat--efficiency">
+                      <span className="stats-summary__value">
+                        {(parsedCost / woundsResults.expectedWounds).toFixed(1)}
+                      </span>
+                      <span className="stats-summary__label">Pts / Avg Wound</span>
+                    </div>
+                  )}
                 </div>
                 <DistributionChart
                   distribution={woundsResults.distribution}
