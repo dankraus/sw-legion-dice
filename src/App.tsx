@@ -479,283 +479,283 @@ function App() {
 
       <main className="app__main">
         <div className="app__layout">
-        <section className="app__pool">
-          <div className="app__attack-pool">
-            <h2 className="app__section-heading">Attack Pool</h2>
-            <DiceSelector
-              color="red"
-              count={pool.red}
-              onChange={(n) => setPool((p) => ({ ...p, red: n }))}
-            />
-            <DiceSelector
-              color="black"
-              count={pool.black}
-              onChange={(n) => setPool((p) => ({ ...p, black: n }))}
-            />
-            <DiceSelector
-              color="white"
-              count={pool.white}
-              onChange={(n) => setPool((p) => ({ ...p, white: n }))}
-            />
-            <AttackSurgeToggle value={surge} onChange={setSurge} />
-            <h3 className="app__section-heading">Tokens</h3>
-            <NumberInputWithControls
-              id="surge-tokens"
-              label="Surge"
-              value={surgeTokens}
-              onChange={setSurgeTokens}
-              guideAnchor="surge-tokens"
-            />
-            <NumberInputWithControls
-              id="aim-tokens"
-              label="Aim"
-              value={aimTokens}
-              onChange={setAimTokens}
-              title="Each Aim token: reroll up to 2 blanks"
-              guideAnchor="aim"
-            />
-            <NumberInputWithControls
-              id="observe-tokens"
-              label="Observe"
-              value={observeTokens}
-              onChange={setObserveTokens}
-              title="Each Observe token: reroll 1 blank."
-              guideAnchor="observe-x"
-            />
-            <h3 className="app__section-heading">Keywords</h3>
-            <NumberInputWithControls
-              id="critical-x"
-              label="Critical"
-              value={criticalX}
-              onChange={setCriticalX}
-              title="Convert up to X surges to crits (before Surge Conversion)"
-              guideAnchor="critical-x"
-            />
-            <NumberInputWithControls
-              id="precise-x"
-              label="Precise"
-              value={preciseX}
-              onChange={setPreciseX}
-              title="Extra rerolls per Aim token when using Aim."
-              guideAnchor="precise-x"
-            />
-            <NumberInputWithControls
-              id="ram-x"
-              label="Ram"
-              value={ramX}
-              onChange={setRamX}
-              title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
-              guideAnchor="ram-x"
-            />
-            <NumberInputWithControls
-              id="sharpshooter-x"
-              label="Sharpshooter"
-              value={sharpshooterX}
-              onChange={setSharpshooterX}
-              title="Reduce cover: 1 = heavy→light, light→none; 2 = heavy/light→none"
-              guideAnchor="sharpshooter-x"
-            />
-            <NumberInputWithControls
-              id="impact-x"
-              label="Impact"
-              value={impactX}
-              onChange={setImpactX}
-              min={0}
-              title="Up to X hits bypass armor when determining how many hits armor cancels."
-            />
-            <NumberInputWithControls
-              id="pierce-x"
-              label="Pierce"
-              value={pierceX}
-              onChange={setPierceX}
-              min={0}
-              title="Cancel up to X blocks on the final defense roll"
-              guideAnchor="pierce-x"
-            />
-            <div className="app__point-cost">
-              <label htmlFor="point-cost">Unit Point Cost</label>
-              <input
-                id="point-cost"
-                type="number"
-                min="0"
-                placeholder="Optional"
-                value={pointCost}
-                onChange={(e) => setPointCost(e.target.value)}
+          <section className="app__pool">
+            <div className="app__attack-pool">
+              <h2 className="app__section-heading">Attack Pool</h2>
+              <DiceSelector
+                color="red"
+                count={pool.red}
+                onChange={(n) => setPool((p) => ({ ...p, red: n }))}
+              />
+              <DiceSelector
+                color="black"
+                count={pool.black}
+                onChange={(n) => setPool((p) => ({ ...p, black: n }))}
+              />
+              <DiceSelector
+                color="white"
+                count={pool.white}
+                onChange={(n) => setPool((p) => ({ ...p, white: n }))}
+              />
+              <AttackSurgeToggle value={surge} onChange={setSurge} />
+              <h3 className="app__section-heading">Tokens</h3>
+              <NumberInputWithControls
+                id="surge-tokens"
+                label="Surge"
+                value={surgeTokens}
+                onChange={setSurgeTokens}
+                guideAnchor="surge-tokens"
+              />
+              <NumberInputWithControls
+                id="aim-tokens"
+                label="Aim"
+                value={aimTokens}
+                onChange={setAimTokens}
+                title="Each Aim token: reroll up to 2 blanks"
+                guideAnchor="aim"
+              />
+              <NumberInputWithControls
+                id="observe-tokens"
+                label="Observe"
+                value={observeTokens}
+                onChange={setObserveTokens}
+                title="Each Observe token: reroll 1 blank."
+                guideAnchor="observe-x"
+              />
+              <h3 className="app__section-heading">Keywords</h3>
+              <NumberInputWithControls
+                id="critical-x"
+                label="Critical"
+                value={criticalX}
+                onChange={setCriticalX}
+                title="Convert up to X surges to crits (before Surge Conversion)"
+                guideAnchor="critical-x"
+              />
+              <NumberInputWithControls
+                id="precise-x"
+                label="Precise"
+                value={preciseX}
+                onChange={setPreciseX}
+                title="Extra rerolls per Aim token when using Aim."
+                guideAnchor="precise-x"
+              />
+              <NumberInputWithControls
+                id="ram-x"
+                label="Ram"
+                value={ramX}
+                onChange={setRamX}
+                title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
+                guideAnchor="ram-x"
+              />
+              <NumberInputWithControls
+                id="sharpshooter-x"
+                label="Sharpshooter"
+                value={sharpshooterX}
+                onChange={setSharpshooterX}
+                title="Reduce cover: 1 = heavy→light, light→none; 2 = heavy/light→none"
+                guideAnchor="sharpshooter-x"
+              />
+              <NumberInputWithControls
+                id="impact-x"
+                label="Impact"
+                value={impactX}
+                onChange={setImpactX}
+                min={0}
+                title="Up to X hits bypass armor when determining how many hits armor cancels."
+              />
+              <NumberInputWithControls
+                id="pierce-x"
+                label="Pierce"
+                value={pierceX}
+                onChange={setPierceX}
+                min={0}
+                title="Cancel up to X blocks on the final defense roll"
+                guideAnchor="pierce-x"
+              />
+              <div className="app__point-cost">
+                <label htmlFor="point-cost">Unit Point Cost</label>
+                <input
+                  id="point-cost"
+                  type="number"
+                  min="0"
+                  placeholder="Optional"
+                  value={pointCost}
+                  onChange={(e) => setPointCost(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="app__defense-pool">
+              <h2 className="app__section-heading">Defense Pool</h2>
+              <DefenseDiceToggle
+                value={defenseDieColor}
+                onChange={setDefenseDieColor}
+              />
+              <DefenseSurgeToggle
+                value={defenseSurge}
+                onChange={setDefenseSurge}
+              />
+              <CoverToggle value={cover} onChange={setCover} />
+              <CheckboxToggle
+                id="dug-in"
+                label="Dug In"
+                title="When in cover, roll red defense dice for the cover roll instead of white."
+                checked={dugIn}
+                onChange={setDugIn}
+              />
+
+              <h3 className="app__section-heading">Keywords</h3>
+              <CheckboxToggle
+                id="low-profile"
+                label="Low Profile"
+                title="When in cover, cancel one hit before rolling cover dice."
+                checked={lowProfile}
+                onChange={setLowProfile}
+                guideAnchor="low-profile"
+              />
+              <CheckboxToggle
+                id="backup"
+                label="Backup"
+                title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
+                checked={backup}
+                onChange={setBackup}
+                guideAnchor="backup"
+              />
+
+              <CheckboxToggle
+                id="outmaneuver"
+                label="Outmaneuver"
+                title="Dodge tokens can cancel crits as well as hits."
+                checked={outmaneuver}
+                onChange={setOutmaneuver}
+                guideAnchor="outmaneuver"
+              />
+              <CheckboxToggle
+                id="suppressed"
+                label="Suppressed"
+                title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
+                checked={suppressed}
+                onChange={setSuppressed}
+                disabled={cover === 'heavy'}
+                guideAnchor="suppressed"
+              />
+              <CheckboxToggle
+                id="impervious"
+                label="Impervious"
+                title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
+                checked={impervious}
+                onChange={setImpervious}
+                guideAnchor="impervious"
+              />
+              <NumberInputWithControls
+                id="cover-x"
+                label="Cover"
+                value={coverX}
+                onChange={setCoverX}
+                min={0}
+                max={2}
+                title="Improve cover by X for cover rolls (none=0, light=1, heavy=2); cannot exceed heavy."
+                guideAnchor="cover-x"
+              />
+              <NumberInputWithControls
+                id="armor-x"
+                label="Armor"
+                value={armorX}
+                onChange={setArmorX}
+                min={0}
+                title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
+                guideAnchor="armor-x"
+              />
+              <NumberInputWithControls
+                id="danger-sense-x"
+                label="Danger Sense"
+                value={dangerSenseX}
+                onChange={setDangerSenseX}
+                min={0}
+                title="While defending, roll one extra defense die per suppression token, up to X extra dice."
+                guideAnchor="danger-sense-x"
+              />
+              <h3 className="app__section-heading">Tokens</h3>
+              <NumberInputWithControls
+                id="defense-surge-tokens"
+                label="Surge"
+                value={defenseSurgeTokens}
+                onChange={setDefenseSurgeTokens}
+                min={0}
+                guideAnchor="surge-tokens"
+              />
+              <NumberInputWithControls
+                id="shield-tokens"
+                label="Shield"
+                value={shieldTokens}
+                onChange={setShieldTokens}
+                min={0}
+                title="Cancel one hit or one crit per token before rolling defense (applied after cover, before dodge)."
+                guideAnchor="shield-tokens"
+              />
+              <NumberInputWithControls
+                id="dodge-tokens"
+                label="Dodge"
+                value={dodgeTokens}
+                onChange={setDodgeTokens}
+                title="Cancel one hit per token before rolling defense; crits cannot be dodged."
+                guideAnchor="dodge"
+              />
+              <NumberInputWithControls
+                id="suppression-tokens"
+                label="Suppression"
+                value={suppressionTokens}
+                onChange={setSuppressionTokens}
+                min={0}
+                title="Number of suppression tokens on the defender; used by Danger Sense X for extra defense dice."
+                guideAnchor="suppression"
               />
             </div>
-          </div>
+          </section>
 
-          <div className="app__defense-pool">
-            <h2 className="app__section-heading">Defense Pool</h2>
-            <DefenseDiceToggle
-              value={defenseDieColor}
-              onChange={setDefenseDieColor}
-            />
-            <DefenseSurgeToggle
-              value={defenseSurge}
-              onChange={setDefenseSurge}
-            />
-            <CoverToggle value={cover} onChange={setCover} />
-            <CheckboxToggle
-              id="dug-in"
-              label="Dug In"
-              title="When in cover, roll red defense dice for the cover roll instead of white."
-              checked={dugIn}
-              onChange={setDugIn}
-            />
-
-            <h3 className="app__section-heading">Keywords</h3>
-            <CheckboxToggle
-              id="low-profile"
-              label="Low Profile"
-              title="When in cover, cancel one hit before rolling cover dice."
-              checked={lowProfile}
-              onChange={setLowProfile}
-              guideAnchor="low-profile"
-            />
-            <CheckboxToggle
-              id="backup"
-              label="Backup"
-              title="Backup is possible for Ranged 3+ shots and removes up to two hits when rolling defense dice."
-              checked={backup}
-              onChange={setBackup}
-              guideAnchor="backup"
-            />
-
-            <CheckboxToggle
-              id="outmaneuver"
-              label="Outmaneuver"
-              title="Dodge tokens can cancel crits as well as hits."
-              checked={outmaneuver}
-              onChange={setOutmaneuver}
-              guideAnchor="outmaneuver"
-            />
-            <CheckboxToggle
-              id="suppressed"
-              label="Suppressed"
-              title="Improve cover by 1 for cover rolls (none→light, light→heavy)."
-              checked={suppressed}
-              onChange={setSuppressed}
-              disabled={cover === 'heavy'}
-              guideAnchor="suppressed"
-            />
-            <CheckboxToggle
-              id="impervious"
-              label="Impervious"
-              title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
-              checked={impervious}
-              onChange={setImpervious}
-              guideAnchor="impervious"
-            />
-            <NumberInputWithControls
-              id="cover-x"
-              label="Cover"
-              value={coverX}
-              onChange={setCoverX}
-              min={0}
-              max={2}
-              title="Improve cover by X for cover rolls (none=0, light=1, heavy=2); cannot exceed heavy."
-              guideAnchor="cover-x"
-            />
-            <NumberInputWithControls
-              id="armor-x"
-              label="Armor"
-              value={armorX}
-              onChange={setArmorX}
-              min={0}
-              title="Cancel up to X hits after cover, before defense dice; crits are not reduced."
-              guideAnchor="armor-x"
-            />
-            <NumberInputWithControls
-              id="danger-sense-x"
-              label="Danger Sense"
-              value={dangerSenseX}
-              onChange={setDangerSenseX}
-              min={0}
-              title="While defending, roll one extra defense die per suppression token, up to X extra dice."
-              guideAnchor="danger-sense-x"
-            />
-            <h3 className="app__section-heading">Tokens</h3>
-            <NumberInputWithControls
-              id="defense-surge-tokens"
-              label="Surge"
-              value={defenseSurgeTokens}
-              onChange={setDefenseSurgeTokens}
-              min={0}
-              guideAnchor="surge-tokens"
-            />
-            <NumberInputWithControls
-              id="shield-tokens"
-              label="Shield"
-              value={shieldTokens}
-              onChange={setShieldTokens}
-              min={0}
-              title="Cancel one hit or one crit per token before rolling defense (applied after cover, before dodge)."
-              guideAnchor="shield-tokens"
-            />
-            <NumberInputWithControls
-              id="dodge-tokens"
-              label="Dodge"
-              value={dodgeTokens}
-              onChange={setDodgeTokens}
-              title="Cancel one hit per token before rolling defense; crits cannot be dodged."
-              guideAnchor="dodge"
-            />
-            <NumberInputWithControls
-              id="suppression-tokens"
-              label="Suppression"
-              value={suppressionTokens}
-              onChange={setSuppressionTokens}
-              min={0}
-              title="Number of suppression tokens on the defender; used by Danger Sense X for extra defense dice."
-              guideAnchor="suppression"
-            />
-          </div>
-        </section>
-
-        <section className="app__results">
-          {totalDice === 0 ? (
-            <p className="app__empty">Add dice to see results.</p>
-          ) : (
-            <>
-              <h3 className="app__results-heading">Attack</h3>
-              <StatsSummary
-                expectedHits={results.expectedHits}
-                expectedCrits={results.expectedCrits}
-                expectedTotal={results.expectedTotal}
-                pointCost={parsedCost > 0 ? parsedCost : undefined}
-              />
-              <DistributionChart
-                distribution={results.distribution}
-                title="Attack Distribution"
-                xAxisLabel="Total Successes"
-              />
-              <CumulativeTable
-                cumulative={results.cumulative}
-                title="Attack: At Least N Successes"
-              />
-              <h3 className="app__results-heading">Wounds</h3>
-              <div className="stats-summary">
-                <div className="stats-summary__stat stats-summary__stat--wounds">
-                  <span className="stats-summary__value">
-                    {woundsResults.expectedWounds.toFixed(2)}
-                  </span>
-                  <span className="stats-summary__label">Avg Wounds</span>
+          <section className="app__results">
+            {totalDice === 0 ? (
+              <p className="app__empty">Add dice to see results.</p>
+            ) : (
+              <>
+                <h3 className="app__results-heading">Attack</h3>
+                <StatsSummary
+                  expectedHits={results.expectedHits}
+                  expectedCrits={results.expectedCrits}
+                  expectedTotal={results.expectedTotal}
+                  pointCost={parsedCost > 0 ? parsedCost : undefined}
+                />
+                <DistributionChart
+                  distribution={results.distribution}
+                  title="Attack Distribution"
+                  xAxisLabel="Total Successes"
+                />
+                <CumulativeTable
+                  cumulative={results.cumulative}
+                  title="Attack: At Least N Successes"
+                />
+                <h3 className="app__results-heading">Wounds</h3>
+                <div className="stats-summary">
+                  <div className="stats-summary__stat stats-summary__stat--wounds">
+                    <span className="stats-summary__value">
+                      {woundsResults.expectedWounds.toFixed(2)}
+                    </span>
+                    <span className="stats-summary__label">Avg Wounds</span>
+                  </div>
                 </div>
-              </div>
-              <DistributionChart
-                distribution={woundsResults.distribution}
-                title="Wounds Distribution"
-                xAxisLabel="Wounds"
-                barColor="#dc2626"
-              />
-              <CumulativeTable
-                cumulative={woundsResults.cumulative}
-                title="At Least N Wounds"
-              />
-            </>
-          )}
-        </section>
+                <DistributionChart
+                  distribution={woundsResults.distribution}
+                  title="Wounds Distribution"
+                  xAxisLabel="Wounds"
+                  barColor="#dc2626"
+                />
+                <CumulativeTable
+                  cumulative={woundsResults.cumulative}
+                  title="At Least N Wounds"
+                />
+              </>
+            )}
+          </section>
         </div>
       </main>
 
@@ -777,7 +777,7 @@ function App() {
           <p className="app__footer-links">
             Spotted a problem?{' '}
             <a
-              href="https://github.com/dskraus/legion-dice/issues"
+              href="https://github.com/dankraus/sw-legion-dice/issues"
               target="_blank"
               rel="noopener noreferrer"
             >
