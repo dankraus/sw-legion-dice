@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  min-height: 48px;
+  padding: 0.25rem 0;
   cursor: pointer;
 }
 
@@ -22,6 +23,9 @@
 
 .checkbox-toggle__input {
   margin: 0;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .checkbox-toggle--disabled {
