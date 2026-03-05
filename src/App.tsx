@@ -477,7 +477,8 @@ function App() {
         </div>
       </header>
 
-      <div className="app__layout">
+      <main className="app__main">
+        <div className="app__layout">
         <section className="app__pool">
           <div className="app__attack-pool">
             <h2 className="app__section-heading">Attack Pool</h2>
@@ -755,7 +756,8 @@ function App() {
             </>
           )}
         </section>
-      </div>
+        </div>
+      </main>
 
       <footer className="app__footer">
         <div className="app__footer-bar">
