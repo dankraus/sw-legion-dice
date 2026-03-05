@@ -145,7 +145,7 @@
 
 .app__empty {
   text-align: center;
-  color: #9ca3af;
+  color: #4b5563;
   font-size: 1.1rem;
   padding: 3rem 0;
 }
@@ -155,7 +155,7 @@
   padding-top: 1.5rem;
   border-top: 2px solid #d1d5db;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #4b5563;
 }
 
 .app__footer-bar {
@@ -169,7 +169,7 @@
 .app__footer-links {
   margin: 0;
   font-size: 0.95rem;
-  color: #6b7280;
+  color: #4b5563;
 }
 
 .app__footer-kofi {
@@ -191,7 +191,7 @@
 
 .app__footer-disclaimer {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: #4b5563;
 }
 
 .app__footer-credit {
@@ -200,9 +200,15 @@
 
 .app__footer a {
   color: #3b82f6;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .app__footer a:hover {
-  text-decoration: underline;
+  color: #2563eb;
+}
+
+.app__footer a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
