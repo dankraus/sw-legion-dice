@@ -199,16 +199,16 @@
 }
 
 .app__footer a {
-  color: #3b82f6;
+  color: #1d4ed8;
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
 
 .app__footer a:hover {
-  color: #2563eb;
+  color: #1e40af;
 }
 
 .app__footer a:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }
