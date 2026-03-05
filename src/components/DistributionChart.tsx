@@ -21,9 +21,9 @@ export function DistributionChart({
   xAxisLabel = 'Total Successes',
   barColor = '#3b82f6',
 }: DistributionChartProps) {
-  const data = distribution.map((d) => ({
-    ...d,
-    percent: +(d.probability * 100).toFixed(1),
+  const data = distribution.map((entry) => ({
+    ...entry,
+    percent: +(entry.probability * 100).toFixed(1),
   }));
 
   return (
@@ -39,10 +39,10 @@ export function DistributionChart({
             label={{ value: xAxisLabel, position: 'insideBottom', offset: -15 }}
           />
           <YAxis
-            tickFormatter={(v: number) => `${v}%`}
+            tickFormatter={(value: number) => `${value}%`}
             label={{ value: 'Probability', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip formatter={(v) => [`${v}%`, 'Probability']} />
+          <Tooltip formatter={(value) => [`${value}%`, 'Probability']} />
           <Bar dataKey="percent" radius={[4, 4, 0, 0]}>
             {data.map((_, index) => (
               <Cell key={index} fill={barColor} />
