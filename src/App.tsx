@@ -562,6 +562,7 @@ function App() {
                 onChange={setImpactX}
                 min={0}
                 title="Up to X hits bypass armor when determining how many hits armor cancels."
+                guideAnchor="impact-x"
               />
               <NumberInputWithControls
                 id="pierce-x"
