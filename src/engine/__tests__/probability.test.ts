@@ -990,6 +990,58 @@ describe('calculateWounds', () => {
     );
   });
 
+  it('impactX 2 with 2 hits 0 crits: armorX 2 and armorX 3 give identical expected wounds', () => {
+    const emptyPool = calculateAttackPool(
+      { red: 0, black: 0, white: 0 },
+      'none'
+    );
+    const attackTwoHits = {
+      ...emptyPool,
+      distribution: [{ total: 2, probability: 1 }],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+    };
+    const woundsArmor2 = calculateWounds(
+      attackTwoHits,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      2,
+      2,
+      0
+    );
+    const woundsArmor3 = calculateWounds(
+      attackTwoHits,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      3,
+      2,
+      0
+    );
+    expect(woundsArmor2.expectedWounds).toBe(woundsArmor3.expectedWounds);
+    expect(woundsArmor2.distribution).toEqual(woundsArmor3.distribution);
+  });
+
   it('impervious true with pierce 2 yields lower or equal expected wounds than impervious false', () => {
     const pool = { red: 2, black: 0, white: 0 };
     const attackResults = calculateAttackPool(pool, 'hit');

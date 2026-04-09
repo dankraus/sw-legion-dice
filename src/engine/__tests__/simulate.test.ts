@@ -1304,6 +1304,78 @@ describe('Impact X in wounds simulation', () => {
       woundsImpact0.expectedWounds
     );
   });
+
+  it('impactX 2 with 2 hits 0 crits: armorX 2 and armorX 3 give identical wounds distribution', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [
+        { total: 0, probability: 0 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 1 },
+      ],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [
+        { total: 0, probability: 1 },
+        { total: 1, probability: 0 },
+        { total: 2, probability: 0 },
+      ],
+    };
+    const runs = 5000;
+    const rngArmor2 = createSeededRng(4242);
+    const rngArmor3 = createSeededRng(4242);
+    const woundsArmor2 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      2,
+      2,
+      0,
+      false,
+      0,
+      0,
+      runs,
+      rngArmor2
+    );
+    const woundsArmor3 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      3,
+      2,
+      0,
+      false,
+      0,
+      0,
+      runs,
+      rngArmor3
+    );
+    expect(woundsArmor2.expectedWounds).toBe(woundsArmor3.expectedWounds);
+    expect(woundsArmor2.distribution).toEqual(woundsArmor3.distribution);
+  });
 });
 
 describe('Impervious in wounds simulation', () => {

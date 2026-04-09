@@ -116,6 +116,31 @@ function normalizeDefenseSurgeTokens(value: number | undefined | null): number {
   return Math.floor(num);
 }
 
+/**
+ * Impact converts hit results to critical results (vs Armor) before Armor cancels
+ * hit results only.
+ */
+function resolveImpactThenArmor(
+  hitsAfterCover: number,
+  critsAfterCover: number,
+  normalizedArmorX: number,
+  normalizedImpactX: number
+): { hitsAfterArmor: number; critsAfterImpact: number } {
+  let hitsAfterImpact = hitsAfterCover;
+  let critsAfterImpact = critsAfterCover;
+  if (normalizedArmorX > 0 && normalizedImpactX > 0) {
+    const convertedHitCount = Math.min(
+      normalizedImpactX,
+      hitsAfterCover
+    );
+    hitsAfterImpact = hitsAfterCover - convertedHitCount;
+    critsAfterImpact = critsAfterCover + convertedHitCount;
+  }
+  const hitsCanceledByArmor = Math.min(normalizedArmorX, hitsAfterImpact);
+  const hitsAfterArmor = hitsAfterImpact - hitsCanceledByArmor;
+  return { hitsAfterArmor, critsAfterImpact };
+}
+
 /** Resolve defense roll: blocks + (surge block ? surges : min(tokens, surges)). */
 export function resolveDefenseRoll(
   blocks: number,
@@ -573,15 +598,19 @@ export function simulateWounds(
     );
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
     const normalizedImpactX = Math.max(0, Math.floor(impactX));
-    const effectiveArmor = Math.max(0, normalizedArmorX - normalizedImpactX);
-    const hitsAfterArmor = Math.max(0, afterCover.hits - effectiveArmor);
+    const { hitsAfterArmor, critsAfterImpact } = resolveImpactThenArmor(
+      afterCover.hits,
+      afterCover.crits,
+      normalizedArmorX,
+      normalizedImpactX
+    );
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
-    const critsAfterShields = Math.max(0, afterCover.crits - normalizedShields);
+    const critsAfterShields = Math.max(0, critsAfterImpact - normalizedShields);
     const hitsAfterShields = Math.max(
       0,
-      hitsAfterBackup - Math.max(0, normalizedShields - afterCover.crits)
+      hitsAfterBackup - Math.max(0, normalizedShields - critsAfterImpact)
     );
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)
@@ -712,15 +741,19 @@ export function simulateWoundsFromAttackResults(
     );
     const normalizedArmorX = Math.max(0, Math.floor(armorX));
     const normalizedImpactX = Math.max(0, Math.floor(impactX));
-    const effectiveArmor = Math.max(0, normalizedArmorX - normalizedImpactX);
-    const hitsAfterArmor = Math.max(0, afterCover.hits - effectiveArmor);
+    const { hitsAfterArmor, critsAfterImpact } = resolveImpactThenArmor(
+      afterCover.hits,
+      afterCover.crits,
+      normalizedArmorX,
+      normalizedImpactX
+    );
     const hitsAfterBackup = backup
       ? Math.max(0, hitsAfterArmor - 2)
       : hitsAfterArmor;
-    const critsAfterShields = Math.max(0, afterCover.crits - normalizedShields);
+    const critsAfterShields = Math.max(0, critsAfterImpact - normalizedShields);
     const hitsAfterShields = Math.max(
       0,
-      hitsAfterBackup - Math.max(0, normalizedShields - afterCover.crits)
+      hitsAfterBackup - Math.max(0, normalizedShields - critsAfterImpact)
     );
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)

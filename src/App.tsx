@@ -561,7 +561,7 @@ function App() {
                 value={impactX}
                 onChange={setImpactX}
                 min={0}
-                title="Up to X hits bypass armor when determining how many hits armor cancels."
+                title="Vs. a unit with Armor: convert up to X hit results to critical hit results before Armor cancels hit results (Armor affects hits only)."
                 guideAnchor="impact-x"
               />
               <NumberInputWithControls
