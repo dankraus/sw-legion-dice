@@ -91,6 +91,24 @@ export function rollAttackPoolDetailed(
   return outcomes;
 }
 
+export function rollDefensePoolDetailed(
+  pool: DefensePool,
+  rng: () => number
+): DefenseDieOutcome[] {
+  const outcomes: DefenseDieOutcome[] = [];
+  const colors: DefenseDieColor[] = ['red', 'white'];
+  for (const color of colors) {
+    const number = pool[color];
+    for (let dieIndex = 0; dieIndex < number; dieIndex++) {
+      outcomes.push({
+        color,
+        face: rollOneDefenseDieOutcome(color, rng),
+      });
+    }
+  }
+  return outcomes;
+}
+
 /** Sum per-die outcomes to raw (crit, surge, hit, blank) counts. */
 export function aggregateToRawCounts(outcomes: DieOutcome[]): RawAttackCounts {
   const counts: RawAttackCounts = { crit: 0, surge: 0, hit: 0, blank: 0 };

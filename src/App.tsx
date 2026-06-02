@@ -20,6 +20,7 @@ import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
 import { CumulativeTable } from './components/CumulativeTable';
 import { RulebookVersion } from './components/RulebookVersion';
+import { DiceRollerModal } from './components/DiceRollerModal';
 import './App.css';
 
 function App() {
@@ -187,6 +188,7 @@ function App() {
     () => initialFromUrl?.backup ?? false
   );
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
+  const [diceRollerOpen, setDiceRollerOpen] = useState(false);
 
   const simulationInputs = useMemo(
     () => ({
@@ -571,6 +573,14 @@ function App() {
           <button
             type="button"
             className="app__reset"
+            onClick={() => setDiceRollerOpen(true)}
+            title="Roll a dice pool to see its outcome"
+          >
+            Quick roll
+          </button>
+          <button
+            type="button"
+            className="app__reset"
             onClick={handleCopyLink}
             title="Copy URL with current settings"
           >
@@ -581,6 +591,10 @@ function App() {
           </button>
         </div>
       </header>
+
+      {diceRollerOpen ? (
+        <DiceRollerModal onClose={() => setDiceRollerOpen(false)} />
+      ) : null}
 
       <main className="app__main">
         <div className="app__layout">
