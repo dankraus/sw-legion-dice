@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useDebouncedValue } from './useDebouncedValue';
 import { parseFragment, buildFragment, type UrlState } from './urlState';
 import type {
   AttackPool,
@@ -189,77 +190,40 @@ function App() {
   );
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
-  const urlState = useMemo<UrlState>(
+  const simulationInputs = useMemo(
     () => ({
-      r: pool.red,
-      b: pool.black,
-      w: pool.white,
+      pool,
       surge,
-      crit:
-        criticalX === '' ? 0 : Math.max(0, Math.floor(Number(criticalX)) || 0),
-      sTok:
-        surgeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(surgeTokens)) || 0),
-      aim:
-        aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0),
-      obs:
-        observeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(observeTokens)) || 0),
-      precise:
-        preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0),
-      ram: ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0),
-      assault:
-        assaultX === '' ? 0 : Math.max(0, Math.floor(Number(assaultX)) || 0),
-      sharp:
-        sharpshooterX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(sharpshooterX)) || 0),
-      pierce:
-        pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0),
-      impact:
-        impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0),
-      cost: pointCost,
-      dColor: defenseDieColor,
-      dSurge: defenseSurge,
-      dSurgeTok:
-        defenseSurgeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0),
-      dodge:
-        dodgeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(dodgeTokens)) || 0),
-      shield:
-        shieldTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(shieldTokens)) || 0),
-      out: outmaneuver,
+      criticalX,
+      surgeTokens,
+      aimTokens,
+      observeTokens,
+      preciseX,
+      ramX,
+      assaultX,
+      sharpshooterX,
+      pierceX,
+      impactX,
+      pointCost,
+      defenseDieColor,
+      defenseSurge,
+      defenseSurgeTokens,
+      dodgeTokens,
+      shieldTokens,
+      outmaneuver,
       cover,
       dugIn,
-      lowProf: lowProfile,
-      sup: suppressed,
-      coverX:
-        coverX === ''
-          ? 0
-          : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0)),
-      armor: armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0),
-      imp: impervious,
-      suppTok:
-        suppressionTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(suppressionTokens)) || 0),
-      danger:
-        dangerSenseX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(dangerSenseX)) || 0),
+      lowProfile,
+      suppressed,
+      coverX,
+      armorX,
+      impervious,
+      suppressionTokens,
+      dangerSenseX,
       backup,
     }),
     [
-      pool.red,
-      pool.black,
-      pool.white,
+      pool,
       surge,
       criticalX,
       surgeTokens,
@@ -291,6 +255,105 @@ function App() {
     ]
   );
 
+  const debouncedInputs = useDebouncedValue(simulationInputs);
+
+  const urlState = useMemo<UrlState>(
+    () => ({
+      r: debouncedInputs.pool.red,
+      b: debouncedInputs.pool.black,
+      w: debouncedInputs.pool.white,
+      surge: debouncedInputs.surge,
+      crit:
+        debouncedInputs.criticalX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.criticalX)) || 0),
+      sTok:
+        debouncedInputs.surgeTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.surgeTokens)) || 0),
+      aim:
+        debouncedInputs.aimTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.aimTokens)) || 0),
+      obs:
+        debouncedInputs.observeTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.observeTokens)) || 0),
+      precise:
+        debouncedInputs.preciseX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.preciseX)) || 0),
+      ram:
+        debouncedInputs.ramX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0),
+      assault:
+        debouncedInputs.assaultX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.assaultX)) || 0),
+      sharp:
+        debouncedInputs.sharpshooterX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.sharpshooterX)) || 0),
+      pierce:
+        debouncedInputs.pierceX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.pierceX)) || 0),
+      impact:
+        debouncedInputs.impactX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.impactX)) || 0),
+      cost: debouncedInputs.pointCost,
+      dColor: debouncedInputs.defenseDieColor,
+      dSurge: debouncedInputs.defenseSurge,
+      dSurgeTok:
+        debouncedInputs.defenseSurgeTokens === ''
+          ? 0
+          : Math.max(
+              0,
+              Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0
+            ),
+      dodge:
+        debouncedInputs.dodgeTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.dodgeTokens)) || 0),
+      shield:
+        debouncedInputs.shieldTokens === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.shieldTokens)) || 0),
+      out: debouncedInputs.outmaneuver,
+      cover: debouncedInputs.cover,
+      dugIn: debouncedInputs.dugIn,
+      lowProf: debouncedInputs.lowProfile,
+      sup: debouncedInputs.suppressed,
+      coverX:
+        debouncedInputs.coverX === ''
+          ? 0
+          : Math.min(
+              2,
+              Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0)
+            ),
+      armor:
+        debouncedInputs.armorX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.armorX)) || 0),
+      imp: debouncedInputs.impervious,
+      suppTok:
+        debouncedInputs.suppressionTokens === ''
+          ? 0
+          : Math.max(
+              0,
+              Math.floor(Number(debouncedInputs.suppressionTokens)) || 0
+            ),
+      danger:
+        debouncedInputs.dangerSenseX === ''
+          ? 0
+          : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0),
+      backup: debouncedInputs.backup,
+    }),
+    [debouncedInputs]
+  );
+
   useEffect(() => {
     const fragment = buildFragment(urlState);
     const url =
@@ -301,63 +364,88 @@ function App() {
   }, [urlState]);
 
   const criticalXNum =
-    criticalX === ''
+    debouncedInputs.criticalX === ''
       ? undefined
-      : Math.max(0, Math.floor(Number(criticalX)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.criticalX)) || 0);
   const surgeTokensNum =
-    surgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(surgeTokens)) || 0);
-  const aimTokensNum =
-    aimTokens === '' ? 0 : Math.max(0, Math.floor(Number(aimTokens)) || 0);
-  const observeTokensNum =
-    observeTokens === ''
+    debouncedInputs.surgeTokens === ''
       ? 0
-      : Math.max(0, Math.floor(Number(observeTokens)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.surgeTokens)) || 0);
+  const aimTokensNum =
+    debouncedInputs.aimTokens === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.aimTokens)) || 0);
+  const observeTokensNum =
+    debouncedInputs.observeTokens === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.observeTokens)) || 0);
   const preciseXNum =
-    preciseX === '' ? 0 : Math.max(0, Math.floor(Number(preciseX)) || 0);
-  const ramXNum = ramX === '' ? 0 : Math.max(0, Math.floor(Number(ramX)) || 0);
+    debouncedInputs.preciseX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.preciseX)) || 0);
+  const ramXNum =
+    debouncedInputs.ramX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0);
   const assaultXNum =
-    assaultX === '' ? 0 : Math.max(0, Math.floor(Number(assaultX)) || 0);
+    debouncedInputs.assaultX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.assaultX)) || 0);
   const effectivePool = useMemo(
-    () => resolveEffectiveAttackPool(pool, { assaultX: assaultXNum }),
-    [pool, assaultXNum]
+    () =>
+      resolveEffectiveAttackPool(debouncedInputs.pool, {
+        assaultX: assaultXNum,
+      }),
+    [debouncedInputs.pool, assaultXNum]
   );
   const sharpshooterXNum =
-    sharpshooterX === ''
+    debouncedInputs.sharpshooterX === ''
       ? 0
-      : Math.max(0, Math.floor(Number(sharpshooterX)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.sharpshooterX)) || 0);
   const pierceXNum =
-    pierceX === '' ? 0 : Math.max(0, Math.floor(Number(pierceX)) || 0);
+    debouncedInputs.pierceX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.pierceX)) || 0);
   const defenseSurgeTokensNum =
-    defenseSurgeTokens === ''
+    debouncedInputs.defenseSurgeTokens === ''
       ? 0
-      : Math.max(0, Math.floor(Number(defenseSurgeTokens)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0);
   const dodgeTokensNum =
-    dodgeTokens === '' ? 0 : Math.max(0, Math.floor(Number(dodgeTokens)) || 0);
+    debouncedInputs.dodgeTokens === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.dodgeTokens)) || 0);
   const shieldTokensNum =
-    shieldTokens === ''
+    debouncedInputs.shieldTokens === ''
       ? 0
-      : Math.max(0, Math.floor(Number(shieldTokens)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.shieldTokens)) || 0);
   const coverXNum =
-    coverX === ''
+    debouncedInputs.coverX === ''
       ? 0
-      : Math.min(2, Math.max(0, Math.floor(Number(coverX)) || 0));
+      : Math.min(2, Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0));
   const armorXNum =
-    armorX === '' ? 0 : Math.max(0, Math.floor(Number(armorX)) || 0);
+    debouncedInputs.armorX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.armorX)) || 0);
   const suppressionTokensNum =
-    suppressionTokens === ''
+    debouncedInputs.suppressionTokens === ''
       ? 0
-      : Math.max(0, Math.floor(Number(suppressionTokens)) || 0);
+      : Math.max(
+          0,
+          Math.floor(Number(debouncedInputs.suppressionTokens)) || 0
+        );
   const dangerSenseXNum =
-    dangerSenseX === ''
+    debouncedInputs.dangerSenseX === ''
       ? 0
-      : Math.max(0, Math.floor(Number(dangerSenseX)) || 0);
+      : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0);
   const impactXNum =
-    impactX === '' ? 0 : Math.max(0, Math.floor(Number(impactX)) || 0);
+    debouncedInputs.impactX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.impactX)) || 0);
   const results = useMemo(
     () =>
       calculateAttackPool(
         effectivePool,
-        surge,
+        debouncedInputs.surge,
         criticalXNum,
         surgeTokensNum,
         aimTokensNum,
@@ -367,7 +455,7 @@ function App() {
       ),
     [
       effectivePool,
-      surge,
+      debouncedInputs.surge,
       criticalXNum,
       surgeTokensNum,
       aimTokensNum,
@@ -381,45 +469,45 @@ function App() {
     () =>
       calculateWounds(
         results,
-        defenseDieColor,
-        defenseSurge,
+        debouncedInputs.defenseDieColor,
+        debouncedInputs.defenseSurge,
         dodgeTokensNum,
         shieldTokensNum,
-        outmaneuver,
+        debouncedInputs.outmaneuver,
         defenseSurgeTokensNum,
-        cover,
-        lowProfile,
-        suppressed,
+        debouncedInputs.cover,
+        debouncedInputs.lowProfile,
+        debouncedInputs.suppressed,
         coverXNum,
-        dugIn,
+        debouncedInputs.dugIn,
         sharpshooterXNum,
-        backup,
+        debouncedInputs.backup,
         armorXNum,
         impactXNum,
         pierceXNum,
-        impervious,
+        debouncedInputs.impervious,
         suppressionTokensNum,
         dangerSenseXNum
       ),
     [
       results,
-      defenseDieColor,
-      defenseSurge,
+      debouncedInputs.defenseDieColor,
+      debouncedInputs.defenseSurge,
       dodgeTokensNum,
       shieldTokensNum,
-      outmaneuver,
+      debouncedInputs.outmaneuver,
       defenseSurgeTokensNum,
-      cover,
-      lowProfile,
-      suppressed,
+      debouncedInputs.cover,
+      debouncedInputs.lowProfile,
+      debouncedInputs.suppressed,
       coverXNum,
-      dugIn,
+      debouncedInputs.dugIn,
       sharpshooterXNum,
-      backup,
+      debouncedInputs.backup,
       armorXNum,
       impactXNum,
       pierceXNum,
-      impervious,
+      debouncedInputs.impervious,
       suppressionTokensNum,
       dangerSenseXNum,
     ]
@@ -428,7 +516,10 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
-  const hasModifiedAttackPool = attackPoolsDiffer(pool, effectivePool);
+  const hasModifiedAttackPool = attackPoolsDiffer(
+    debouncedInputs.pool,
+    effectivePool
+  );
 
   const handleCopyLink = () => {
     if (navigator.clipboard?.writeText) {
