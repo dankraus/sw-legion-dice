@@ -2,11 +2,13 @@
  * @vitest-environment node
  */
 import { describe, it, expect } from 'vitest';
-import type { AttackPool, AttackResults } from '../../types';
+import type { AttackPool, AttackResults, DefensePool } from '../../types';
 import { createSeededRng } from '../rng';
 import {
   rollOneAttackDie,
   rollAttackPool,
+  rollDefensePoolDetailed,
+  type DefenseFace,
   resolveStep,
   applyRerolls,
   applyRam,
@@ -70,6 +72,26 @@ describe('rollAttackPool', () => {
     const rng = createSeededRng(3);
     const counts = rollAttackPool(pool, rng);
     expect(counts.crit + counts.surge + counts.hit + counts.blank).toBe(4);
+  });
+});
+
+describe('rollDefensePoolDetailed', () => {
+  it('returns one outcome per die in red then white order', () => {
+    const pool: DefensePool = { red: 2, white: 1 };
+    const rng = createSeededRng(99);
+    const outcomes = rollDefensePoolDetailed(pool, rng);
+    expect(outcomes).toHaveLength(3);
+    expect(outcomes[0]?.color).toBe('red');
+    expect(outcomes[1]?.color).toBe('red');
+    expect(outcomes[2]?.color).toBe('white');
+    for (const outcome of outcomes) {
+      expect(['block', 'surge', 'blank']).toContain(outcome.face);
+    }
+  });
+
+  it('empty pool returns empty array', () => {
+    const outcomes = rollDefensePoolDetailed({ red: 0, white: 0 }, createSeededRng(1));
+    expect(outcomes).toEqual([]);
   });
 });
 
@@ -230,7 +252,7 @@ describe('getRerollableDefenseIndices', () => {
 
 describe('applyUncannyLuckRerolls', () => {
   it('uncannyLuckX 0 leaves faces unchanged', () => {
-    const faces = ['blank', 'block'];
+    const faces: DefenseFace[] = ['blank', 'block'];
     const rng = createSeededRng(1);
     applyUncannyLuckRerolls(faces, 0, 'block', 0, 'red', rng);
     expect(faces).toEqual(['blank', 'block']);
