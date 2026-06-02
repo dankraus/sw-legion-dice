@@ -643,7 +643,7 @@ function App() {
               <CheckboxToggle
                 id="impervious"
                 label="Impervious"
-                title="While defending, roll extra defense dice equal to the attack pool's total Pierce X."
+                title="Roll extra defense dice equal to Pierce X. If you roll at least one block (after surge conversion), Pierce X cancels one fewer block."
                 checked={impervious}
                 onChange={setImpervious}
                 guideAnchor="impervious"

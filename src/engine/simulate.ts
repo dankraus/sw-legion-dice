@@ -154,6 +154,29 @@ export function resolveDefenseRoll(
   );
 }
 
+/** Pierce blocks canceled after surge conversion; Impervious cancels one fewer when blocks > 0. */
+export function pierceBlocksCancelled(
+  blocks: number,
+  pierceX: number,
+  impervious: boolean
+): number {
+  const normalizedPierceX = Math.max(0, Math.floor(pierceX));
+  if (normalizedPierceX === 0) return 0;
+  if (impervious && blocks > 0) {
+    return Math.max(0, normalizedPierceX - 1);
+  }
+  return normalizedPierceX;
+}
+
+/** Blocks remaining after Pierce (and Impervious) are applied. */
+export function effectiveBlocksAfterPierce(
+  blocks: number,
+  pierceX: number,
+  impervious: boolean
+): number {
+  return Math.max(0, blocks - pierceBlocksCancelled(blocks, pierceX, impervious));
+}
+
 /** Roll one defense die; returns face type. Uses rng() in [0,1). */
 export function rollOneDefenseDieOutcome(
   color: DefenseDieColor,
@@ -640,7 +663,11 @@ export function simulateWounds(
       defenseSurge,
       normalizedDefenseSurgeTokens
     );
-    const effectiveBlocks = Math.max(0, blocks - normalizedPierceX);
+    const effectiveBlocks = effectiveBlocksAfterPierce(
+      blocks,
+      normalizedPierceX,
+      impervious
+    );
     const wounds = Math.max(0, defenseDice - effectiveBlocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;
@@ -774,7 +801,11 @@ export function simulateWoundsFromAttackResults(
       defenseSurge,
       normalizedDefenseSurgeTokens
     );
-    const effectiveBlocks = Math.max(0, blocks - normalizedPierceX);
+    const effectiveBlocks = effectiveBlocksAfterPierce(
+      blocks,
+      normalizedPierceX,
+      impervious
+    );
     const wounds = Math.max(0, defenseDice - effectiveBlocks);
     sumWounds += wounds;
     woundsHistogram[wounds] = (woundsHistogram[wounds] ?? 0) + 1;

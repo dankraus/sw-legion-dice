@@ -13,6 +13,8 @@ import {
   simulateAttackPool,
   rollOneDefenseDie,
   resolveDefenseRoll,
+  pierceBlocksCancelled,
+  effectiveBlocksAfterPierce,
   rollOneDefenseDieOutcome,
   applyCover,
   getEffectiveCover,
@@ -1378,7 +1380,94 @@ describe('Impact X in wounds simulation', () => {
   });
 });
 
+describe('pierceBlocksCancelled', () => {
+  it('impervious with blocks reduces pierce by 1', () => {
+    expect(pierceBlocksCancelled(5, 3, true)).toBe(2);
+    expect(effectiveBlocksAfterPierce(5, 3, true)).toBe(3);
+  });
+
+  it('impervious with no blocks uses full pierce', () => {
+    expect(pierceBlocksCancelled(0, 3, true)).toBe(3);
+    expect(effectiveBlocksAfterPierce(0, 3, true)).toBe(0);
+  });
+
+  it('without impervious uses full pierce when blocks present', () => {
+    expect(pierceBlocksCancelled(5, 3, false)).toBe(3);
+    expect(effectiveBlocksAfterPierce(5, 3, false)).toBe(2);
+  });
+
+  it('pierce 1 with impervious and blocks cancels zero', () => {
+    expect(pierceBlocksCancelled(2, 1, true)).toBe(0);
+    expect(effectiveBlocksAfterPierce(2, 1, true)).toBe(2);
+  });
+});
+
 describe('Impervious in wounds simulation', () => {
+  it('impervious true with pierce 3 yields lower expected wounds than impervious false', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 2,
+      expectedCrits: 0,
+      expectedTotal: 2,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 2, crits: 0, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const rngNoImpervious = createSeededRng(42);
+    const rngImpervious = createSeededRng(42);
+    const woundsNoImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      3, // pierceX
+      false,
+      0,
+      0,
+      runs,
+      rngNoImpervious
+    );
+    const woundsImpervious = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      3, // pierceX
+      true,
+      0,
+      0,
+      runs,
+      rngImpervious
+    );
+    expect(woundsImpervious.expectedWounds).toBeLessThan(
+      woundsNoImpervious.expectedWounds
+    );
+  });
+
   it('impervious true with pierce 2 yields lower or equal expected wounds than impervious false', () => {
     const attackResults: AttackResults = {
       expectedHits: 2,
