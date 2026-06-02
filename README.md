@@ -8,7 +8,7 @@ This site is not affiliated with, endorsed by, or connected with Atomic Mass Gam
 
 ## Support
 
-If Legion Roller helps your list-building or table math, consider [buying Dan a coffee on Buy Me a Coffee](https://ko-fi.com/dankraus). After covering hosting costs for the year (domain name), I will donate to local food banks.
+If Legion Roller helps your list-building or table math, consider supporting the project on Ko-Fi](https://ko-fi.com/dankraus). After covering hosting costs for the year (domain name), I will donate to local food banks.
 
 ## Development
 
