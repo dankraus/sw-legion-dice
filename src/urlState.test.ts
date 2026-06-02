@@ -60,21 +60,11 @@ describe('urlState', () => {
       expect('unknown' in result).toBe(false);
     });
 
-    it('parses assault number', () => {
-      expect(parseFragment('#assault=2').assault).toBe(2);
-      expect(parseFragment('#assault=-1').assault).toBe(0);
-    });
   });
 
   describe('buildFragment', () => {
     it('returns empty string for default state', () => {
       expect(buildFragment(DEFAULT_URL_STATE)).toBe('');
-    });
-
-    it('includes assault in fragment when non-zero', () => {
-      const fragment = buildFragment({ ...DEFAULT_URL_STATE, assault: 2 });
-      expect(fragment).toContain('assault=2');
-      expect(parseFragment('#' + fragment).assault).toBe(2);
     });
 
     it('roundtrips non-default state', () => {

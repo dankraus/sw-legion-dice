@@ -9,8 +9,6 @@ import type {
   CoverLevel,
 } from './types';
 import { calculateAttackPool, calculateWounds } from './engine/probability';
-import { attackPoolsDiffer } from './engine/assault';
-import { resolveEffectiveAttackPool } from './engine/attack-pool-modifiers';
 import { DiceSelector } from './components/DiceSelector';
 import { AttackSurgeToggle } from './components/AttackSurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
@@ -79,13 +77,6 @@ function App() {
       ? initialFromUrl.ram === 0
         ? ''
         : String(initialFromUrl.ram)
-      : ''
-  );
-  const [assaultX, setAssaultX] = useState<string>(() =>
-    initialFromUrl
-      ? initialFromUrl.assault === 0
-        ? ''
-        : String(initialFromUrl.assault)
       : ''
   );
   const [sharpshooterX, setSharpshooterX] = useState<string>(() =>
@@ -200,7 +191,6 @@ function App() {
       observeTokens,
       preciseX,
       ramX,
-      assaultX,
       sharpshooterX,
       pierceX,
       impactX,
@@ -231,7 +221,6 @@ function App() {
       observeTokens,
       preciseX,
       ramX,
-      assaultX,
       sharpshooterX,
       pierceX,
       impactX,
@@ -287,10 +276,6 @@ function App() {
         debouncedInputs.ramX === ''
           ? 0
           : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0),
-      assault:
-        debouncedInputs.assaultX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.assaultX)) || 0),
       sharp:
         debouncedInputs.sharpshooterX === ''
           ? 0
@@ -387,17 +372,6 @@ function App() {
     debouncedInputs.ramX === ''
       ? 0
       : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0);
-  const assaultXNum =
-    debouncedInputs.assaultX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.assaultX)) || 0);
-  const effectivePool = useMemo(
-    () =>
-      resolveEffectiveAttackPool(debouncedInputs.pool, {
-        assaultX: assaultXNum,
-      }),
-    [debouncedInputs.pool, assaultXNum]
-  );
   const sharpshooterXNum =
     debouncedInputs.sharpshooterX === ''
       ? 0
@@ -444,7 +418,7 @@ function App() {
   const results = useMemo(
     () =>
       calculateAttackPool(
-        effectivePool,
+        debouncedInputs.pool,
         debouncedInputs.surge,
         criticalXNum,
         surgeTokensNum,
@@ -454,7 +428,7 @@ function App() {
         ramXNum
       ),
     [
-      effectivePool,
+      debouncedInputs.pool,
       debouncedInputs.surge,
       criticalXNum,
       surgeTokensNum,
@@ -516,11 +490,6 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
-  const hasModifiedAttackPool = attackPoolsDiffer(
-    debouncedInputs.pool,
-    effectivePool
-  );
-
   const handleCopyLink = () => {
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(window.location.href).then(
@@ -542,7 +511,6 @@ function App() {
     setObserveTokens('');
     setPreciseX('');
     setRamX('');
-    setAssaultX('');
     setSharpshooterX('');
     setPierceX('');
     setImpactX('');
@@ -660,15 +628,6 @@ function App() {
                 onChange={setRamX}
                 title="Convert up to X dice to crits after rerolls (blanks first, then hits)"
                 guideAnchor="ram-x"
-              />
-              <NumberInputWithControls
-                id="assault-x"
-                label="Assault"
-                value={assaultX}
-                onChange={setAssaultX}
-                min={0}
-                title="Upgrade up to X attack dice when the defender is within range 1: black dice to red first, then white dice to black. Red dice cannot be upgraded."
-                guideAnchor="assault-x"
               />
               <NumberInputWithControls
                 id="sharpshooter-x"
@@ -844,9 +803,6 @@ function App() {
               <>
                 <h3 className="app__results-heading">Attack</h3>
                 <StatsSummary
-                  effectiveDicePool={
-                    hasModifiedAttackPool ? effectivePool : undefined
-                  }
                   expectedHits={results.expectedHits}
                   expectedCrits={results.expectedCrits}
                   expectedTotal={results.expectedTotal}
