@@ -8,7 +8,12 @@ import {
   type AttackFace,
   type DefenseFace,
 } from '../engine/simulate';
-import { formatAttackTallies, formatDefenseTallies } from '../diceRollerTallies';
+import {
+  formatAttackTallies,
+  formatAttackPoolTotal,
+  formatDefenseTallies,
+  formatDefensePoolTotal,
+} from '../diceRollerTallies';
 import { DiceSelector } from './DiceSelector';
 import { DieFaceChip } from './DieFaceChip';
 import './DiceRollerModal.css';
@@ -151,6 +156,9 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                     />
                   ))}
                 </div>
+                <p className="dice-roller-modal__pool-total">
+                  {formatAttackPoolTotal(lastAttackOutcomes)}
+                </p>
                 <ul className="dice-roller-modal__tallies">
                   {formatAttackTallies(lastAttackOutcomes).map((line) => (
                     <li key={line}>{line}</li>
@@ -203,6 +211,9 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                     />
                   ))}
                 </div>
+                <p className="dice-roller-modal__pool-total">
+                  {formatDefensePoolTotal(lastDefenseOutcomes)}
+                </p>
                 <ul className="dice-roller-modal__tallies">
                   {formatDefenseTallies(lastDefenseOutcomes).map((line) => (
                     <li key={line}>{line}</li>
