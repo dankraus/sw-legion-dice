@@ -33,6 +33,7 @@ export interface UrlState {
   imp: boolean;
   suppTok: number;
   danger: number;
+  uLuck: number;
   backup: boolean;
 }
 
@@ -66,6 +67,7 @@ export const DEFAULT_URL_STATE: UrlState = {
   imp: false,
   suppTok: 0,
   danger: 0,
+  uLuck: 0,
   backup: false,
 };
 
@@ -135,6 +137,7 @@ export function parseFragment(hash: string): UrlState {
     imp: parseBoolean(get('imp')),
     suppTok: parseNumber(get('suppTok'), DEFAULT_URL_STATE.suppTok),
     danger: parseNumber(get('danger'), DEFAULT_URL_STATE.danger),
+    uLuck: parseNumber(get('uLuck'), DEFAULT_URL_STATE.uLuck),
     backup: parseBoolean(get('backup')),
   };
 }

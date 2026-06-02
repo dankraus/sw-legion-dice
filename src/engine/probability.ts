@@ -110,31 +110,37 @@ export function getDefenseDistributionForDiceCount(
   diceCount: number,
   color: DefenseDieColor,
   surge: DefenseSurgeConversion,
-  defenseSurgeTokens?: number
+  defenseSurgeTokens?: number,
+  uncannyLuckX?: number
 ): DefenseResults {
   const rng = createSeededRng(SEED);
+  const normalizedUncannyLuckX = Math.max(0, Math.floor(uncannyLuckX ?? 0));
   return getDefenseDistributionForDiceCountSim(
     diceCount,
     color,
     surge,
     defenseSurgeTokens,
     DEFAULT_RUNS,
-    rng
+    rng,
+    normalizedUncannyLuckX
   );
 }
 
 export function calculateDefensePool(
   pool: DefensePool,
   surge: DefenseSurgeConversion,
-  defenseSurgeTokens?: number
+  defenseSurgeTokens?: number,
+  uncannyLuckX?: number
 ): DefenseResults {
   const rng = createSeededRng(SEED);
+  const normalizedUncannyLuckX = Math.max(0, Math.floor(uncannyLuckX ?? 0));
   return simulateDefensePool(
     pool,
     surge,
     defenseSurgeTokens,
     DEFAULT_RUNS,
-    rng
+    rng,
+    normalizedUncannyLuckX
   );
 }
 
@@ -158,7 +164,8 @@ export function calculateWounds(
   pierceX?: number,
   impervious?: boolean,
   suppressionTokens?: number,
-  dangerSenseX?: number
+  dangerSenseX?: number,
+  uncannyLuckX?: number
 ): WoundsResults {
   const normalizedCoverX = Math.min(2, Math.max(0, Math.floor(coverX ?? 0)));
   const normalizedArmorX = Math.max(0, Math.floor(armorX ?? 0));
@@ -168,6 +175,7 @@ export function calculateWounds(
     Math.floor(suppressionTokens ?? 0)
   );
   const normalizedDangerSenseX = Math.max(0, Math.floor(dangerSenseX ?? 0));
+  const normalizedUncannyLuckX = Math.max(0, Math.floor(uncannyLuckX ?? 0));
   const rng = createSeededRng(SEED);
   return simulateWoundsFromAttackResults(
     attackResults,
@@ -190,6 +198,7 @@ export function calculateWounds(
     impervious ?? false,
     normalizedSuppressionTokens,
     normalizedDangerSenseX,
+    normalizedUncannyLuckX,
     DEFAULT_RUNS,
     rng
   );

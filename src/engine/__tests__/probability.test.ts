@@ -1148,4 +1148,58 @@ describe('calculateWounds', () => {
       woundsBaseline.expectedWounds
     );
   });
+
+  it('Uncanny Luck X: expected wounds with uLuck 2 are less than or equal to 0', () => {
+    const pool: AttackPool = { red: 0, black: 0, white: 4 };
+    const attackResults = calculateAttackPool(pool, 'none');
+    const woundsNone = calculateWounds(
+      attackResults,
+      'red',
+      'block',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0
+    );
+    const woundsUncanny = calculateWounds(
+      attackResults,
+      'red',
+      'block',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2
+    );
+    expect(woundsUncanny.expectedWounds).toBeLessThanOrEqual(
+      woundsNone.expectedWounds
+    );
+  });
 });

@@ -16,6 +16,8 @@ import {
   pierceBlocksCancelled,
   effectiveBlocksAfterPierce,
   rollOneDefenseDieOutcome,
+  getRerollableDefenseIndices,
+  applyUncannyLuckRerolls,
   applyCover,
   getEffectiveCover,
   simulateDefensePool,
@@ -201,6 +203,68 @@ describe('resolveDefenseRoll', () => {
   });
 });
 
+describe('getRerollableDefenseIndices', () => {
+  it('surge block: only blanks are rerollable', () => {
+    const faces = ['block', 'surge', 'blank', 'blank'] as const;
+    expect(getRerollableDefenseIndices([...faces], 'block', 0)).toEqual([2, 3]);
+  });
+
+  it('surge none, 0 tokens: blanks and all surges rerollable', () => {
+    const faces = ['block', 'surge', 'blank', 'surge'] as const;
+    expect(getRerollableDefenseIndices([...faces], 'none', 0)).toEqual([
+      2, 1, 3,
+    ]);
+  });
+
+  it('surge none, tokens convert first surges: excess surges rerollable', () => {
+    const faces = ['surge', 'surge', 'surge', 'blank'] as const;
+    expect(getRerollableDefenseIndices([...faces], 'none', 2)).toEqual([3, 2]);
+  });
+
+  it('all blocks: empty rerollable list', () => {
+    expect(getRerollableDefenseIndices(['block', 'block'], 'none', 5)).toEqual(
+      []
+    );
+  });
+});
+
+describe('applyUncannyLuckRerolls', () => {
+  it('uncannyLuckX 0 leaves faces unchanged', () => {
+    const faces = ['blank', 'block'];
+    const rng = createSeededRng(1);
+    applyUncannyLuckRerolls(faces, 0, 'block', 0, 'red', rng);
+    expect(faces).toEqual(['blank', 'block']);
+  });
+
+  it('with seeded rng, X=2 increases average block count vs no reroll', () => {
+    const runs = 2000;
+    const rngNoReroll = createSeededRng(42);
+    const rngReroll = createSeededRng(42);
+    let sumBlocksNoReroll = 0;
+    let sumBlocksReroll = 0;
+    for (let run = 0; run < runs; run++) {
+      const facesNoReroll: ('block' | 'surge' | 'blank')[] = [];
+      const facesReroll: ('block' | 'surge' | 'blank')[] = [];
+      for (let die = 0; die < 5; die++) {
+        facesNoReroll.push(rollOneDefenseDieOutcome('red', rngNoReroll));
+        facesReroll.push(rollOneDefenseDieOutcome('red', rngReroll));
+      }
+      let blockCount = 0;
+      for (const face of facesNoReroll) {
+        if (face === 'block') blockCount++;
+      }
+      sumBlocksNoReroll += blockCount;
+      applyUncannyLuckRerolls(facesReroll, 2, 'block', 0, 'red', rngReroll);
+      blockCount = 0;
+      for (const face of facesReroll) {
+        if (face === 'block') blockCount++;
+      }
+      sumBlocksReroll += blockCount;
+    }
+    expect(sumBlocksReroll / runs).toBeGreaterThan(sumBlocksNoReroll / runs);
+  });
+});
+
 describe('rollOneDefenseDieOutcome', () => {
   it('red die: over many rolls block/surge/blank proportions match 3/1/2', () => {
     const rng = createSeededRng(42);
@@ -239,6 +303,29 @@ describe('defense simulation', () => {
     );
     expect(result.expectedBlocks).toBe(0);
     expect(result.distribution[0].probability).toBeCloseTo(1, 2);
+  });
+
+  it('simulateDefensePool with uncannyLuckX 2 has higher expectedBlocks than 0', () => {
+    const rngNone = createSeededRng(7);
+    const rngUncanny = createSeededRng(7);
+    const pool = { red: 4, white: 0 };
+    const noUncanny = simulateDefensePool(
+      pool,
+      'block',
+      undefined,
+      5000,
+      rngNone,
+      0
+    );
+    const withUncanny = simulateDefensePool(
+      pool,
+      'block',
+      undefined,
+      5000,
+      rngUncanny,
+      2
+    );
+    expect(withUncanny.expectedBlocks).toBeGreaterThan(noUncanny.expectedBlocks);
   });
 
   it('getDefenseDistributionForDiceCountSim 1 red die surge none: expectedBlocks close to 3/6', () => {
@@ -393,6 +480,7 @@ describe('simulateWounds', () => {
       false, // impervious
       0,
       0,
+      0, // uncannyLuckX
       20_000,
       rng
     );
@@ -433,6 +521,7 @@ describe('shield tokens in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rng
     );
@@ -480,6 +569,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngZero
     );
@@ -504,6 +594,7 @@ describe('defense surge tokens in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOne
     );
@@ -553,6 +644,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngNone
     );
@@ -577,6 +669,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngLight
     );
@@ -627,6 +720,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOff
     );
@@ -651,6 +745,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOn
     );
@@ -697,6 +792,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngNoSharp
     );
@@ -721,6 +817,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngSharp
     );
@@ -771,6 +868,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOff
     );
@@ -795,6 +893,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOn
     );
@@ -826,6 +925,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       10_000,
       rng
     );
@@ -850,6 +950,7 @@ describe('cover in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       10_000,
       rng
     );
@@ -892,6 +993,7 @@ describe('Dug In in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rng
     );
@@ -917,6 +1019,7 @@ describe('Dug In in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngDugIn
     );
@@ -970,6 +1073,7 @@ describe('backup in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOff
     );
@@ -994,6 +1098,7 @@ describe('backup in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngOn
     );
@@ -1041,6 +1146,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rng
     );
@@ -1066,6 +1172,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rng2
     );
@@ -1115,6 +1222,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngZero
     );
@@ -1139,6 +1247,7 @@ describe('Pierce X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngThree
     );
@@ -1194,6 +1303,7 @@ describe('Armor X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngArmor0
     );
@@ -1218,6 +1328,7 @@ describe('Armor X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngArmor3
     );
@@ -1275,6 +1386,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngImpact0
     );
@@ -1299,6 +1411,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngImpact2
     );
@@ -1348,6 +1461,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngArmor2
     );
@@ -1372,6 +1486,7 @@ describe('Impact X in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngArmor3
     );
@@ -1436,6 +1551,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngNoImpervious
     );
@@ -1460,6 +1576,8 @@ describe('Impervious in wounds simulation', () => {
       true,
       0,
       0,
+       0, // uncannyLuckX
+
       runs,
       rngImpervious
     );
@@ -1500,6 +1618,8 @@ describe('Impervious in wounds simulation', () => {
       false, // impervious
       0,
       0,
+       0, // uncannyLuckX
+
       runs,
       rng
     );
@@ -1524,6 +1644,8 @@ describe('Impervious in wounds simulation', () => {
       true, // impervious
       0,
       0,
+       0, // uncannyLuckX
+
       runs,
       rng
     );
@@ -1565,6 +1687,7 @@ describe('Impervious in wounds simulation', () => {
       false,
       0,
       0,
+      0, // uncannyLuckX
       runs,
       rngNoImpervious
     );
@@ -1589,12 +1712,81 @@ describe('Impervious in wounds simulation', () => {
       true,
       0,
       0,
+       0, // uncannyLuckX
+
       runs,
       rngImpervious
     );
     expect(woundsImpervious.expectedWounds).toBeCloseTo(
       woundsNoImpervious.expectedWounds,
       10
+    );
+  });
+});
+
+describe('Uncanny Luck X in wounds simulation', () => {
+  it('uncannyLuckX 2 yields lower or equal expected wounds than 0 for fixed attack', () => {
+    const attackResults: AttackResults = {
+      expectedHits: 3,
+      expectedCrits: 1,
+      expectedTotal: 4,
+      distribution: [],
+      distributionByHitsCrits: [{ hits: 3, crits: 1, probability: 1 }],
+      cumulative: [],
+    };
+    const runs = 5000;
+    const woundsNone = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      0, // uncannyLuckX
+      runs,
+      createSeededRng(42)
+    );
+    const woundsUncanny2 = simulateWoundsFromAttackResults(
+      attackResults,
+      'red',
+      'none',
+      0,
+      0,
+      false,
+      0,
+      'none',
+      false,
+      false,
+      0,
+      false,
+      0,
+      false,
+      0,
+      0,
+      0,
+      false,
+      0,
+      0,
+      2, // uncannyLuckX
+      runs,
+      createSeededRng(42)
+    );
+    expect(woundsUncanny2.expectedWounds).toBeLessThanOrEqual(
+      woundsNone.expectedWounds
     );
   });
 });
@@ -1632,6 +1824,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       0, // suppressionTokens
       0, // dangerSenseX
+      0, // uncannyLuckX
       runs,
       rng
     );
@@ -1656,6 +1849,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       2, // suppressionTokens
       2, // dangerSenseX
+      0, // uncannyLuckX
       runs,
       rng
     );
@@ -1698,6 +1892,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       2, // suppressionTokens
       2, // dangerSenseX
+      0, // uncannyLuckX
       runs,
       rngTwoTokens
     );
@@ -1722,6 +1917,7 @@ describe('Danger Sense X in wounds simulation', () => {
       false,
       3, // suppressionTokens
       2, // dangerSenseX
+      0, // uncannyLuckX
       runs,
       rngThreeTokens
     );

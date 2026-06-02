@@ -60,6 +60,13 @@ describe('urlState', () => {
       expect('unknown' in result).toBe(false);
     });
 
+    it('parses uLuck and roundtrips in buildFragment', () => {
+      const parsed = parseFragment('#uLuck=3');
+      expect(parsed.uLuck).toBe(3);
+      const fragment = buildFragment({ ...DEFAULT_URL_STATE, uLuck: 3 });
+      expect(fragment).toContain('uLuck=3');
+      expect(parseFragment('#' + fragment).uLuck).toBe(3);
+    });
   });
 
   describe('buildFragment', () => {

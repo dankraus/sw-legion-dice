@@ -176,6 +176,13 @@ function App() {
         : String(initialFromUrl.danger)
       : ''
   );
+  const [uncannyLuckX, setUncannyLuckX] = useState<string>(() =>
+    initialFromUrl
+      ? initialFromUrl.uLuck === 0
+        ? ''
+        : String(initialFromUrl.uLuck)
+      : ''
+  );
   const [backup, setBackup] = useState<boolean>(
     () => initialFromUrl?.backup ?? false
   );
@@ -210,6 +217,7 @@ function App() {
       impervious,
       suppressionTokens,
       dangerSenseX,
+      uncannyLuckX,
       backup,
     }),
     [
@@ -240,6 +248,7 @@ function App() {
       impervious,
       suppressionTokens,
       dangerSenseX,
+      uncannyLuckX,
       backup,
     ]
   );
@@ -334,6 +343,13 @@ function App() {
         debouncedInputs.dangerSenseX === ''
           ? 0
           : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0),
+      uLuck:
+        debouncedInputs.uncannyLuckX === ''
+          ? 0
+          : Math.max(
+              0,
+              Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0
+            ),
       backup: debouncedInputs.backup,
     }),
     [debouncedInputs]
@@ -411,6 +427,10 @@ function App() {
     debouncedInputs.dangerSenseX === ''
       ? 0
       : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0);
+  const uncannyLuckXNum =
+    debouncedInputs.uncannyLuckX === ''
+      ? 0
+      : Math.max(0, Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0);
   const impactXNum =
     debouncedInputs.impactX === ''
       ? 0
@@ -461,7 +481,8 @@ function App() {
         pierceXNum,
         debouncedInputs.impervious,
         suppressionTokensNum,
-        dangerSenseXNum
+        dangerSenseXNum,
+        uncannyLuckXNum
       ),
     [
       results,
@@ -484,6 +505,7 @@ function App() {
       debouncedInputs.impervious,
       suppressionTokensNum,
       dangerSenseXNum,
+      uncannyLuckXNum,
     ]
   );
 
@@ -530,6 +552,7 @@ function App() {
     setImpervious(false);
     setSuppressionTokens('');
     setDangerSenseX('');
+    setUncannyLuckX('');
     setBackup(false);
   };
 
@@ -757,6 +780,15 @@ function App() {
                 min={0}
                 title="While defending, roll one extra defense die per suppression token, up to X extra dice."
                 guideAnchor="danger-sense-x"
+              />
+              <NumberInputWithControls
+                id="uncanny-luck-x"
+                label="Uncanny Luck"
+                value={uncannyLuckX}
+                onChange={setUncannyLuckX}
+                min={0}
+                title="While defending, reroll up to X defense dice that would not become blocks."
+                guideAnchor="uncanny-luck-x"
               />
               <h3 className="app__section-heading">Tokens</h3>
               <NumberInputWithControls
