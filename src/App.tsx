@@ -8,7 +8,8 @@ import type {
   CoverLevel,
 } from './types';
 import { calculateAttackPool, calculateWounds } from './engine/probability';
-import { applyAssaultToPool } from './engine/assault';
+import { attackPoolsDiffer } from './engine/assault';
+import { resolveEffectiveAttackPool } from './engine/attack-pool-modifiers';
 import { DiceSelector } from './components/DiceSelector';
 import { AttackSurgeToggle } from './components/AttackSurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
@@ -317,7 +318,7 @@ function App() {
   const assaultXNum =
     assaultX === '' ? 0 : Math.max(0, Math.floor(Number(assaultX)) || 0);
   const effectivePool = useMemo(
-    () => applyAssaultToPool(pool, assaultXNum),
+    () => resolveEffectiveAttackPool(pool, { assaultX: assaultXNum }),
     [pool, assaultXNum]
   );
   const sharpshooterXNum =
@@ -427,19 +428,7 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
-  const formatRollingPool = (attackPool: AttackPool): string => {
-    const parts: string[] = [];
-    if (attackPool.red > 0) parts.push(`${attackPool.red} red`);
-    if (attackPool.black > 0) parts.push(`${attackPool.black} black`);
-    if (attackPool.white > 0) parts.push(`${attackPool.white} white`);
-    return parts.length > 0 ? parts.join(', ') : '0 dice';
-  };
-
-  const showEffectivePool =
-    assaultXNum > 0 &&
-    (effectivePool.red !== pool.red ||
-      effectivePool.black !== pool.black ||
-      effectivePool.white !== pool.white);
+  const hasModifiedAttackPool = attackPoolsDiffer(pool, effectivePool);
 
   const handleCopyLink = () => {
     if (navigator.clipboard?.writeText) {
@@ -531,11 +520,6 @@ function App() {
                 count={pool.white}
                 onChange={(n) => setPool((p) => ({ ...p, white: n }))}
               />
-              {showEffectivePool && (
-                <p className="app__effective-pool">
-                  Rolling: {formatRollingPool(effectivePool)}
-                </p>
-              )}
               <AttackSurgeToggle value={surge} onChange={setSurge} />
               <h3 className="app__section-heading">Tokens</h3>
               <NumberInputWithControls
@@ -769,6 +753,9 @@ function App() {
               <>
                 <h3 className="app__results-heading">Attack</h3>
                 <StatsSummary
+                  effectiveDicePool={
+                    hasModifiedAttackPool ? effectivePool : undefined
+                  }
                   expectedHits={results.expectedHits}
                   expectedCrits={results.expectedCrits}
                   expectedTotal={results.expectedTotal}

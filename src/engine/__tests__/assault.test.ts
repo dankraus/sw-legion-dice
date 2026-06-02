@@ -1,7 +1,38 @@
 import { describe, it, expect } from 'vitest';
-import { applyAssaultToPool } from '../assault';
+import {
+  applyAssaultToPool,
+  attackPoolsDiffer,
+  formatAttackPoolCounts,
+} from '../assault';
 import { calculateAttackPool } from '../probability';
 import type { AttackPool } from '../../types';
+
+describe('formatAttackPoolCounts', () => {
+  it('formats non-zero colors', () => {
+    expect(formatAttackPoolCounts({ red: 2, black: 1, white: 0 })).toBe(
+      '2 red, 1 black'
+    );
+  });
+
+  it('returns 0 dice when pool is empty', () => {
+    expect(formatAttackPoolCounts({ red: 0, black: 0, white: 0 })).toBe(
+      '0 dice'
+    );
+  });
+});
+
+describe('attackPoolsDiffer', () => {
+  it('is false when pools match', () => {
+    const pool = { red: 1, black: 1, white: 1 };
+    expect(attackPoolsDiffer(pool, { ...pool })).toBe(false);
+  });
+
+  it('is true when any color count differs', () => {
+    expect(attackPoolsDiffer({ red: 0, black: 2, white: 0 }, { red: 1, black: 1, white: 0 })).toBe(
+      true
+    );
+  });
+});
 
 describe('applyAssaultToPool', () => {
   it('returns same pool when assault is 0', () => {
