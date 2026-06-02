@@ -2,9 +2,11 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add Impervious defense keyword: while defending, roll extra defense dice equal to the attack pool’s total Pierce X.
+**Goal:** Add Impervious defense keyword: while defending, Pierce X cancels one fewer block when the defender rolls at least one block (after surge conversion).
 
-**Architecture:** Add optional `impervious` boolean through the stack. In sim, after computing base `defenseDice`, add `impervious ? normalizedPierceX : 0` to the count, then roll and resolve as today. Pierce still applies (blocks − pierceX). UI: one checkbox in Defense section (e.g. after Armor, before DefenseSurgeToggle), same pattern as Backup/Outmaneuver.
+**Architecture:** Add optional `impervious` boolean through the stack. In sim, after `resolveDefenseRoll`, apply Pierce via `pierceBlocksCancelled` / `effectiveBlocksAfterPierce` (Impervious reduces blocks cancelled by 1 when `blocks > 0`). Impervious does not add defense dice. UI: one checkbox in Defense section (e.g. after Armor, before DefenseSurgeToggle), same pattern as Backup/Outmaneuver.
+
+**Update (2026-06-02):** Extra defense dice equal to Pierce X were removed; only the Pierce reduction remains. See `docs/superpowers/specs/2026-06-01-impervious-pierce-design.md`.
 
 **Tech Stack:** TypeScript, React, Vite, Vitest. See `AGENTS.md` for commands.
 

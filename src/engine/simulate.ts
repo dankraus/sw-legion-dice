@@ -764,7 +764,6 @@ export function simulateWounds(
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)
       : critsAfterShields + Math.max(0, hitsAfterShields - normalizedDodge);
-    const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
     const normalizedSuppressionTokens = Math.max(
       0,
       Math.floor(suppressionTokens)
@@ -775,7 +774,7 @@ export function simulateWounds(
       normalizedDangerSenseX
     );
     const totalDefenseDice =
-      defenseDice + extraDiceFromImpervious + dangerSenseExtra;
+      defenseDice + dangerSenseExtra;
     const faces: DefenseFace[] = [];
     for (let dieIndex = 0; dieIndex < totalDefenseDice; dieIndex++) {
       faces.push(rollOneDefenseDieOutcome(defenseDieColor, rng));
@@ -924,9 +923,7 @@ export function simulateWoundsFromAttackResults(
     const defenseDice = outmaneuver
       ? Math.max(0, hitsAfterShields + critsAfterShields - normalizedDodge)
       : critsAfterShields + Math.max(0, hitsAfterShields - normalizedDodge);
-    const extraDiceFromImpervious = impervious ? normalizedPierceX : 0;
-    const totalDefenseDice =
-      defenseDice + extraDiceFromImpervious + dangerSenseExtra;
+    const totalDefenseDice = defenseDice + dangerSenseExtra;
     const faces: DefenseFace[] = [];
     for (let dieIndex = 0; dieIndex < totalDefenseDice; dieIndex++) {
       faces.push(rollOneDefenseDieOutcome(defenseDieColor, rng));
