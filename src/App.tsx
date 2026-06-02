@@ -18,6 +18,7 @@ import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
 import { CumulativeTable } from './components/CumulativeTable';
+import { RulebookVersion } from './components/RulebookVersion';
 import './App.css';
 
 function App() {
@@ -461,6 +462,7 @@ function App() {
             Legion Roller
           </h1>
           <p className="app__header-subtitle">Never tell me the odds!</p>
+          <RulebookVersion />
         </div>
         <div className="app__header-actions">
           <button
