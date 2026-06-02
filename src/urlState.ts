@@ -14,6 +14,7 @@ export interface UrlState {
   obs: number;
   precise: number;
   ram: number;
+  assault: number;
   sharp: number;
   pierce: number;
   impact: number;
@@ -47,6 +48,7 @@ export const DEFAULT_URL_STATE: UrlState = {
   obs: 0,
   precise: 0,
   ram: 0,
+  assault: 0,
   sharp: 0,
   pierce: 0,
   impact: 0,
@@ -113,6 +115,7 @@ export function parseFragment(hash: string): UrlState {
     obs: parseNumber(get('obs'), DEFAULT_URL_STATE.obs),
     precise: parseNumber(get('precise'), DEFAULT_URL_STATE.precise),
     ram: parseNumber(get('ram'), DEFAULT_URL_STATE.ram),
+    assault: parseNumber(get('assault'), DEFAULT_URL_STATE.assault),
     sharp: parseNumber(get('sharp'), DEFAULT_URL_STATE.sharp),
     pierce: parseNumber(get('pierce'), DEFAULT_URL_STATE.pierce),
     impact: parseNumber(get('impact'), DEFAULT_URL_STATE.impact),
