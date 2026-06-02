@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { applyAssaultToPool } from '../assault';
+import { calculateAttackPool } from '../probability';
 import type { AttackPool } from '../../types';
 
 describe('applyAssaultToPool', () => {
@@ -52,5 +53,27 @@ describe('applyAssaultToPool', () => {
     const base: AttackPool = { red: 0, black: 1, white: 0 };
     expect(applyAssaultToPool(base, -1)).toEqual(base);
     expect(applyAssaultToPool(base, 1.9)).toEqual(base);
+  });
+});
+
+describe('Assault X with calculateAttackPool', () => {
+  it('effective pool from assault matches direct pool for expectedTotal', () => {
+    const viaAssault = calculateAttackPool(
+      applyAssaultToPool({ red: 0, black: 2, white: 0 }, 1),
+      'none'
+    );
+    const direct = calculateAttackPool({ red: 1, black: 1, white: 0 }, 'none');
+    expect(viaAssault.expectedTotal).toBe(direct.expectedTotal);
+    expect(viaAssault.expectedHits).toBe(direct.expectedHits);
+    expect(viaAssault.expectedCrits).toBe(direct.expectedCrits);
+  });
+
+  it('assault increases expected total vs base pool with black dice', () => {
+    const base = calculateAttackPool({ red: 0, black: 2, white: 0 }, 'none');
+    const upgraded = calculateAttackPool(
+      applyAssaultToPool({ red: 0, black: 2, white: 0 }, 1),
+      'none'
+    );
+    expect(upgraded.expectedTotal).toBeGreaterThan(base.expectedTotal);
   });
 });
