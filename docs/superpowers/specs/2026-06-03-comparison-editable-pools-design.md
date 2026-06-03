@@ -29,7 +29,7 @@ Let users edit **both** pools (A and B) while comparing, with UI that makes comp
 
 1. User configures a pool in the config column.
 2. User clicks **Compare against this setup** in the compare bar (disabled when `totalDice === 0`, same as today’s Pin button).
-3. Current `liveConfig` is copied to `pinnedConfig` (pool A).
+3. Current editor state (immediate, not debounced) is copied to `pinnedConfig` (pool A) and `cachedPoolB` (pool B).
 4. Compare mode activates; active tab = **B**; results show A vs B snapshots and deltas.
 5. Editor continues showing B (same values as at pin time until user changes them).
 
@@ -44,13 +44,14 @@ Let users edit **both** pools (A and B) while comparing, with UI that makes comp
 ### Exit compare
 
 1. User clicks **End compare** in the compare bar.
-2. `pinnedConfig` cleared; compare UI hidden.
-3. Editor remains on pool B values (bare URL keys). Pool A discarded.
-4. Compare bar shows single-pool entry button again.
+2. If `activePool === 'A'`, load **cached pool B** into the editor (hooks must not stay on A’s values).
+3. `pinnedConfig` cleared; `cachedPoolB` cleared; compare UI hidden.
+4. Editor shows pool B (bare URL keys). Pool A discarded.
+5. Compare bar shows single-pool entry button again.
 
 ### Reset
 
-Unchanged: **Reset** clears compare mode, labels, and all pool inputs.
+Unchanged: **Reset** clears compare mode, labels, `activePool`, `cachedPoolB`, and all pool inputs.
 
 ## Compare bar UI
 
@@ -95,43 +96,91 @@ Labels remain editable in the card header; tab text updates as the user types.
 | State | Purpose |
 | ----- | -------- |
 | `pinnedConfig: PoolConfig \| null` | Pool A; `null` = not comparing |
+| `cachedPoolB: PoolConfig \| null` | In-memory pool B while comparing; source of truth for B when editor is on A tab |
 | `activePool: 'A' \| 'B'` | Which pool the editor targets (only meaningful when comparing) |
 | `labelA`, `labelB` | Display names; drive tab text and snapshot headers |
-| Existing per-field `useState` | Editor UI; represents **pool B** when not comparing; represents **active pool** when comparing |
+| Existing per-field `useState` | Editor UI; always reflects the **active** pool when comparing; equals pool B when not comparing |
 
 Compare mode is active iff `pinnedConfig !== null`.
 
-On enter compare: set `activePool = 'B'`.
+**Lifecycle:**
 
-On exit compare: clear `pinnedConfig`; do not change B’s editor values.
+- Enter compare: `activePool = 'B'`; `cachedPoolB = readConfigFromEditor()` (same as B at pin time).
+- URL load with `cmp=1`: `activePool = 'B'`; `cachedPoolB = poolStateToConfig(parsed bare keys)`.
+- Exit compare: restore B into editor from `cachedPoolB` if needed; clear `pinnedConfig`, `cachedPoolB`; `activePool` unused until next compare.
+- Reset: clear compare state including `activePool` and `cachedPoolB`.
+
+### Resolving config A and B
+
+Editor hooks alone are **not** always pool B during compare. Derive display configs explicitly:
+
+```ts
+const editorConfig = readConfigFromEditor(simulationInputs); // immediate, not debounced
+
+const configA = pinnedConfig!; // when comparing
+const configB =
+  activePool === 'B'
+    ? editorConfig
+    : cachedPoolB ?? editorConfig;
+```
+
+Use **debounced** variants only for expensive results (`computePoolResults`), keyed off the same `configA` / `configB` resolution so snapshots and charts stay stable.
 
 ### Tab switch persistence
 
 The editor uses one set of input state hooks. Switching tabs must not lose edits.
 
-Add pure helpers (new file or `poolConfigEditor.ts`):
+Add pure helpers (new file `poolConfigEditor.ts`):
 
-- `configToEditorState(config: PoolConfig)` → object of values matching all editor setters (mirror `poolStateToConfig` / `configToPoolState` field mapping).
 - `applyConfigToEditor(config, setters)` — load a `PoolConfig` into all editor fields.
-- `readConfigFromEditor(editorState)` — build `PoolConfig` from current hook values (today’s `liveConfig` derivation).
+- `readConfigFromEditor(inputs)` — build `PoolConfig` from current hook values (extract from today’s `liveConfig` derivation).
 
-**On tab change** (`A` → `B` or `B` → `A`):
+**On tab change** (`A` ↔ `B`):
 
-1. Read current editor → `PoolConfig`.
-2. If leaving **A**, write to `setPinnedConfig`; if leaving **B**, values already live in editor hooks (B syncs to URL via existing debounced path).
-3. Load target pool into editor via `applyConfigToEditor`.
+1. Read current editor → `PoolConfig` (`outgoing`).
+2. If leaving **B**: `setCachedPoolB(outgoing)`.
+3. If leaving **A**: `setPinnedConfig(outgoing)`.
+4. Load target pool into editor: from `cachedPoolB` when switching to B, from `pinnedConfig` when switching to A.
 
-When editing **A** while active, updates go to editor hooks **and** `pinnedConfig` should stay in sync. Simplest approach: on any editor change while `activePool === 'A'`, also update `pinnedConfig` from `readConfigFromEditor` (debounced like B). Alternative: only flush on tab switch—prefer **continuous sync while on A tab** so snapshots and results update live.
+When editing **B** (`activePool === 'B'`): each change updates editor hooks; also `setCachedPoolB(editorConfig)` so B stays cached if user switches away.
 
-When editing **B**, existing URL sync unchanged.
+When editing **A** (`activePool === 'A'`): each change updates editor hooks **and** `setPinnedConfig(editorConfig)` immediately so snapshots and `a.*` URL keys stay live. Debounce applies only to `computePoolResults`, not to `pinnedConfig` / URL.
+
+### URL sync (`urlState` useMemo)
+
+Bare keys (pool B) must **never** serialize the editor while `activePool === 'A'`.
+
+| Compare state | Bare keys source | `a.*` keys source |
+| ------------- | ---------------- | ----------------- |
+| Off | Editor hooks (today) | — |
+| On, editing B | Editor hooks | `pinnedConfig` |
+| On, editing A | `cachedPoolB` | `pinnedConfig` (synced from editor) |
+
+This preserves the contract: B = bare keys, A = `a.*`, with no schema changes.
+
+### Downstream consumers
+
+| Consumer | Pool B source | Pool A source |
+| -------- | ------------- | ------------- |
+| `ComparisonResults` | `configB` (resolved above) | `configA` = `pinnedConfig` |
+| `ShareModal` `live` | Always `configB` | `pinned` when comparing |
+| `urlState` | Bare keys per table above | `configToPoolState(pinnedConfig)` |
+
+### Enter compare (pin)
+
+Pin from **immediate** `readConfigFromEditor(simulationInputs)`, not debounced `liveConfig`, so a quick edit + Compare does not snapshot stale values.
+
+Set `pinnedConfig = editorConfig`, `cachedPoolB = editorConfig`, `activePool = 'B'`.
 
 ### Results computation
 
-Unchanged:
+```ts
+const configA = pinnedConfig;
+const configB = activePool === 'B' ? debouncedLiveConfig : cachedPoolB;
+// debouncedLiveConfig = debounced editor when activePool === 'B'
+```
 
-- `configA = pinnedConfig`
-- `configB = liveConfig` (from debounced editor state)
-- `computePoolResults` for each; render `ComparisonResults`.
+`computePoolResults(configA)` and `computePoolResults(configB)`; render `ComparisonResults`.
 
 ### New component: `ComparePoolBar.tsx`
 
@@ -170,10 +219,15 @@ New optional props: `isActive`, `onSelect` (card click handler; ignore when clic
 ### `App.tsx`
 
 - Remove Pin / Clear compare buttons from `app__header-actions`.
+- Add `cachedPoolB`, `activePool` state and lifecycle rules above.
 - Render `ComparePoolBar` at top of `app__pool`.
-- Wire `handlePin` → compare bar start; `handleClearCompare` → end compare.
-- Implement tab switch handler with persistence helpers.
-- Pass `activePool` and select handlers to `ComparisonResults`.
+- Wire compare start/end, tab switch with persistence helpers.
+- Gate `urlState` bare keys on `activePool` / `cachedPoolB`.
+- Pass resolved `configA` / `configB` and `activePool` to results and share.
+
+### `src/poolConfigEditor.ts` (new)
+
+Pure helpers: `readConfigFromEditor`, `applyConfigToEditor`.
 
 ## UI order
 
@@ -198,11 +252,14 @@ New optional props: `isActive`, `onSelect` (card click handler; ignore when clic
 ## Testing
 
 - **ComparePoolBar**: single mode renders start button; compare mode renders both tab labels and End compare; clicking tabs calls handler.
-- **Tab switch**: edit a field on B, switch to A, edit A, switch back—B retains prior value; A reflects edits; snapshots update.
-- **Enter / exit**: start compare pins A, lands on B tab; exit clears compare, B values preserved.
+- **Tab switch**: edit B → switch to A → edit A → B snapshot/deltas still show B; switch back—B retains prior value; A reflects edits.
+- **URL while on A tab**: edit A; bare URL keys unchanged (still B); `a.*` keys update.
+- **Share round-trip**: edit A, share URL, reload—A and B both correct.
+- **Enter / exit**: pin uses immediate editor state; exit on A tab restores B in editor; exit on B tab keeps B.
+- **Rapid tab switch**: edits persist before debounce completes.
 - **PoolSnapshotCard**: active state shows Editing pill; inactive does not; optional click fires `onSelect`.
 - **App / integration**: Pin button absent from header; compare bar present in pool section.
-- Existing URL round-trip and delta/chart tests unchanged.
+- Existing delta/chart tests updated where they assume editor always equals B.
 
 ## Out of scope
 
