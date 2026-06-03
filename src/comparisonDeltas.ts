@@ -2,8 +2,8 @@ import type { PoolResults } from './poolResults';
 
 export interface DeltaRow {
   label: string;
-  a: number | null;
-  b: number | null;
+  valueA: number | null;
+  valueB: number | null;
   delta: number | null;
   betterIsHigher: boolean;
   bIsBetter: boolean | null;
@@ -20,8 +20,8 @@ function ratio(costValue: number, denominator: number): number | null {
 }
 
 export function buildDeltaRows(
-  a: PoolResults,
-  b: PoolResults,
+  resultsA: PoolResults,
+  resultsB: PoolResults,
   costA: string,
   costB: string
 ): DeltaRow[] {
@@ -29,28 +29,43 @@ export function buildDeltaRows(
 
   const push = (
     label: string,
-    aValue: number | null,
-    bValue: number | null,
+    valueA: number | null,
+    valueB: number | null,
     betterIsHigher: boolean
   ) => {
-    const delta = aValue !== null && bValue !== null ? bValue - aValue : null;
+    const delta = valueA !== null && valueB !== null ? valueB - valueA : null;
     let bIsBetter: boolean | null = null;
     if (delta !== null && delta !== 0) {
       bIsBetter = betterIsHigher ? delta > 0 : delta < 0;
     }
     rows.push({
       label,
-      a: aValue,
-      b: bValue,
+      valueA,
+      valueB,
       delta,
       betterIsHigher,
       bIsBetter,
     });
   };
 
-  push('Avg hits', a.results.expectedHits, b.results.expectedHits, true);
-  push('Avg crits', a.results.expectedCrits, b.results.expectedCrits, true);
-  push('Avg total', a.results.expectedTotal, b.results.expectedTotal, true);
+  push(
+    'Avg hits',
+    resultsA.results.expectedHits,
+    resultsB.results.expectedHits,
+    true
+  );
+  push(
+    'Avg crits',
+    resultsA.results.expectedCrits,
+    resultsB.results.expectedCrits,
+    true
+  );
+  push(
+    'Avg total',
+    resultsA.results.expectedTotal,
+    resultsB.results.expectedTotal,
+    true
+  );
 
   const costAValue = cost(costA);
   const costBValue = cost(costB);
@@ -58,24 +73,24 @@ export function buildDeltaRows(
   if (costAValue > 0 || costBValue > 0) {
     push(
       'Pts/success',
-      ratio(costAValue, a.results.expectedTotal),
-      ratio(costBValue, b.results.expectedTotal),
+      ratio(costAValue, resultsA.results.expectedTotal),
+      ratio(costBValue, resultsB.results.expectedTotal),
       false
     );
   }
 
   push(
     'Avg wounds',
-    a.woundsResults.expectedWounds,
-    b.woundsResults.expectedWounds,
+    resultsA.woundsResults.expectedWounds,
+    resultsB.woundsResults.expectedWounds,
     true
   );
 
   if (costAValue > 0 || costBValue > 0) {
     push(
       'Pts/wound',
-      ratio(costAValue, a.woundsResults.expectedWounds),
-      ratio(costBValue, b.woundsResults.expectedWounds),
+      ratio(costAValue, resultsA.woundsResults.expectedWounds),
+      ratio(costBValue, resultsB.woundsResults.expectedWounds),
       false
     );
   }

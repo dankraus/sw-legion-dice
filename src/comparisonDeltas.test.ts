@@ -24,8 +24,8 @@ describe('buildDeltaRows', () => {
   it('marks higher avg total for B as better (positive direction)', () => {
     const rows = buildDeltaRows(fakeResults(2, 1), fakeResults(3, 1.5), '', '');
     const total = rows.find((row) => row.label === 'Avg total')!;
-    expect(total.a).toBeCloseTo(2);
-    expect(total.b).toBeCloseTo(3);
+    expect(total.valueA).toBeCloseTo(2);
+    expect(total.valueB).toBeCloseTo(3);
     expect(total.delta).toBeCloseTo(1);
     expect(total.betterIsHigher).toBe(true);
     expect(total.bIsBetter).toBe(true);
@@ -44,8 +44,8 @@ describe('buildDeltaRows', () => {
       '40'
     );
     const ptsWound = rows.find((row) => row.label === 'Pts/wound')!;
-    expect(ptsWound.a).toBeCloseTo(40);
-    expect(ptsWound.b).toBeCloseTo(20);
+    expect(ptsWound.valueA).toBeCloseTo(40);
+    expect(ptsWound.valueB).toBeCloseTo(20);
     expect(ptsWound.betterIsHigher).toBe(false);
     expect(ptsWound.bIsBetter).toBe(true);
   });

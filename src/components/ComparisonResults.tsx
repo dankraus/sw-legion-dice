@@ -57,8 +57,8 @@ export function ComparisonResults({
           {rows.map((row) => (
             <tr key={row.label}>
               <td>{row.label}</td>
-              <td className="is-number">{formatValue(row.a)}</td>
-              <td className="is-number">{formatValue(row.b)}</td>
+              <td className="is-number">{formatValue(row.valueA)}</td>
+              <td className="is-number">{formatValue(row.valueB)}</td>
               <td
                 className={
                   'is-number' +
