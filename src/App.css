@@ -247,3 +247,21 @@
   outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }
+
+.app__compare-labels {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.app__compare-labels label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.app__compare-labels input {
+  padding: 0.2rem 0.4rem;
+}
