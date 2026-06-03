@@ -1,0 +1,36 @@
+.comparison__delta {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.comparison__delta th,
+.comparison__delta td {
+  text-align: left;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.comparison__delta td.is-number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.comparison__delta .delta-better {
+  color: #16a34a;
+}
+
+.comparison__delta .delta-worse {
+  color: #dc2626;
+}
+
+.comparison__cumulatives {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.comparison__cumulatives > div {
+  flex: 1 1 220px;
+}
