@@ -10,12 +10,45 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 .pool-snapshot__marker {
   font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.pool-snapshot__label-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.pool-snapshot__pool-letter {
+  font-weight: 600;
+  color: #374151;
+  flex-shrink: 0;
+}
+
+.pool-snapshot__label-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.pool-snapshot__label-input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
 }
 
 .pool-snapshot__pool-label {
@@ -41,6 +74,23 @@
   height: 14px;
   border-radius: 3px;
   border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.pool-snapshot__die-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pool-snapshot__surge-line {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0.15rem 0 0.35rem;
+  font-size: 0.85rem;
+}
+
+.pool-snapshot__surge-label {
+  color: #4b5563;
 }
 
 .pool-snapshot__section {

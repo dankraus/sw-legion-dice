@@ -12,7 +12,7 @@ function countFromString(value: string): number {
   return Math.max(0, Math.floor(Number(value)) || 0);
 }
 
-function attackSurgeLabel(surge: SurgeConversion): string {
+export function formatAttackSurgeLabel(surge: SurgeConversion): string {
   if (surge === 'hit') return 'Hit';
   if (surge === 'crit') return 'Crit';
   return 'None';
@@ -45,16 +45,6 @@ function addBooleanLine(
 
 export function formatPoolSnapshot(config: PoolConfig): PoolSnapshotSection[] {
   const sections: PoolSnapshotSection[] = [];
-
-  sections.push({
-    title: 'Attack',
-    lines: [
-      { label: 'Red', value: String(config.pool.red) },
-      { label: 'Black', value: String(config.pool.black) },
-      { label: 'White', value: String(config.pool.white) },
-      { label: 'Surge', value: attackSurgeLabel(config.surge) },
-    ],
-  });
 
   const tokenLines: PoolSnapshotLine[] = [];
   addCountLine(tokenLines, 'Surge tokens', config.surgeTokens);
@@ -110,9 +100,4 @@ export function formatPoolSnapshot(config: PoolConfig): PoolSnapshotSection[] {
   }
 
   return sections;
-}
-
-/** Text summary for attack dice including zero counts (snapshot dice row). */
-export function attackDiceSummaryText(config: PoolConfig): string {
-  return `${config.pool.red} red · ${config.pool.black} black · ${config.pool.white} white`;
 }

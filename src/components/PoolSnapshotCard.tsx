@@ -5,13 +5,17 @@ import './PoolSnapshotCard.css';
 
 interface PoolSnapshotCardProps {
   config: PoolConfig;
+  poolId: 'A' | 'B';
   label: string;
+  onLabelChange: (value: string) => void;
   accentColor: string;
 }
 
 export function PoolSnapshotCard({
   config,
+  poolId,
   label,
+  onLabelChange,
   accentColor,
 }: PoolSnapshotCardProps) {
   const sections = formatPoolSnapshot(config);
@@ -25,7 +29,17 @@ export function PoolSnapshotCard({
         <span className="pool-snapshot__marker" style={{ color: accentColor }}>
           ■
         </span>
-        {label}
+        <label className="pool-snapshot__label-control">
+          <span className="pool-snapshot__pool-letter">{poolId}</span>
+          <input
+            className="pool-snapshot__label-input"
+            value={label}
+            onChange={(event) => onLabelChange(event.target.value)}
+            maxLength={24}
+            placeholder={poolId}
+            aria-label={`Label for pool ${poolId}`}
+          />
+        </label>
       </header>
       <PoolDiceRow config={config} classPrefix="pool-snapshot" />
       {sections.map((section) => (

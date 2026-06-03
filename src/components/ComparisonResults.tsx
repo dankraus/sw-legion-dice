@@ -51,35 +51,18 @@ export function ComparisonResults({
       <div className="comparison__snapshots">
         <PoolSnapshotCard
           config={configA}
+          poolId="A"
           label={labelA}
+          onLabelChange={onLabelAChange}
           accentColor={COLOR_A}
         />
         <PoolSnapshotCard
           config={configB}
+          poolId="B"
           label={labelB}
+          onLabelChange={onLabelBChange}
           accentColor={COLOR_B}
         />
-      </div>
-
-      <div className="app__compare-labels">
-        <label>
-          A
-          <input
-            value={labelA}
-            onChange={(event) => onLabelAChange(event.target.value)}
-            maxLength={24}
-            aria-label="Label for pool A"
-          />
-        </label>
-        <label>
-          B
-          <input
-            value={labelB}
-            onChange={(event) => onLabelBChange(event.target.value)}
-            maxLength={24}
-            aria-label="Label for pool B"
-          />
-        </label>
       </div>
 
       <table className="comparison__delta">

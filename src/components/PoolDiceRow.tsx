@@ -1,5 +1,5 @@
 import type { PoolConfig } from '../types';
-import { attackDiceSummaryText } from '../poolSnapshot';
+import { formatAttackSurgeLabel } from '../poolSnapshot';
 
 const DIE_COLORS: Record<string, string> = {
   red: '#dc2626',
@@ -27,44 +27,34 @@ export function PoolDiceRow({ config, classPrefix }: PoolDiceRowProps) {
   const poolLabel = `${classPrefix}__pool-label`;
   const dice = `${classPrefix}__dice`;
   const die = `${classPrefix}__die`;
-
-  const showPoolLabels = classPrefix === 'share-card';
+  const dieGroup = `${classPrefix}__die-group`;
 
   return (
     <>
-      {showPoolLabels ? <div className={poolLabel}>Attack</div> : null}
+      <div className={poolLabel}>Attack</div>
       <div className={dice}>
-        {classPrefix === 'share-card' ? (
-          attack.length === 0 ? (
-            <span>none</span>
-          ) : (
-            attack.map((entry) => (
-              <span key={entry.name} className="share-card__die-group">
-                <span
-                  className={die}
-                  style={{ background: entry.color }}
-                />
-                <span>{entry.name}</span>
-                <span>×{entry.count}</span>
-              </span>
-            ))
-          )
+        {attack.length === 0 ? (
+          <span>none</span>
         ) : (
-          <>
-            {attack.flatMap((entry) =>
-              Array.from({ length: entry.count }).map((_, index) => (
-                <span
-                  key={`${entry.name}-${index}`}
-                  className={die}
-                  style={{ background: entry.color }}
-                />
-              ))
-            )}
-            <span>{attackDiceSummaryText(config)}</span>
-          </>
+          attack.map((entry) => (
+            <span key={entry.name} className={dieGroup}>
+              <span
+                className={die}
+                style={{ background: entry.color }}
+              />
+              <span>{entry.name}</span>
+              <span>×{entry.count}</span>
+            </span>
+          ))
         )}
       </div>
-      {showPoolLabels ? <div className={poolLabel}>Defense</div> : null}
+      {classPrefix === 'pool-snapshot' ? (
+        <p className="pool-snapshot__surge-line">
+          <span className="pool-snapshot__surge-label">Surge</span>
+          <span>{formatAttackSurgeLabel(config.surge)}</span>
+        </p>
+      ) : null}
+      <div className={poolLabel}>Defense</div>
       <div className={dice}>
         <span
           className={die}

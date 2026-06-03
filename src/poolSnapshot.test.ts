@@ -19,12 +19,11 @@ function lineValue(
 }
 
 describe('formatPoolSnapshot', () => {
-  it('always includes attack dice and surge in Attack', () => {
+  it('omits Attack section (dice and surge shown in PoolDiceRow)', () => {
     const sections = formatPoolSnapshot(DEFAULT_POOL_CONFIG);
-    expect(lineValue(sections, 'Attack', 'Red')).toBe('0');
-    expect(lineValue(sections, 'Attack', 'Black')).toBe('0');
-    expect(lineValue(sections, 'Attack', 'White')).toBe('0');
-    expect(lineValue(sections, 'Attack', 'Surge')).toBe('None');
+    expect(sections.some((section) => section.title === 'Attack')).toBe(
+      false
+    );
   });
 
   it('omits Tokens section when all token counts are default', () => {
