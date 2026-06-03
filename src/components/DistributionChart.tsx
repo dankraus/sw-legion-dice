@@ -4,15 +4,22 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
   ResponsiveContainer,
   Cell,
 } from 'recharts';
 
+type Point = { total: number; probability: number };
+
 interface DistributionChartProps {
-  distribution: { total: number; probability: number }[];
+  distribution: Point[];
   title?: string;
   xAxisLabel?: string;
   barColor?: string;
+  secondaryDistribution?: Point[];
+  secondaryColor?: string;
+  seriesLabel?: string;
+  secondaryLabel?: string;
 }
 
 export function DistributionChart({
@@ -20,10 +27,29 @@ export function DistributionChart({
   title = 'Probability Distribution',
   xAxisLabel = 'Total Successes',
   barColor = '#3b82f6',
+  secondaryDistribution,
+  secondaryColor = '#f59e0b',
+  seriesLabel = 'A',
+  secondaryLabel = 'B',
 }: DistributionChartProps) {
-  const data = distribution.map((entry) => ({
-    ...entry,
-    percent: +(entry.probability * 100).toFixed(1),
+  const hasSecondary = secondaryDistribution !== undefined;
+
+  const percentOf = (points: Point[] | undefined, total: number) => {
+    const found = points?.find((entry) => entry.total === total);
+    return found ? +(found.probability * 100).toFixed(1) : 0;
+  };
+
+  const totals = Array.from(
+    new Set([
+      ...distribution.map((entry) => entry.total),
+      ...(secondaryDistribution ?? []).map((entry) => entry.total),
+    ])
+  ).sort((a, b) => a - b);
+
+  const data = totals.map((total) => ({
+    total,
+    primary: percentOf(distribution, total),
+    secondary: percentOf(secondaryDistribution, total),
   }));
 
   return (
@@ -43,11 +69,24 @@ export function DistributionChart({
             label={{ value: 'Probability', angle: -90, position: 'insideLeft' }}
           />
           <Tooltip formatter={(value) => [`${value}%`, 'Probability']} />
-          <Bar dataKey="percent" radius={[4, 4, 0, 0]}>
-            {data.map((_, index) => (
-              <Cell key={index} fill={barColor} />
-            ))}
+          {hasSecondary && <Legend verticalAlign="top" height={24} />}
+          <Bar
+            dataKey="primary"
+            name={seriesLabel}
+            radius={[4, 4, 0, 0]}
+            fill={barColor}
+          >
+            {!hasSecondary &&
+              data.map((_, index) => <Cell key={index} fill={barColor} />)}
           </Bar>
+          {hasSecondary && (
+            <Bar
+              dataKey="secondary"
+              name={secondaryLabel}
+              radius={[4, 4, 0, 0]}
+              fill={secondaryColor}
+            />
+          )}
         </BarChart>
       </ResponsiveContainer>
     </div>
