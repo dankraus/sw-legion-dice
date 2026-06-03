@@ -39,7 +39,10 @@ describe('rollDefensePoolDetailed', () => {
   });
 
   it('empty pool returns empty array', () => {
-    const outcomes = rollDefensePoolDetailed({ red: 0, white: 0 }, createSeededRng(1));
+    const outcomes = rollDefensePoolDetailed(
+      { red: 0, white: 0 },
+      createSeededRng(1)
+    );
     expect(outcomes).toEqual([]);
   });
 });
@@ -195,10 +198,21 @@ Props: `onClose: () => void` only (component mounts only while open; no `open` p
 - [ ] **Step 2: Ephemeral state**
 
 ```ts
-const [attackPool, setAttackPool] = useState<AttackPool>({ red: 0, black: 0, white: 0 });
-const [defensePool, setDefensePool] = useState<DefensePool>({ red: 0, white: 0 });
-const [lastAttackOutcomes, setLastAttackOutcomes] = useState<DieOutcome[] | null>(null);
-const [lastDefenseOutcomes, setLastDefenseOutcomes] = useState<DefenseDieOutcome[] | null>(null);
+const [attackPool, setAttackPool] = useState<AttackPool>({
+  red: 0,
+  black: 0,
+  white: 0,
+});
+const [defensePool, setDefensePool] = useState<DefensePool>({
+  red: 0,
+  white: 0,
+});
+const [lastAttackOutcomes, setLastAttackOutcomes] = useState<
+  DieOutcome[] | null
+>(null);
+const [lastDefenseOutcomes, setLastDefenseOutcomes] = useState<
+  DefenseDieOutcome[] | null
+>(null);
 ```
 
 No `localStorage`. Unmount on close resets everything.
@@ -265,10 +279,12 @@ In `app__header-actions`, before Copy link:
   onClick={() => setDiceRollerOpen(true)}
 >
   Roll dice
-</button>
-{diceRollerOpen ? (
-  <DiceRollerModal onClose={() => setDiceRollerOpen(false)} />
-) : null}
+</button>;
+{
+  diceRollerOpen ? (
+    <DiceRollerModal onClose={() => setDiceRollerOpen(false)} />
+  ) : null;
+}
 ```
 
 Unmounting on close clears all roller state for the next open.
@@ -294,15 +310,15 @@ git commit -m "feat: open raw dice roller from header"
 
 ## Self-review (spec coverage)
 
-| Design requirement | Task |
-| ------------------ | ---- |
-| Raw faces only | Tasks 1, 4 — no keyword pipeline |
-| Attack + defense pools | Task 4 |
-| Standalone pools | Task 4 state |
-| Header + modal | Task 5, 4 |
-| Separate roll buttons | Task 4 |
-| Chips + tallies | Tasks 2, 3, 4 |
+| Design requirement              | Task                                        |
+| ------------------------------- | ------------------------------------------- |
+| Raw faces only                  | Tasks 1, 4 — no keyword pipeline            |
+| Attack + defense pools          | Task 4                                      |
+| Standalone pools                | Task 4 state                                |
+| Header + modal                  | Task 5, 4                                   |
+| Separate roll buttons           | Task 4                                      |
+| Chips + tallies                 | Tasks 2, 3, 4                               |
 | Reset on close (no persistence) | Task 5 conditional mount; Task 4 no storage |
-| No dice cap | No clamp in selectors |
-| No URL state | No `urlState` changes |
-| No calculator mirror | Not implemented |
+| No dice cap                     | No clamp in selectors                       |
+| No URL state                    | No `urlState` changes                       |
+| No calculator mirror            | Not implemented                             |

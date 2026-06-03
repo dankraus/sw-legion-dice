@@ -15,6 +15,7 @@
 ### Task 1: Rulebook constants
 
 **Files:**
+
 - Create: `src/rulebook.ts`
 
 - [ ] **Step 1: Add constants file**
@@ -37,6 +38,7 @@ Expected: PASS (no consumers yet; build should still succeed)
 ### Task 2: RulebookVersion component
 
 **Files:**
+
 - Create: `src/components/RulebookVersion.tsx`
 
 - [ ] **Step 1: Create component**
@@ -68,6 +70,7 @@ export function RulebookVersion() {
 ### Task 3: Header integration and styles
 
 **Files:**
+
 - Modify: `src/App.tsx` (import + render below subtitle)
 - Modify: `src/App.css` (`.app__rulebook-version`)
 
@@ -126,5 +129,6 @@ Expected: PASS
 
 Run: `npm run dev`  
 Confirm under “Never tell me the odds!”:
+
 - Text reads `Core Rule Book effective 5.29.2026`
 - Click opens https://www.atomicmassgames.com/swlegiondocs/ in a new tab
