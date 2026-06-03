@@ -48,7 +48,7 @@ Let users export their current setup and results as a shareable card for Discord
 
 ### Card content (Style B)
 - Header: logo + "Legion Roller".
-- Attack line: colored dice chips + "N red · N black · N white".
+- Attack line: grouped colored chip + color name + `×N` per die type (e.g. red ×8, black ×2). See [compact dice pools](./2026-06-03-share-card-compact-dice-pools-design.md).
 - Defense line: colored dice chips + "N red · N white".
 - Active-modifier pills (from `describeActiveModifiers`).
 - Headline stats: Avg hits, Avg crits, Avg total, Avg wounds.
