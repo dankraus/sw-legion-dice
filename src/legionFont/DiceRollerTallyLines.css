@@ -10,11 +10,6 @@
   margin-bottom: 0.25rem;
 }
 
-.dice-roller-tally-lines__faces,
-.dice-roller-pool-total__faces {
-  display: inline;
-}
-
 .dice-roller-pool-total {
   margin: 0 0 0.5rem;
   font-size: 0.95rem;

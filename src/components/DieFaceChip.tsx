@@ -1,11 +1,6 @@
 import type { AttackFace, DefenseFace } from '../engine/simulate';
+import { ATTACK_FACE_GLYPHS, DEFENSE_FACE_GLYPHS, ATTACK_FACE_LABELS, DEFENSE_FACE_LABELS } from '../legionFont/legionFaceGlyphs';
 import { LegionFaceSymbol } from '../legionFont/LegionFaceSymbol';
-import {
-  getAttackFaceGlyph,
-  getDefenseFaceGlyph,
-  ATTACK_FACE_LABELS,
-  DEFENSE_FACE_LABELS,
-} from '../legionFont/legionFaceGlyphs';
 import './DieFaceChip.css';
 
 interface DieFaceChipProps {
@@ -15,21 +10,19 @@ interface DieFaceChipProps {
 }
 
 export function DieFaceChip({ color, face, poolKind }: DieFaceChipProps) {
-  const colorCapitalized = color.charAt(0).toUpperCase() + color.slice(1);
   const faceLabel =
     poolKind === 'attack'
       ? ATTACK_FACE_LABELS[face as AttackFace]
       : DEFENSE_FACE_LABELS[face as DefenseFace];
   const glyph =
     poolKind === 'attack'
-      ? getAttackFaceGlyph(face as AttackFace)
-      : getDefenseFaceGlyph(face as DefenseFace);
-  const ariaLabel = `${colorCapitalized} ${faceLabel.toLowerCase()}`;
+      ? ATTACK_FACE_GLYPHS[face as AttackFace]
+      : DEFENSE_FACE_GLYPHS[face as DefenseFace];
 
   return (
     <span
       className={`die-face-chip die-face-chip--${color}`}
-      aria-label={ariaLabel}
+      aria-label={`${color[0].toUpperCase()}${color.slice(1)} ${faceLabel.toLowerCase()}`}
     >
       <LegionFaceSymbol glyph={glyph} size="chip" />
     </span>

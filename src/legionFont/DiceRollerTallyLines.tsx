@@ -1,97 +1,62 @@
-import type {
-  DieOutcome,
-  DefenseDieOutcome,
-  AttackFace,
-  DefenseFace,
-} from '../engine/simulate';
-import type { DieColor, DefenseDieColor } from '../types';
+import type { DieOutcome, DefenseDieOutcome, AttackFace, DefenseFace } from '../engine/simulate';
 import {
   getAttackTallyGroups,
   getDefenseTallyGroups,
   getAttackPoolTotalParts,
   getDefensePoolTotalParts,
 } from '../diceRollerTallies';
+import { ATTACK_FACE_LABELS, DEFENSE_FACE_LABELS } from './legionFaceGlyphs';
 import { FaceCountDisplay } from './FaceCountDisplay';
-import { faceCountAriaLabel } from './faceCountAriaLabel';
 import './DiceRollerTallyLines.css';
 
-function capitalizeColor(color: string): string {
-  return color.charAt(0).toUpperCase() + color.slice(1);
+type PoolKind = 'attack' | 'defense';
+
+function faceAriaText(
+  face: AttackFace | DefenseFace,
+  count: number,
+  poolKind: PoolKind
+): string {
+  const label =
+    poolKind === 'attack'
+      ? ATTACK_FACE_LABELS[face as AttackFace].toLowerCase()
+      : DEFENSE_FACE_LABELS[face as DefenseFace].toLowerCase();
+  return `${count} ${label}${count === 1 ? '' : 's'}`;
 }
 
-interface AttackTallyLinesProps {
-  outcomes: DieOutcome[];
+interface TallyLinesProps {
+  outcomes: DieOutcome[] | DefenseDieOutcome[];
+  poolKind: PoolKind;
 }
 
-export function AttackTallyLines({ outcomes }: AttackTallyLinesProps) {
-  const groups = getAttackTallyGroups(outcomes);
+export function TallyLines({ outcomes, poolKind }: TallyLinesProps) {
+  const groups =
+    poolKind === 'attack'
+      ? getAttackTallyGroups(outcomes as DieOutcome[])
+      : getDefenseTallyGroups(outcomes as DefenseDieOutcome[]);
 
   return (
     <ul className="dice-roller-tally-lines">
-      {groups.map((group) => (
-        <li
-          key={group.color}
-          className="dice-roller-tally-lines__row"
-          aria-label={buildTallyAriaLabel(group.color, group.parts, 'attack')}
-        >
-          <span className="dice-roller-tally-lines__color" aria-hidden="true">
-            {capitalizeColor(group.color)}:
-          </span>{' '}
-          <span className="dice-roller-tally-lines__faces" aria-hidden="true">
-            {group.parts.map((part) => (
-              <FaceCountDisplay
-                key={part.face}
-                count={part.count}
-                face={part.face}
-                poolKind="attack"
-                size="tally"
-              />
-            ))}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-interface DefenseTallyLinesProps {
-  outcomes: DefenseDieOutcome[];
-}
-
-export function DefenseTallyLines({ outcomes }: DefenseTallyLinesProps) {
-  const groups = getDefenseTallyGroups(outcomes);
-
-  return (
-    <ul className="dice-roller-tally-lines">
-      {groups.map((group) => (
-        <li
-          key={group.color}
-          className="dice-roller-tally-lines__row"
-          aria-label={buildTallyAriaLabel(group.color, group.parts, 'defense')}
-        >
-          <span className="dice-roller-tally-lines__color" aria-hidden="true">
-            {capitalizeColor(group.color)}:
-          </span>{' '}
-          <span className="dice-roller-tally-lines__faces" aria-hidden="true">
-            {group.parts.map((part) => (
-              <FaceCountDisplay
-                key={part.face}
-                count={part.count}
-                face={part.face}
-                poolKind="defense"
-                size="tally"
-              />
-            ))}
-          </span>
-        </li>
-      ))}
+      {groups.map(({ color, parts }) => {
+        const colorLabel = color[0].toUpperCase() + color.slice(1);
+        const ariaLabel = `${colorLabel}: ${parts.map(({ face, count }) => faceAriaText(face, count, poolKind)).join(', ')}`;
+        return (
+          <li key={color} className="dice-roller-tally-lines__row" aria-label={ariaLabel}>
+            <span aria-hidden="true">
+              {colorLabel}:{' '}
+              {parts.map((part) => (
+                <FaceCountDisplay key={part.face} count={part.count} face={part.face} poolKind={poolKind} />
+              ))}
+            </span>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
 interface PoolTotalLineProps {
   outcomes: DieOutcome[] | DefenseDieOutcome[];
-  poolKind: 'attack' | 'defense';
+  poolKind: PoolKind;
 }
 
 export function PoolTotalLine({ outcomes, poolKind }: PoolTotalLineProps) {
@@ -100,40 +65,16 @@ export function PoolTotalLine({ outcomes, poolKind }: PoolTotalLineProps) {
       ? getAttackPoolTotalParts(outcomes as DieOutcome[])
       : getDefensePoolTotalParts(outcomes as DefenseDieOutcome[]);
 
-  const ariaParts = parts.map((part) =>
-    faceCountAriaLabel(part.count, part.face, poolKind)
-  );
+  const ariaLabel = `Total: ${parts.map(({ face, count }) => faceAriaText(face, count, poolKind)).join(', ')}`;
 
   return (
-    <p
-      className="dice-roller-pool-total"
-      aria-label={`Total: ${ariaParts.join(', ')}`}
-    >
-      <span className="dice-roller-pool-total__label" aria-hidden="true">
+    <p className="dice-roller-pool-total" aria-label={ariaLabel}>
+      <span aria-hidden="true">
         Total:{' '}
-      </span>
-      <span className="dice-roller-pool-total__faces" aria-hidden="true">
         {parts.map((part) => (
-          <FaceCountDisplay
-            key={part.face}
-            count={part.count}
-            face={part.face}
-            poolKind={poolKind}
-            size="tally"
-          />
+          <FaceCountDisplay key={part.face} count={part.count} face={part.face} poolKind={poolKind} />
         ))}
       </span>
     </p>
   );
-}
-
-function buildTallyAriaLabel(
-  color: DieColor | DefenseDieColor,
-  parts: { face: AttackFace | DefenseFace; count: number }[],
-  poolKind: 'attack' | 'defense'
-): string {
-  const faceSummary = parts
-    .map((part) => faceCountAriaLabel(part.count, part.face, poolKind))
-    .join(', ');
-  return `${capitalizeColor(color)}: ${faceSummary}`;
 }

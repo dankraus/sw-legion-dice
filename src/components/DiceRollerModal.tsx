@@ -8,11 +8,7 @@ import {
 } from '../engine/simulate';
 import { DiceSelector } from './DiceSelector';
 import { DieFaceChip } from './DieFaceChip';
-import {
-  AttackTallyLines,
-  DefenseTallyLines,
-  PoolTotalLine,
-} from '../legionFont/DiceRollerTallyLines';
+import { TallyLines, PoolTotalLine } from '../legionFont/DiceRollerTallyLines';
 import './DiceRollerModal.css';
 
 interface DiceRollerModalProps {
@@ -145,7 +141,7 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                   outcomes={lastAttackOutcomes}
                   poolKind="attack"
                 />
-                <AttackTallyLines outcomes={lastAttackOutcomes} />
+                <TallyLines outcomes={lastAttackOutcomes} poolKind="attack" />
               </>
             )}
           </div>
@@ -198,7 +194,7 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                   outcomes={lastDefenseOutcomes}
                   poolKind="defense"
                 />
-                <DefenseTallyLines outcomes={lastDefenseOutcomes} />
+                <TallyLines outcomes={lastDefenseOutcomes} poolKind="defense" />
               </>
             )}
           </div>
