@@ -16,7 +16,10 @@ describe('ShareCard', () => {
         live={{ config, results: computePoolResults(config), label: 'B' }}
       />
     );
-    expect(getByText(/3 red/)).toBeTruthy();
+    expect(getByText('red')).toBeTruthy();
+    expect(getByText('black')).toBeTruthy();
+    expect(getByText('×3')).toBeTruthy();
+    expect(getByText('×1')).toBeTruthy();
     expect(getByText('Aim 2')).toBeTruthy();
     expect(getByText('Avg total')).toBeTruthy();
   });
@@ -82,5 +85,34 @@ describe('ShareCard', () => {
     expect(deltas).toBeTruthy();
     expect(deltas?.textContent).toContain('Δ Avg total');
     expect(deltas?.textContent).toContain('Δ Avg wounds');
+  });
+
+  it('uses one attack chip per color in compare mode for large pools', () => {
+    const largePool = { red: 8, black: 8, white: 0 };
+    const configA = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: largePool,
+    };
+    const configB = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: largePool,
+    };
+    const { getAllByText, container } = render(
+      <ShareCard
+        url="https://legionroller.com/#r=8&b=8"
+        live={{
+          config: configB,
+          results: computePoolResults(configB),
+          label: 'B',
+        }}
+        pinned={{
+          config: configA,
+          results: computePoolResults(configA),
+          label: 'A',
+        }}
+      />
+    );
+    expect(getAllByText('×8').length).toBe(4);
+    expect(container.querySelectorAll('.share-card__die').length).toBe(6);
   });
 });
