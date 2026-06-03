@@ -198,7 +198,9 @@ function poolEntries(pool: UrlPoolState, prefix: string): string[] {
     if (!isDefaultPoolValue(key, value)) {
       const serialized =
         typeof value === 'boolean' ? (value ? '1' : '0') : String(value);
-      entries.push(`${prefix}${poolKey(key)}=${encodeURIComponent(serialized)}`);
+      entries.push(
+        `${prefix}${poolKey(key)}=${encodeURIComponent(serialized)}`
+      );
     }
   }
   return entries;

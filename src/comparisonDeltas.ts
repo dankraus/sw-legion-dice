@@ -38,7 +38,14 @@ export function buildDeltaRows(
     if (delta !== null && delta !== 0) {
       bIsBetter = betterIsHigher ? delta > 0 : delta < 0;
     }
-    rows.push({ label, a: aValue, b: bValue, delta, betterIsHigher, bIsBetter });
+    rows.push({
+      label,
+      a: aValue,
+      b: bValue,
+      delta,
+      betterIsHigher,
+      bIsBetter,
+    });
   };
 
   push('Avg hits', a.results.expectedHits, b.results.expectedHits, true);
