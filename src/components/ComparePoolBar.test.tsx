@@ -8,7 +8,7 @@ describe('ComparePoolBar', () => {
     const { getByRole } = render(
       <ComparePoolBar mode="single" onStartCompare={onStart} startDisabled={false} />
     );
-    fireEvent.click(getByRole('button', { name: /compare against this setup/i }));
+    fireEvent.click(getByRole('button', { name: /compare pools/i }));
     expect(onStart).toHaveBeenCalled();
   });
 
@@ -27,7 +27,7 @@ describe('ComparePoolBar', () => {
     );
     fireEvent.click(getByRole('tab', { name: 'Heavy' }));
     expect(onChange).toHaveBeenCalledWith('A');
-    fireEvent.click(getByRole('button', { name: /exit compare/i }));
+    fireEvent.click(getByRole('button', { name: /clear/i }));
     expect(onEnd).toHaveBeenCalled();
     expect(getByText(/Editing: Upgrade/)).toBeTruthy();
   });

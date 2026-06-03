@@ -34,8 +34,9 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
           className="compare-bar__start"
           onClick={props.onStartCompare}
           disabled={props.startDisabled}
+          aria-label="Compare pools"
         >
-          Compare against this setup
+          Compare Pools
         </button>
       </div>
     );
@@ -114,9 +115,9 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
           type="button"
           className="compare-bar__end"
           onClick={onEndCompare}
-          aria-label="Exit compare mode"
+          aria-label="Clear comparison"
         >
-          End compare
+          Clear
         </button>
       </div>
       <p className="compare-bar__editing" style={{ color: activeColor }}>

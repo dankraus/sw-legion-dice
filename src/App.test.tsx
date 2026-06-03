@@ -7,7 +7,7 @@ describe('App compare UI', () => {
     const { queryByRole, getByRole } = render(<App />);
     expect(queryByRole('button', { name: /pin as a/i })).toBeNull();
     expect(
-      getByRole('button', { name: /compare against this setup/i })
+      getByRole('button', { name: /compare pools/i })
     ).toBeTruthy();
   });
 });
