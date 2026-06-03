@@ -3,6 +3,7 @@ import {
   parseFragment,
   buildFragment,
   DEFAULT_URL_STATE,
+  DEFAULT_URL_STATE_POOL,
   type UrlState,
 } from './urlState';
 
@@ -91,6 +92,40 @@ describe('urlState', () => {
       expect(parsed.surge).toBe(state.surge);
       expect(parsed.cover).toBe(state.cover);
       expect(parsed.out).toBe(state.out);
+    });
+  });
+
+  describe('comparison state', () => {
+    it('roundtrips a pinned pool A under a. prefix with cmp flag and labels', () => {
+      const state: UrlState = {
+        ...DEFAULT_URL_STATE,
+        r: 1,
+        cmp: true,
+        la: 'DLT',
+        lb: 'Stock',
+        a: { ...DEFAULT_URL_STATE_POOL, r: 3, crit: 1, cover: 'light' },
+      };
+      const fragment = buildFragment(state);
+      expect(fragment).toContain('cmp=1');
+      expect(fragment).toContain('la=DLT');
+      expect(fragment).toContain('a.r=3');
+      expect(fragment).toContain('a.crit=1');
+
+      const parsed = parseFragment('#' + fragment);
+      expect(parsed.cmp).toBe(true);
+      expect(parsed.la).toBe('DLT');
+      expect(parsed.lb).toBe('Stock');
+      expect(parsed.r).toBe(1);
+      expect(parsed.a.r).toBe(3);
+      expect(parsed.a.crit).toBe(1);
+      expect(parsed.a.cover).toBe('light');
+    });
+
+    it('legacy links without cmp parse with compare off and default pool A', () => {
+      const parsed = parseFragment('#r=2&b=1');
+      expect(parsed.cmp).toBe(false);
+      expect(parsed.r).toBe(2);
+      expect(parsed.a).toEqual(DEFAULT_URL_STATE_POOL);
     });
   });
 });
