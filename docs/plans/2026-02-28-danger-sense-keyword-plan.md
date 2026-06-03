@@ -122,13 +122,13 @@ git commit -m "test(sim): Danger Sense X in wounds simulation"
   - `const normalizedSuppressionTokens = Math.max(0, Math.floor(suppressionTokens));`
   - `const normalizedDangerSenseX = Math.max(0, Math.floor(dangerSenseX));`
   - `const dangerSenseExtra = Math.min(normalizedSuppressionTokens, normalizedDangerSenseX);`
-- Change the line that sets `totalDefenseDice` from `defenseDice + extraDiceFromImpervious` to `defenseDice + extraDiceFromImpervious + dangerSenseExtra`.
+- Change the line that sets `totalDefenseDice` from `defenseDice` to `defenseDice + dangerSenseExtra`.
 - No change to the wounds formula: keep `wounds = Math.max(0, defenseDice - effectiveBlocks)` (extra dice only increase blocks).
 
 **Step 2: Add suppressionTokens and dangerSenseX to simulateWounds**
 
 - Add the same two parameters after `impervious`, before `runs`.
-- In the per-run loop, after computing `defenseDice`, add the same normalization and `dangerSenseExtra`, and add `dangerSenseExtra` to `totalDefenseDice` (so `totalDefenseDice = defenseDice + extraDiceFromImpervious + dangerSenseExtra`).
+- In the per-run loop, after computing `defenseDice`, add the same normalization and `dangerSenseExtra`, and add `dangerSenseExtra` to `totalDefenseDice` (so `totalDefenseDice = defenseDice + dangerSenseExtra`).
 
 **Step 2b: Update call sites**
 

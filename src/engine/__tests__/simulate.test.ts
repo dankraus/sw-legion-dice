@@ -1540,7 +1540,7 @@ describe('pierceBlocksCancelled', () => {
 });
 
 describe('Impervious in wounds simulation', () => {
-  it('impervious true with pierce 3 yields lower expected wounds than impervious false', () => {
+  it('impervious true with pierce 3 yields lower or equal expected wounds than impervious false', () => {
     const attackResults: AttackResults = {
       expectedHits: 2,
       expectedCrits: 0,
@@ -1603,7 +1603,7 @@ describe('Impervious in wounds simulation', () => {
       runs,
       rngImpervious
     );
-    expect(woundsImpervious.expectedWounds).toBeLessThan(
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(
       woundsNoImpervious.expectedWounds
     );
   });

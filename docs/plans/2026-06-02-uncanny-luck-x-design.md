@@ -19,7 +19,7 @@ Per [Legion Quick Guide — Uncanny Luck X](https://legionquickguide.com/#uncann
   - **Surge** when defense surge is **None** — `min(tokens, surgeCount)` surges are treated as converted to blocks; only **excess** surges are rerollable.
 - **X** is a fixed keyword value (non-negative integer). **X = 0** → no rerolls.
 - **Cap:** `rerollCount = min(X, rerollableCount)`. If more than X dice are rerollable, any X may be chosen; for same-color pools all rerollable faces are equivalent for expected value.
-- **Order:** Roll all defense dice → Uncanny Luck rerolls → `resolveDefenseRoll` → pierce / impervious → wounds. Same `totalDefenseDice` as today (attack successes, dodge, Danger Sense, Impervious extras, etc.); Uncanny Luck does not add dice.
+- **Order:** Roll all defense dice → Uncanny Luck rerolls → `resolveDefenseRoll` → pierce / impervious → wounds. Same `totalDefenseDice` as today (attack successes, dodge, Danger Sense extra, etc.); Uncanny Luck does not add dice.
 
 ## Architecture (Approach 1)
 
