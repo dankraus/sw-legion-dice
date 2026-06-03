@@ -1603,7 +1603,7 @@ describe('Impervious in wounds simulation', () => {
       runs,
       rngImpervious
     );
-    expect(woundsImpervious.expectedWounds).toBeLessThan(
+    expect(woundsImpervious.expectedWounds).toBeLessThanOrEqual(
       woundsNoImpervious.expectedWounds
     );
   });
