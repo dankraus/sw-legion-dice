@@ -914,7 +914,7 @@ function App() {
           <p className="app__footer-links">
             Spotted a problem?{' '}
             <a
-              href="https://github.com/dankraus/sw-legion-dice/issues"
+              href="https://github.com/dankraus/legion-roller/issues"
               target="_blank"
               rel="noopener noreferrer"
             >
