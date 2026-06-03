@@ -3,6 +3,7 @@ import type { PoolResults } from '../poolResults';
 import { describeActiveModifiers } from '../share/describeActiveModifiers';
 import { pointCostValue } from '../share/pointCost';
 import { buildDeltaRows } from '../comparisonDeltas';
+import { PoolDiceRow } from './PoolDiceRow';
 import './ShareCard.css';
 
 export interface ShareCardPool {
@@ -15,54 +16,6 @@ interface ShareCardProps {
   url: string;
   live: ShareCardPool;
   pinned?: ShareCardPool;
-}
-
-const DIE_COLORS: Record<string, string> = {
-  red: '#dc2626',
-  black: '#111111',
-  white: '#ffffff',
-};
-
-function DiceRow({ config }: { config: PoolConfig }) {
-  const attack: { color: string; count: number; name: string }[] = [
-    { color: DIE_COLORS.red, count: config.pool.red, name: 'red' },
-    { color: DIE_COLORS.black, count: config.pool.black, name: 'black' },
-    { color: DIE_COLORS.white, count: config.pool.white, name: 'white' },
-  ].filter((entry) => entry.count > 0);
-
-  const defenseColor = config.defenseDieColor;
-  const defenseLabel =
-    defenseColor === 'white' ? 'White defense die' : 'Red defense die';
-
-  return (
-    <>
-      <div className="share-card__pool-label">Attack</div>
-      <div className="share-card__dice">
-        {attack.length === 0 ? (
-          <span>none</span>
-        ) : (
-          attack.map((entry) => (
-            <span key={entry.name} className="share-card__die-group">
-              <span
-                className="share-card__die"
-                style={{ background: entry.color }}
-              />
-              <span>{entry.name}</span>
-              <span>×{entry.count}</span>
-            </span>
-          ))
-        )}
-      </div>
-      <div className="share-card__pool-label">Defense</div>
-      <div className="share-card__dice">
-        <span
-          className="share-card__die"
-          style={{ background: DIE_COLORS[defenseColor] }}
-        />
-        <span>{defenseLabel}</span>
-      </div>
-    </>
-  );
 }
 
 const COMPARE_STACK_BUCKET_THRESHOLD = 10;
@@ -173,7 +126,7 @@ function PoolDetails({ pool }: { pool: ShareCardPool }) {
   const modifiers = describeActiveModifiers(pool.config);
   return (
     <div>
-      <DiceRow config={pool.config} />
+      <PoolDiceRow config={pool.config} classPrefix="share-card" />
       {modifiers.length > 0 && (
         <div className="share-card__pills">
           {modifiers.map((modifier) => (
