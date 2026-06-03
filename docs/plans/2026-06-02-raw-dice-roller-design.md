@@ -12,18 +12,18 @@ Roll specific Legion dice when physical dice are not available. Attack and defen
 
 ## Product decisions
 
-| Topic | Decision |
-| ----- | -------- |
-| Result type | **Raw faces only** (no surge conversion, tokens, rerolls, keywords) |
-| Dice | **Attack** (red, black, white) and **defense** (red, white) |
-| Pool source | **Standalone** counts in the roller (not tied to calculator pools) |
-| Entry | Header button **“Roll dice”** (same weight as Copy link / Reset) |
-| Surface | **Modal** (backdrop, Escape, X, focus trap) |
-| Roll actions | **Roll attack** and **Roll defense** separately |
-| Results display | **Per-die chips** + **per-color tally** under each pool section |
-| Persistence | **None** — pools and results reset when the modal closes; fresh empty state each time it opens |
-| Dice cap | **None** — no artificial limit on pool sizes |
-| URL state | **Out of scope** — not in fragment share |
+| Topic           | Decision                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| Result type     | **Raw faces only** (no surge conversion, tokens, rerolls, keywords)                            |
+| Dice            | **Attack** (red, black, white) and **defense** (red, white)                                    |
+| Pool source     | **Standalone** counts in the roller (not tied to calculator pools)                             |
+| Entry           | Header button **“Roll dice”** (same weight as Copy link / Reset)                               |
+| Surface         | **Modal** (backdrop, Escape, X, focus trap)                                                    |
+| Roll actions    | **Roll attack** and **Roll defense** separately                                                |
+| Results display | **Per-die chips** + **per-color tally** under each pool section                                |
+| Persistence     | **None** — pools and results reset when the modal closes; fresh empty state each time it opens |
+| Dice cap        | **None** — no artificial limit on pool sizes                                                   |
+| URL state       | **Out of scope** — not in fragment share                                                       |
 
 ## Architecture (recommended)
 
@@ -87,14 +87,14 @@ No changes to simulation, probability, or `urlState`.
 
 ## Files
 
-| File | Role |
-| ---- | ---- |
-| `src/components/DiceRollerModal.tsx` | Modal UI, roll handlers, ephemeral state |
-| `src/components/DiceRollerModal.css` | Modal overlay, sections, chip grid |
-| `src/components/DieFaceChip.tsx` | Single die outcome chip (optional; can inline if tiny) |
-| `src/diceRollerTallies.ts` | Tally formatters for results display |
-| `src/engine/simulate.ts` | `rollDefensePoolDetailed`, types |
-| `src/App.tsx` | Header button + conditional mount |
+| File                                 | Role                                                   |
+| ------------------------------------ | ------------------------------------------------------ |
+| `src/components/DiceRollerModal.tsx` | Modal UI, roll handlers, ephemeral state               |
+| `src/components/DiceRollerModal.css` | Modal overlay, sections, chip grid                     |
+| `src/components/DieFaceChip.tsx`     | Single die outcome chip (optional; can inline if tiny) |
+| `src/diceRollerTallies.ts`           | Tally formatters for results display                   |
+| `src/engine/simulate.ts`             | `rollDefensePoolDetailed`, types                       |
+| `src/App.tsx`                        | Header button + conditional mount                      |
 
 ## Testing
 

@@ -28,7 +28,6 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
   if (props.mode === 'single') {
     return (
       <div className="compare-bar compare-bar--single">
-        <h2 className="compare-bar__heading">Compare pools</h2>
         <button
           type="button"
           className="compare-bar__start"
@@ -42,18 +41,11 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
     );
   }
 
-  const {
-    labelA,
-    labelB,
-    activePool,
-    onActivePoolChange,
-    onEndCompare,
-  } = props;
+  const { labelA, labelB, activePool, onActivePoolChange, onEndCompare } =
+    props;
 
   const displayA = tabLabel(labelA, 'A');
   const displayB = tabLabel(labelB, 'B');
-  const activeLabel = activePool === 'A' ? displayA : displayB;
-  const activeColor = activePool === 'A' ? COLOR_A : COLOR_B;
 
   function handleTabListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'ArrowLeft' && activePool === 'B') {
@@ -120,12 +112,6 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
           Clear
         </button>
       </div>
-      <p className="compare-bar__editing" style={{ color: activeColor }}>
-        <span className="compare-bar__editing-marker" style={{ color: activeColor }}>
-          ■
-        </span>{' '}
-        Editing: {activeLabel}
-      </p>
     </div>
   );
 }

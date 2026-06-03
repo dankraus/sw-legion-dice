@@ -8,26 +8,26 @@ In Pin & Compare mode, users lose sight of what each pool (A and B) contains bec
 
 ## Product decisions
 
-| Topic | Decision |
-| ----- | -------- |
-| Content scope | Full snapshot: structural fields always visible; optional fields when non-default (per `DEFAULT_POOL_CONFIG`) |
-| Placement | Results column only — two cards (A \| B) **above** editable labels and the delta table |
-| Layout | Side-by-side on wide viewports; stack vertically on narrow |
-| Visual identity | A = blue (`#2563eb`), B = amber (`#f59e0b`) — same as comparison charts |
-| Edit model | Unchanged — only B is editable in the left config column |
-| URL / share | No changes — configs already encoded in fragment |
+| Topic           | Decision                                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------------------- |
+| Content scope   | Full snapshot: structural fields always visible; optional fields when non-default (per `DEFAULT_POOL_CONFIG`) |
+| Placement       | Results column only — two cards (A \| B) **above** editable labels and the delta table                        |
+| Layout          | Side-by-side on wide viewports; stack vertically on narrow                                                    |
+| Visual identity | A = blue (`#2563eb`), B = amber (`#f59e0b`) — same as comparison charts                                       |
+| Edit model      | Unchanged — only B is editable in the left config column                                                      |
+| URL / share     | No changes — configs already encoded in fragment                                                              |
 
 ## Snapshot content
 
 `formatPoolSnapshot(config)` returns grouped sections mirroring the editor.
 
-| Section | Always show | Show when non-default |
-| ------- | ----------- | --------------------- |
-| Attack | Red / Black / White counts (including 0), Surge conversion | — |
-| Tokens | — | Any token count > 0 (Surge, Aim, Observe, etc.) |
-| Attack keywords | — | Critical, Precise, Ram, Sharpshooter, Pierce, Impact when set |
-| Defense | Defense die color, Defense surge, Cover level | Dug In, Low Profile, Suppressed, Backup, Impervious, Outmaneuver, Armor, Cover+, Dodge, Shield, Def surge tokens, Suppression, Danger Sense, Uncanny Luck when set |
-| Cost | — | Point cost when > 0 |
+| Section         | Always show                                                | Show when non-default                                                                                                                                              |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Attack          | Red / Black / White counts (including 0), Surge conversion | —                                                                                                                                                                  |
+| Tokens          | —                                                          | Any token count > 0 (Surge, Aim, Observe, etc.)                                                                                                                    |
+| Attack keywords | —                                                          | Critical, Precise, Ram, Sharpshooter, Pierce, Impact when set                                                                                                      |
+| Defense         | Defense die color, Defense surge, Cover level              | Dug In, Low Profile, Suppressed, Backup, Impervious, Outmaneuver, Armor, Cover+, Dodge, Shield, Def surge tokens, Suppression, Danger Sense, Uncanny Luck when set |
+| Cost            | —                                                          | Point cost when > 0                                                                                                                                                |
 
 **Dice display:** Colored die chips plus text (e.g. `3 red · 2 black`), same pattern as `ShareCard` `DiceRow`.
 

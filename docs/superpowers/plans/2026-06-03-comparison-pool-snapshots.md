@@ -14,24 +14,25 @@ Spec: `docs/superpowers/specs/2026-06-03-comparison-pool-snapshots-design.md`
 
 ## File structure
 
-| File | Responsibility |
-| ---- | ---------------- |
-| `src/poolSnapshot.ts` (new) | `formatPoolSnapshot` — sectioned labels/values from `PoolConfig` |
-| `src/poolSnapshot.test.ts` (new) | Formatter unit tests |
-| `src/components/PoolDiceRow.tsx` (new) | Attack chips + text, defense die row (shared) |
-| `src/components/PoolSnapshotCard.tsx` (new) | One pool’s snapshot card UI |
-| `src/components/PoolSnapshotCard.css` (new) | Card layout, accent border, sections |
-| `src/components/ComparisonResults.tsx` | Snapshots row, optional label inputs, existing charts |
-| `src/components/ComparisonResults.css` | `.comparison__snapshots` flex layout |
-| `src/components/ComparisonResults.test.tsx` | Assert snapshot content + labels |
-| `src/components/ShareCard.tsx` | Import `PoolDiceRow` instead of local `DiceRow` |
-| `src/App.tsx` | Pass configs + label handlers into `ComparisonResults`; remove outer label block |
+| File                                        | Responsibility                                                                   |
+| ------------------------------------------- | -------------------------------------------------------------------------------- |
+| `src/poolSnapshot.ts` (new)                 | `formatPoolSnapshot` — sectioned labels/values from `PoolConfig`                 |
+| `src/poolSnapshot.test.ts` (new)            | Formatter unit tests                                                             |
+| `src/components/PoolDiceRow.tsx` (new)      | Attack chips + text, defense die row (shared)                                    |
+| `src/components/PoolSnapshotCard.tsx` (new) | One pool’s snapshot card UI                                                      |
+| `src/components/PoolSnapshotCard.css` (new) | Card layout, accent border, sections                                             |
+| `src/components/ComparisonResults.tsx`      | Snapshots row, optional label inputs, existing charts                            |
+| `src/components/ComparisonResults.css`      | `.comparison__snapshots` flex layout                                             |
+| `src/components/ComparisonResults.test.tsx` | Assert snapshot content + labels                                                 |
+| `src/components/ShareCard.tsx`              | Import `PoolDiceRow` instead of local `DiceRow`                                  |
+| `src/App.tsx`                               | Pass configs + label handlers into `ComparisonResults`; remove outer label block |
 
 ---
 
 ### Task 1: `formatPoolSnapshot` (TDD)
 
 **Files:**
+
 - Create: `src/poolSnapshot.ts`
 - Test: `src/poolSnapshot.test.ts`
 
@@ -71,9 +72,7 @@ describe('formatPoolSnapshot', () => {
 
   it('omits Tokens section when all token counts are default', () => {
     const sections = formatPoolSnapshot(DEFAULT_POOL_CONFIG);
-    expect(sections.some((section) => section.title === 'Tokens')).toBe(
-      false
-    );
+    expect(sections.some((section) => section.title === 'Tokens')).toBe(false);
   });
 
   it('includes Tokens when a token count is set', () => {
@@ -154,11 +153,7 @@ function coverLabel(cover: CoverLevel): string {
   return 'None';
 }
 
-function addCountLine(
-  lines: PoolSnapshotLine[],
-  label: string,
-  value: string
-) {
+function addCountLine(lines: PoolSnapshotLine[], label: string, value: string) {
   const count = countFromString(value);
   if (count > 0) {
     lines.push({ label, value: String(count) });
@@ -265,6 +260,7 @@ git commit -m "feat: add formatPoolSnapshot for compare mode"
 ### Task 2: Extract `PoolDiceRow`
 
 **Files:**
+
 - Create: `src/components/PoolDiceRow.tsx`
 - Modify: `src/components/ShareCard.tsx`
 
@@ -370,6 +366,7 @@ git commit -m "refactor: extract PoolDiceRow for share card and snapshots"
 ### Task 3: `PoolSnapshotCard` component
 
 **Files:**
+
 - Create: `src/components/PoolSnapshotCard.tsx`
 - Create: `src/components/PoolSnapshotCard.css`
 - Test: `src/components/PoolSnapshotCard.test.tsx`
@@ -513,10 +510,7 @@ export function PoolSnapshotCard({
   const sections = formatPoolSnapshot(config);
 
   return (
-    <article
-      className="pool-snapshot"
-      style={{ borderColor: accentColor }}
-    >
+    <article className="pool-snapshot" style={{ borderColor: accentColor }}>
       <header className="pool-snapshot__header">
         <span className="pool-snapshot__marker" style={{ color: accentColor }}>
           ■
@@ -561,6 +555,7 @@ git commit -m "feat: add PoolSnapshotCard for compare snapshots"
 ### Task 4: Wire snapshots into `ComparisonResults`
 
 **Files:**
+
 - Modify: `src/components/ComparisonResults.tsx`
 - Modify: `src/components/ComparisonResults.css`
 - Modify: `src/components/ComparisonResults.test.tsx`
@@ -734,16 +729,16 @@ git commit -m "feat: show A/B pool snapshots in compare results"
 
 ## Spec coverage (self-review)
 
-| Spec requirement | Task |
-| ---------------- | ---- |
-| `formatPoolSnapshot` with defaults logic | Task 1 |
-| Side-by-side cards A/B colors | Task 3–4 |
-| Placement above labels, above delta | Task 4 (order in JSX) |
-| `PoolDiceRow` / ShareCard reuse | Task 2 |
-| `App` passes `pinnedConfig` + `liveConfig` | Task 4 |
-| Unit tests for formatter + UI | Tasks 1, 3, 4 |
-| URL/share unchanged | No task (N/A) |
-| Out of scope items | Not planned |
+| Spec requirement                           | Task                  |
+| ------------------------------------------ | --------------------- |
+| `formatPoolSnapshot` with defaults logic   | Task 1                |
+| Side-by-side cards A/B colors              | Task 3–4              |
+| Placement above labels, above delta        | Task 4 (order in JSX) |
+| `PoolDiceRow` / ShareCard reuse            | Task 2                |
+| `App` passes `pinnedConfig` + `liveConfig` | Task 4                |
+| Unit tests for formatter + UI              | Tasks 1, 3, 4         |
+| URL/share unchanged                        | No task (N/A)         |
+| Out of scope items                         | Not planned           |
 
 ## Verification (final)
 

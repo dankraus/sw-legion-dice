@@ -8,20 +8,20 @@ Let users edit **both** pools (A and B) while comparing, with UI that makes comp
 
 ## Product decisions
 
-| Topic | Decision |
-| ----- | -------- |
-| Edit model | One config column; **A/B tabs** switch which pool the editor reads/writes |
-| Tab labels | Tab text = `labelA` / `labelB` (fallback `"A"` / `"B"` when empty); truncate with ellipsis + `title` tooltip when long |
-| Enter compare | **Compare bar** at top of config column: heading + **Compare against this setup** button (replaces header **Pin as A**) |
-| Exit compare | **End compare** control (text or ✕) in the compare bar; removes pinned A; editor keeps pool B values |
-| Default active tab | **B** when entering compare (user typically tunes the variant) |
-| Compare chrome placement | Top of config column (`app__pool`), above Attack Pool heading |
-| Pin / Clear location | Removed from header; only in compare bar |
-| Snapshot cards | Remain read-only summaries in results column; **active** card highlighted with accent border, tinted background, and **Editing** pill; inactive card slightly muted |
-| Optional affordance | Click inactive snapshot card → switch to that pool’s tab |
-| Visual identity | A = blue (`#2563eb`), B = amber (`#f59e0b`) — unchanged |
-| URL / share | No schema changes — B = bare keys, A = `a.*`, `cmp`, `la`, `lb` as today |
-| Header actions | Quick Roll, Share, Reset only |
+| Topic                    | Decision                                                                                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Edit model               | One config column; **A/B tabs** switch which pool the editor reads/writes                                                                                           |
+| Tab labels               | Tab text = `labelA` / `labelB` (fallback `"A"` / `"B"` when empty); truncate with ellipsis + `title` tooltip when long                                              |
+| Enter compare            | **Compare bar** at top of config column: heading + **Compare against this setup** button (replaces header **Pin as A**)                                             |
+| Exit compare             | **End compare** control (text or ✕) in the compare bar; removes pinned A; editor keeps pool B values                                                                |
+| Default active tab       | **B** when entering compare (user typically tunes the variant)                                                                                                      |
+| Compare chrome placement | Top of config column (`app__pool`), above Attack Pool heading                                                                                                       |
+| Pin / Clear location     | Removed from header; only in compare bar                                                                                                                            |
+| Snapshot cards           | Remain read-only summaries in results column; **active** card highlighted with accent border, tinted background, and **Editing** pill; inactive card slightly muted |
+| Optional affordance      | Click inactive snapshot card → switch to that pool’s tab                                                                                                            |
+| Visual identity          | A = blue (`#2563eb`), B = amber (`#f59e0b`) — unchanged                                                                                                             |
+| URL / share              | No schema changes — B = bare keys, A = `a.*`, `cmp`, `la`, `lb` as today                                                                                            |
+| Header actions           | Quick Roll, Share, Reset only                                                                                                                                       |
 
 ## User flows
 
@@ -81,11 +81,11 @@ Editing: {activeLabel}
 
 Extend `PoolSnapshotCard`:
 
-| State | Treatment |
-| ----- | ----------- |
-| Active | Stronger accent border, light tinted background, **Editing** pill in header |
-| Inactive | Default border, slightly reduced contrast; no pill |
-| Click (optional) | Whole card clickable except label input; calls `onSelect` to switch tab |
+| State            | Treatment                                                                   |
+| ---------------- | --------------------------------------------------------------------------- |
+| Active           | Stronger accent border, light tinted background, **Editing** pill in header |
+| Inactive         | Default border, slightly reduced contrast; no pill                          |
+| Click (optional) | Whole card clickable except label input; calls `onSelect` to switch tab     |
 
 Labels remain editable in the card header; tab text updates as the user types.
 
@@ -93,13 +93,13 @@ Labels remain editable in the card header; tab text updates as the user types.
 
 ### State (`App.tsx`)
 
-| State | Purpose |
-| ----- | -------- |
-| `pinnedConfig: PoolConfig \| null` | Pool A; `null` = not comparing |
-| `cachedPoolB: PoolConfig \| null` | In-memory pool B while comparing; source of truth for B when editor is on A tab |
-| `activePool: 'A' \| 'B'` | Which pool the editor targets (only meaningful when comparing) |
-| `labelA`, `labelB` | Display names; drive tab text and snapshot headers |
-| Existing per-field `useState` | Editor UI; always reflects the **active** pool when comparing; equals pool B when not comparing |
+| State                              | Purpose                                                                                         |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `pinnedConfig: PoolConfig \| null` | Pool A; `null` = not comparing                                                                  |
+| `cachedPoolB: PoolConfig \| null`  | In-memory pool B while comparing; source of truth for B when editor is on A tab                 |
+| `activePool: 'A' \| 'B'`           | Which pool the editor targets (only meaningful when comparing)                                  |
+| `labelA`, `labelB`                 | Display names; drive tab text and snapshot headers                                              |
+| Existing per-field `useState`      | Editor UI; always reflects the **active** pool when comparing; equals pool B when not comparing |
 
 Compare mode is active iff `pinnedConfig !== null`.
 
@@ -119,9 +119,7 @@ const editorConfig = readConfigFromEditor(simulationInputs); // immediate, not d
 
 const configA = pinnedConfig!; // when comparing
 const configB =
-  activePool === 'B'
-    ? editorConfig
-    : cachedPoolB ?? editorConfig;
+  activePool === 'B' ? editorConfig : (cachedPoolB ?? editorConfig);
 ```
 
 Use **debounced** variants only for expensive results (`computePoolResults`), keyed off the same `configA` / `configB` resolution so snapshots and charts stay stable.
@@ -150,21 +148,21 @@ When editing **A** (`activePool === 'A'`): each change updates editor hooks **an
 
 Bare keys (pool B) must **never** serialize the editor while `activePool === 'A'`.
 
-| Compare state | Bare keys source | `a.*` keys source |
-| ------------- | ---------------- | ----------------- |
-| Off | Editor hooks (today) | — |
-| On, editing B | Editor hooks | `pinnedConfig` |
-| On, editing A | `cachedPoolB` | `pinnedConfig` (synced from editor) |
+| Compare state | Bare keys source     | `a.*` keys source                   |
+| ------------- | -------------------- | ----------------------------------- |
+| Off           | Editor hooks (today) | —                                   |
+| On, editing B | Editor hooks         | `pinnedConfig`                      |
+| On, editing A | `cachedPoolB`        | `pinnedConfig` (synced from editor) |
 
 This preserves the contract: B = bare keys, A = `a.*`, with no schema changes.
 
 ### Downstream consumers
 
-| Consumer | Pool B source | Pool A source |
-| -------- | ------------- | ------------- |
-| `ComparisonResults` | `configB` (resolved above) | `configA` = `pinnedConfig` |
-| `ShareModal` `live` | Always `configB` | `pinned` when comparing |
-| `urlState` | Bare keys per table above | `configToPoolState(pinnedConfig)` |
+| Consumer            | Pool B source              | Pool A source                     |
+| ------------------- | -------------------------- | --------------------------------- |
+| `ComparisonResults` | `configB` (resolved above) | `configA` = `pinnedConfig`        |
+| `ShareModal` `live` | Always `configB`           | `pinned` when comparing           |
+| `urlState`          | Bare keys per table above  | `configToPoolState(pinnedConfig)` |
 
 ### Enter compare (pin)
 

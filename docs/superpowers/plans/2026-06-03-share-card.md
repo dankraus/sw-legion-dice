@@ -29,6 +29,7 @@ Spec: `docs/superpowers/specs/2026-06-03-share-card-design.md`
 ### Task 1: Add `html-to-image` dependency
 
 **Files:**
+
 - Modify: `package.json` (via npm)
 
 - [ ] **Step 1: Install**
@@ -48,6 +49,7 @@ git commit -m "build: add html-to-image dependency"
 ### Task 2: `describeActiveModifiers` (TDD)
 
 **Files:**
+
 - Create: `src/share/describeActiveModifiers.ts`
 - Test: `src/share/describeActiveModifiers.test.ts`
 
@@ -166,6 +168,7 @@ git commit -m "feat: add describeActiveModifiers"
 ### Task 3: `buildShareText` (TDD)
 
 **Files:**
+
 - Create: `src/share/shareText.ts`
 - Test: `src/share/shareText.test.ts`
 
@@ -202,7 +205,10 @@ describe('buildShareText', () => {
   });
 
   it('omits efficiency when no point cost is set', () => {
-    const config = { ...DEFAULT_POOL_CONFIG, pool: { red: 2, black: 0, white: 0 } };
+    const config = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 2, black: 0, white: 0 },
+    };
     const text = buildShareText({
       url,
       live: { config, results: computePoolResults(config), label: 'B' },
@@ -211,12 +217,26 @@ describe('buildShareText', () => {
   });
 
   it('renders an A vs B comparison block when pinned is provided', () => {
-    const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 3, black: 0, white: 0 } };
-    const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
+    const configA = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 3, black: 0, white: 0 },
+    };
+    const configB = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 1, black: 0, white: 0 },
+    };
     const text = buildShareText({
       url,
-      live: { config: configB, results: computePoolResults(configB), label: 'Stock' },
-      pinned: { config: configA, results: computePoolResults(configA), label: 'DLT' },
+      live: {
+        config: configB,
+        results: computePoolResults(configB),
+        label: 'Stock',
+      },
+      pinned: {
+        config: configA,
+        results: computePoolResults(configA),
+        label: 'DLT',
+      },
     });
     expect(text).toContain('DLT');
     expect(text).toContain('Stock');
@@ -316,6 +336,7 @@ git commit -m "feat: add buildShareText (single + compare)"
 ### Task 4: `shareImage` helpers
 
 **Files:**
+
 - Create: `src/share/shareImage.ts`
 - Test: `src/share/shareImage.test.ts`
 
@@ -395,9 +416,7 @@ export function canCopyImage(): boolean {
 export async function copyImageToClipboard(node: HTMLElement): Promise<void> {
   const blob = await toBlob(node, { pixelRatio: PIXEL_RATIO });
   if (!blob) throw new Error('Failed to render card image');
-  await navigator.clipboard.write([
-    new ClipboardItem({ 'image/png': blob }),
-  ]);
+  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
 export async function downloadPng(
@@ -429,6 +448,7 @@ git commit -m "feat: add shareImage clipboard/download helpers"
 ### Task 5: `ShareCard` component
 
 **Files:**
+
 - Create: `src/components/ShareCard.tsx`
 - Create: `src/components/ShareCard.css`
 - Test: `src/components/ShareCard.test.tsx`
@@ -480,7 +500,10 @@ Create `src/components/ShareCard.css`:
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 16px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
 }
@@ -618,7 +641,9 @@ function DiceRow({ config }: { config: PoolConfig }) {
     { color: DIE_COLORS.white, count: config.pool.white, name: 'white' },
   ].filter((entry) => entry.count > 0);
 
-  const text = attack.map((entry) => `${entry.count} ${entry.name}`).join(' · ');
+  const text = attack
+    .map((entry) => `${entry.count} ${entry.name}`)
+    .join(' · ');
 
   return (
     <>
@@ -733,6 +758,7 @@ git commit -m "feat: add ShareCard presentational component"
 ### Task 6: `ShareModal` component
 
 **Files:**
+
 - Create: `src/components/ShareModal.tsx`
 - Create: `src/components/ShareModal.css`
 - Test: `src/components/ShareModal.test.tsx`
@@ -759,7 +785,11 @@ describe('ShareModal', () => {
   it('renders the action buttons and closes on backdrop click', () => {
     const onClose = vi.fn();
     const { getByText, getByRole } = render(
-      <ShareModal url="https://legionroller.com/#r=2" live={live} onClose={onClose} />
+      <ShareModal
+        url="https://legionroller.com/#r=2"
+        live={live}
+        onClose={onClose}
+      />
     );
     expect(getByText('Copy link')).toBeTruthy();
     expect(getByText('Copy text')).toBeTruthy();
@@ -773,7 +803,11 @@ describe('ShareModal', () => {
     const { getByText } = render(
       <ShareModal
         url="https://legionroller.com/"
-        live={{ config: emptyConfig, results: computePoolResults(emptyConfig), label: 'B' }}
+        live={{
+          config: emptyConfig,
+          results: computePoolResults(emptyConfig),
+          label: 'B',
+        }}
         onClose={() => {}}
       />
     );
@@ -987,7 +1021,9 @@ export function ShareModal({ url, live, pinned, onClose }: ShareModalProps) {
 
         {feedback && <p className="share-modal__hint">{feedback}</p>}
         {!hasDice && (
-          <p className="share-modal__hint">Add dice to share an image or text.</p>
+          <p className="share-modal__hint">
+            Add dice to share an image or text.
+          </p>
         )}
 
         <div className="share-modal__offscreen" aria-hidden="true">
@@ -1018,6 +1054,7 @@ git commit -m "feat: add ShareModal with preview and copy/download actions"
 ### Task 7: Wire `ShareModal` into `App.tsx`
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 - [ ] **Step 1: Replace the Share button behavior**
@@ -1054,18 +1091,24 @@ Remove the now-unused `handleCopyLink`/`copyFeedback` only if nothing else uses 
 Near the `DiceRollerModal` render, add:
 
 ```tsx
-{shareOpen ? (
-  <ShareModal
-    url={window.location.href}
-    live={{ config: liveConfig, results: liveResults, label: labelB || 'B' }}
-    pinned={
-      pinnedConfig && pinnedResults
-        ? { config: pinnedConfig, results: pinnedResults, label: labelA || 'A' }
-        : undefined
-    }
-    onClose={() => setShareOpen(false)}
-  />
-) : null}
+{
+  shareOpen ? (
+    <ShareModal
+      url={window.location.href}
+      live={{ config: liveConfig, results: liveResults, label: labelB || 'B' }}
+      pinned={
+        pinnedConfig && pinnedResults
+          ? {
+              config: pinnedConfig,
+              results: pinnedResults,
+              label: labelA || 'A',
+            }
+          : undefined
+      }
+      onClose={() => setShareOpen(false)}
+    />
+  ) : null;
+}
 ```
 
 This reuses `liveConfig`, `liveResults`, `pinnedConfig`, `pinnedResults`, `labelA`, `labelB` from the comparison plan. If the comparison feature is not present, pass only `live` and omit `pinned`.
@@ -1076,6 +1119,7 @@ Run: `npm run test && npx tsc -b && npm run lint && npm run build`
 Expected: all pass.
 
 Manual check (`npm run dev`):
+
 1. Click **Share** → modal opens with a live card preview.
 2. **Copy link** copies the URL; **Copy text** copies the text block; **Download PNG** downloads a PNG; **Copy image** copies a PNG (Chrome/Edge/Safari).
 3. With 0 dice, image/text/PNG disabled with the hint; link still works.

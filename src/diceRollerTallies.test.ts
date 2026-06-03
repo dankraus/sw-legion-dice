@@ -15,7 +15,13 @@ describe('diceRollerTallies', () => {
       { color: 'white', face: 'crit' },
     ];
     expect(getAttackTallyGroups(outcomes)).toEqual([
-      { color: 'red', parts: [{ face: 'hit', count: 1 }, { face: 'blank', count: 1 }] },
+      {
+        color: 'red',
+        parts: [
+          { face: 'hit', count: 1 },
+          { face: 'blank', count: 1 },
+        ],
+      },
       { color: 'white', parts: [{ face: 'crit', count: 1 }] },
     ]);
   });

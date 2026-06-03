@@ -10,14 +10,14 @@ describe('ShareCard', () => {
       pool: { red: 3, black: 1, white: 0 },
       aimTokens: '2',
     };
-    const { getByText } = render(
+    const { getAllByText, getByText } = render(
       <ShareCard
         url="https://legionroller.com/#r=3"
         live={{ config, results: computePoolResults(config), label: 'B' }}
       />
     );
-    expect(getByText('red')).toBeTruthy();
-    expect(getByText('black')).toBeTruthy();
+    expect(getAllByText('Red').length).toBe(2);
+    expect(getByText('Black')).toBeTruthy();
     expect(getByText('×3')).toBeTruthy();
     expect(getByText('×1')).toBeTruthy();
     expect(getByText('Aim 2')).toBeTruthy();
@@ -61,13 +61,13 @@ describe('ShareCard', () => {
       pool: { red: 2, black: 0, white: 0 },
       defenseDieColor: 'white' as const,
     };
-    const { getByText } = render(
+    const { getAllByText } = render(
       <ShareCard
         url="https://legionroller.com/#r=2"
         live={{ config, results: computePoolResults(config), label: 'B' }}
       />
     );
-    expect(getByText('White defense die')).toBeTruthy();
+    expect(getAllByText('White').length).toBeGreaterThan(0);
   });
 
   it('shows a delta summary in compare mode', () => {

@@ -9,7 +9,11 @@ interface FaceCountDisplayProps {
   poolKind: 'attack' | 'defense';
 }
 
-export function FaceCountDisplay({ count, face, poolKind }: FaceCountDisplayProps) {
+export function FaceCountDisplay({
+  count,
+  face,
+  poolKind,
+}: FaceCountDisplayProps) {
   if (face === 'blank') {
     return (
       <span className="face-count-display">

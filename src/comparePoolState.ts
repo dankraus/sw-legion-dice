@@ -17,12 +17,16 @@ export function resolveCompareConfigs(args: {
   editorConfig: PoolConfig;
   debouncedEditorConfig: PoolConfig;
 }): CompareConfigResolution | null {
-  const { pinnedConfig, cachedPoolB, activePool, editorConfig, debouncedEditorConfig } =
-    args;
+  const {
+    pinnedConfig,
+    cachedPoolB,
+    activePool,
+    editorConfig,
+    debouncedEditorConfig,
+  } = args;
   if (pinnedConfig === null) return null;
 
-  const configA =
-    activePool === 'A' ? editorConfig : pinnedConfig;
+  const configA = activePool === 'A' ? editorConfig : pinnedConfig;
   const configB =
     activePool === 'B' ? editorConfig : (cachedPoolB ?? editorConfig);
   const debouncedConfigA =
@@ -33,5 +37,11 @@ export function resolveCompareConfigs(args: {
       : (cachedPoolB ?? debouncedEditorConfig);
   const barePoolStateSource = configB;
 
-  return { configA, configB, debouncedConfigA, debouncedConfigB, barePoolStateSource };
+  return {
+    configA,
+    configB,
+    debouncedConfigA,
+    debouncedConfigB,
+    barePoolStateSource,
+  };
 }

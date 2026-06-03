@@ -14,11 +14,11 @@ Spec: `docs/superpowers/specs/2026-06-03-share-card-compact-dice-pools-design.md
 
 ## File Structure
 
-| File | Change |
-| ---- | ------ |
-| `src/components/ShareCard.test.tsx` | Update composition assertion; add large-pool compare test |
-| `src/components/ShareCard.tsx` | Replace `flatMap` chips + summary with die groups |
-| `src/components/ShareCard.css` | `.share-card__die-group`, `flex-wrap` on `.share-card__dice` |
+| File                                | Change                                                       |
+| ----------------------------------- | ------------------------------------------------------------ |
+| `src/components/ShareCard.test.tsx` | Update composition assertion; add large-pool compare test    |
+| `src/components/ShareCard.tsx`      | Replace `flatMap` chips + summary with die groups            |
+| `src/components/ShareCard.css`      | `.share-card__die-group`, `flex-wrap` on `.share-card__dice` |
 
 Docs in the spec are already updated; no further doc tasks.
 
@@ -27,6 +27,7 @@ Docs in the spec are already updated; no further doc tasks.
 ### Task 1: Update ShareCard tests (TDD)
 
 **Files:**
+
 - Modify: `src/components/ShareCard.test.tsx`
 
 - [ ] **Step 1: Update the composition test expectations**
@@ -34,12 +35,12 @@ Docs in the spec are already updated; no further doc tasks.
 Replace the `shows pool composition...` test body assertions. Keep the same config (`3 red, 1 black`); change lines 19–21:
 
 ```ts
-    expect(getByText('red')).toBeTruthy();
-    expect(getByText('black')).toBeTruthy();
-    expect(getByText('×3')).toBeTruthy();
-    expect(getByText('×1')).toBeTruthy();
-    expect(getByText('Aim 2')).toBeTruthy();
-    expect(getByText('Avg total')).toBeTruthy();
+expect(getByText('red')).toBeTruthy();
+expect(getByText('black')).toBeTruthy();
+expect(getByText('×3')).toBeTruthy();
+expect(getByText('×1')).toBeTruthy();
+expect(getByText('Aim 2')).toBeTruthy();
+expect(getByText('Avg total')).toBeTruthy();
 ```
 
 Remove `expect(getByText(/3 red/)).toBeTruthy();`.
@@ -98,6 +99,7 @@ git commit -m "test: expect compact die groups on share card"
 ### Task 2: Implement compact DiceRow and CSS
 
 **Files:**
+
 - Modify: `src/components/ShareCard.tsx` (`DiceRow`, lines 26–65)
 - Modify: `src/components/ShareCard.css` (`.share-card__dice`, after `.share-card__die`)
 
@@ -204,17 +206,17 @@ git commit -m "fix: compact share card attack dice with per-color multipliers"
 
 ## Spec coverage (self-review)
 
-| Spec requirement | Task |
-| ---------------- | ---- |
-| Chip + color + `×N` per attack color | Task 2 `DiceRow` |
-| Order red → black → white | Task 2 array order unchanged |
-| Remove `N red · N black` summary | Task 2 removes `text` span |
-| Defense unchanged | Task 2 defense block identical |
-| Empty attack → `none` | Task 2 conditional |
-| `.share-card__die-group` + flex-wrap | Task 2 CSS |
-| Composition test update | Task 1 |
-| Large compare pool test | Task 1 |
-| Parent spec doc | Already done in brainstorming |
+| Spec requirement                     | Task                           |
+| ------------------------------------ | ------------------------------ |
+| Chip + color + `×N` per attack color | Task 2 `DiceRow`               |
+| Order red → black → white            | Task 2 array order unchanged   |
+| Remove `N red · N black` summary     | Task 2 removes `text` span     |
+| Defense unchanged                    | Task 2 defense block identical |
+| Empty attack → `none`                | Task 2 conditional             |
+| `.share-card__die-group` + flex-wrap | Task 2 CSS                     |
+| Composition test update              | Task 1                         |
+| Large compare pool test              | Task 1                         |
+| Parent spec doc                      | Already done in brainstorming  |
 
 ## Out of scope (confirmed)
 

@@ -1,5 +1,10 @@
 import type { AttackFace, DefenseFace } from '../engine/simulate';
-import { ATTACK_FACE_GLYPHS, DEFENSE_FACE_GLYPHS, ATTACK_FACE_LABELS, DEFENSE_FACE_LABELS } from '../legionFont/legionFaceGlyphs';
+import {
+  ATTACK_FACE_GLYPHS,
+  DEFENSE_FACE_GLYPHS,
+  ATTACK_FACE_LABELS,
+  DEFENSE_FACE_LABELS,
+} from '../legionFont/legionFaceGlyphs';
 import { LegionFaceSymbol } from '../legionFont/LegionFaceSymbol';
 import './DieFaceChip.css';
 

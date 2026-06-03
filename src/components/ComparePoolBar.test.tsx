@@ -6,7 +6,11 @@ describe('ComparePoolBar', () => {
   it('renders start compare button in single mode', () => {
     const onStart = vi.fn();
     const { getByRole } = render(
-      <ComparePoolBar mode="single" onStartCompare={onStart} startDisabled={false} />
+      <ComparePoolBar
+        mode="single"
+        onStartCompare={onStart}
+        startDisabled={false}
+      />
     );
     fireEvent.click(getByRole('button', { name: /compare pools/i }));
     expect(onStart).toHaveBeenCalled();
@@ -15,7 +19,7 @@ describe('ComparePoolBar', () => {
   it('renders label tabs and end compare in compare mode', () => {
     const onChange = vi.fn();
     const onEnd = vi.fn();
-    const { getByRole, getByText } = render(
+    const { getByRole } = render(
       <ComparePoolBar
         mode="compare"
         labelA="Heavy"
@@ -29,7 +33,6 @@ describe('ComparePoolBar', () => {
     expect(onChange).toHaveBeenCalledWith('A');
     fireEvent.click(getByRole('button', { name: /clear/i }));
     expect(onEnd).toHaveBeenCalled();
-    expect(getByText(/Editing: Upgrade/)).toBeTruthy();
   });
 
   it('moves focus between tabs with arrow keys', () => {

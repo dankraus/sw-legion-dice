@@ -24,11 +24,7 @@ function coverLabel(cover: CoverLevel): string {
   return 'None';
 }
 
-function addCountLine(
-  lines: PoolSnapshotLine[],
-  label: string,
-  value: string
-) {
+function addCountLine(lines: PoolSnapshotLine[], label: string, value: string) {
   const count = countFromString(value);
   if (count > 0) {
     lines.push({ label, value: String(count) });

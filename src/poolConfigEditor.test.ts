@@ -60,7 +60,11 @@ describe('applyConfigToEditor', () => {
       setBackup: vi.fn(),
     };
     applyConfigToEditor(config, setters);
-    expect(setters.setPool).toHaveBeenCalledWith({ red: 2, black: 0, white: 1 });
+    expect(setters.setPool).toHaveBeenCalledWith({
+      red: 2,
+      black: 0,
+      white: 1,
+    });
     expect(setters.setSurge).toHaveBeenCalledWith('crit');
     expect(setters.setAimTokens).toHaveBeenCalledWith('1');
     expect(setters.setCover).toHaveBeenCalledWith('light');

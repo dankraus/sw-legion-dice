@@ -14,22 +14,23 @@
 
 ## File map
 
-| File | Change |
-|------|--------|
-| `src/engine/simulate.ts` | Helpers + reroll step in defense roll paths |
-| `src/engine/probability.ts` | `uncannyLuckX` on `calculateWounds`, defense distribution wrappers |
-| `src/engine/__tests__/simulate.test.ts` | Unit + wounds simulation tests |
-| `src/engine/__tests__/probability.test.ts` | `calculateWounds` integration test |
-| `src/urlState.ts` | `uLuck` in `UrlState` |
-| `src/urlState.test.ts` | Parse/build round-trip |
-| `src/App.tsx` | State, debounce, URL, UI control, `calculateWounds` |
-| `docs/plans/2026-06-02-uncanny-luck-x-design.md` | Add **Implemented** line when done |
+| File                                             | Change                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------ |
+| `src/engine/simulate.ts`                         | Helpers + reroll step in defense roll paths                        |
+| `src/engine/probability.ts`                      | `uncannyLuckX` on `calculateWounds`, defense distribution wrappers |
+| `src/engine/__tests__/simulate.test.ts`          | Unit + wounds simulation tests                                     |
+| `src/engine/__tests__/probability.test.ts`       | `calculateWounds` integration test                                 |
+| `src/urlState.ts`                                | `uLuck` in `UrlState`                                              |
+| `src/urlState.test.ts`                           | Parse/build round-trip                                             |
+| `src/App.tsx`                                    | State, debounce, URL, UI control, `calculateWounds`                |
+| `docs/plans/2026-06-02-uncanny-luck-x-design.md` | Add **Implemented** line when done                                 |
 
 ---
 
 ### Task 1: Engine — rerollable indices (TDD)
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Test: `src/engine/__tests__/simulate.test.ts`
 
@@ -124,16 +125,14 @@ git commit -m "feat(engine): add getRerollableDefenseIndices for Uncanny Luck X"
 ### Task 2: Engine — apply rerolls helper (TDD)
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts`
 - Test: `src/engine/__tests__/simulate.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
 ```ts
-import {
-  applyUncannyLuckRerolls,
-  rollOneDefenseDieOutcome,
-} from '../simulate';
+import { applyUncannyLuckRerolls, rollOneDefenseDieOutcome } from '../simulate';
 
 describe('applyUncannyLuckRerolls', () => {
   it('rerolls at most X rerollable dice', () => {
@@ -242,6 +241,7 @@ git commit -m "feat(engine): add applyUncannyLuckRerolls for Uncanny Luck X"
 ### Task 3: Engine — wire into wounds simulation
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (`simulateWounds`, `simulateWoundsFromAttackResults`)
 
 - [ ] **Step 1: Write the failing wounds test**
@@ -383,6 +383,7 @@ git commit -m "feat(engine): apply Uncanny Luck X in wounds simulation"
 ### Task 4: Engine — standalone defense pool APIs
 
 **Files:**
+
 - Modify: `src/engine/simulate.ts` (`simulateDefensePool`, `getDefenseDistributionForDiceCountSim`)
 - Modify: `src/engine/probability.ts`
 - Test: `src/engine/__tests__/simulate.test.ts`, `src/engine/__tests__/probability.test.ts`
@@ -484,6 +485,7 @@ git commit -m "feat(engine): Uncanny Luck X on standalone defense pool APIs"
 ### Task 5: Engine — `calculateWounds` wrapper
 
 **Files:**
+
 - Modify: `src/engine/probability.ts`
 - Test: `src/engine/__tests__/probability.test.ts`
 
@@ -585,6 +587,7 @@ git commit -m "feat(engine): thread uncannyLuckX through calculateWounds"
 ### Task 6: URL state — `uLuck`
 
 **Files:**
+
 - Modify: `src/urlState.ts`
 - Test: `src/urlState.test.ts`
 
@@ -609,7 +612,7 @@ Run: `npm test -- src/urlState.test.ts -t "uLuck"`
 In `UrlState` and `DEFAULT_URL_STATE`:
 
 ```ts
-uLuck: number;  // default 0
+uLuck: number; // default 0
 ```
 
 In `parseFragment`:
@@ -634,6 +637,7 @@ git commit -m "feat(url): add uLuck fragment key for Uncanny Luck X"
 ### Task 7: UI — input, wiring, guide link
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 - [ ] **Step 1: Add state and URL init**

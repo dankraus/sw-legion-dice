@@ -461,11 +461,10 @@ function App() {
   };
 
   const handleEndCompare = () => {
-    if (activePool === 'A' && cachedPoolB) {
-      applyConfigToEditor(cachedPoolB, poolEditorSetters);
-    }
     setPinnedConfig(null);
     setCachedPoolB(null);
+    setActivePool('B');
+    handleReset();
   };
 
   const handleActivePoolChange = (pool: ActivePool) => {
@@ -589,12 +588,12 @@ function App() {
             className={
               'app__pool' +
               (isComparing ? ' app__pool--compare' : '') +
-              (isComparing ? ` app__pool--editing-${activePool.toLowerCase()}` : '')
+              (isComparing
+                ? ` app__pool--editing-${activePool.toLowerCase()}`
+                : '')
             }
             style={
-              isComparing
-                ? { borderLeftColor: activePoolAccent }
-                : undefined
+              isComparing ? { borderLeftColor: activePoolAccent } : undefined
             }
           >
             {isComparing ? (

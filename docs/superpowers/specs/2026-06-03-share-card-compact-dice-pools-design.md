@@ -9,14 +9,14 @@ Prevent the share/export card from overflowing horizontally when attack pools ar
 
 ## Product decisions
 
-| Topic | Decision |
-| ----- | -------- |
-| Attack display | One group per color with count &gt; 0: colored chip + color name + `×N` (e.g. `■ red ×8`) |
-| Attack order | red → black → white |
-| Redundant text | Remove the trailing `N red · N black · N white` summary (replaced by groups) |
-| Defense display | Unchanged: single chip + "Red/White defense die" (no multiplier) |
-| Scope | `ShareCard` image/preview only; `shareText.ts` and main app UI unchanged |
-| Card width | No change (360px single, 480px compare) |
+| Topic           | Decision                                                                                  |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| Attack display  | One group per color with count &gt; 0: colored chip + color name + `×N` (e.g. `■ red ×8`) |
+| Attack order    | red → black → white                                                                       |
+| Redundant text  | Remove the trailing `N red · N black · N white` summary (replaced by groups)              |
+| Defense display | Unchanged: single chip + "Red/White defense die" (no multiplier)                          |
+| Scope           | `ShareCard` image/preview only; `shareText.ts` and main app UI unchanged                  |
+| Card width      | No change (360px single, 480px compare)                                                   |
 
 ## Problem
 

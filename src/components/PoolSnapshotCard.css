@@ -1,9 +1,10 @@
 .pool-snapshot {
   flex: 1 1 220px;
-  border: 1px solid #e5e7eb;
+  border: 2px solid transparent;
   border-radius: 8px;
   padding: 0.75rem;
   background: #fafafa;
+  box-shadow: 0 0 0 1px #e5e7eb inset;
 }
 
 .pool-snapshot__header {
@@ -125,11 +126,19 @@
 .pool-snapshot__lines dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pool-snapshot__lines dd .pool-snapshot__die {
+  flex-shrink: 0;
 }
 
 .pool-snapshot--active {
   background: color-mix(in srgb, var(--pool-accent, #2563eb) 8%, #fafafa);
-  border-width: 2px;
+  border-color: var(--pool-accent, #2563eb);
+  box-shadow: none;
   opacity: 1;
 }
 

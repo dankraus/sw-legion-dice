@@ -15,23 +15,24 @@ describe('ComparisonResults', () => {
     };
     const resultsA = computePoolResults(configA);
     const resultsB = computePoolResults(configB);
-    const { getAllByDisplayValue, getByText, getByLabelText, getAllByText } = render(
-      <ComparisonResults
-        configA={configA}
-        configB={configB}
-        resultsA={resultsA}
-        resultsB={resultsB}
-        costA=""
-        costB=""
-        labelA="DLT"
-        labelB="Stock"
-        onLabelAChange={() => {}}
-        onLabelBChange={() => {}}
-        activePool="B"
-        onSelectPoolA={() => {}}
-        onSelectPoolB={() => {}}
-      />
-    );
+    const { getAllByDisplayValue, getByText, getByLabelText, getAllByText } =
+      render(
+        <ComparisonResults
+          configA={configA}
+          configB={configB}
+          resultsA={resultsA}
+          resultsB={resultsB}
+          costA=""
+          costB=""
+          labelA="DLT"
+          labelB="Stock"
+          onLabelAChange={() => {}}
+          onLabelBChange={() => {}}
+          activePool="B"
+          onSelectPoolA={() => {}}
+          onSelectPoolB={() => {}}
+        />
+      );
     expect(getByText('×3')).toBeTruthy();
     expect(getByText('×1')).toBeTruthy();
     expect(getAllByDisplayValue('DLT').length).toBeGreaterThan(0);

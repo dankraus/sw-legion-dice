@@ -18,6 +18,7 @@ Remove the `<h2 className="compare-bar__heading">Compare pools</h2>` element fro
 **File:** `src/components/ComparePoolBar.tsx`
 
 **Current structure (lines 28-42):**
+
 ```tsx
 if (props.mode === 'single') {
   return (
@@ -38,6 +39,7 @@ if (props.mode === 'single') {
 ```
 
 **New structure:**
+
 ```tsx
 if (props.mode === 'single') {
   return (
@@ -66,10 +68,12 @@ if (props.mode === 'single') {
 ### Impact Analysis
 
 **Affected:**
+
 - Visual layout of single mode compare bar (simplified)
 - DOM structure (one fewer element)
 
 **Unaffected:**
+
 - Button functionality and accessibility
 - Compare mode with tabs (lines 68-129) - does not use this heading
 - CSS class `.compare-bar__heading` can remain in stylesheet (no breaking changes required)
@@ -90,10 +94,12 @@ if (props.mode === 'single') {
 ## Alternative Approaches Considered
 
 ### Option 2: Visually hide heading, keep for screen readers
+
 - Add `sr-only` class to heading to hide visually but preserve in DOM
 - **Rejected:** Button already has proper `aria-label`, making this redundant
 
 ### Option 3: Replace with descriptive label
+
 - Change heading to non-redundant text like "Comparison mode"
 - **Rejected:** Still adds visual clutter; button is sufficiently self-descriptive
 

@@ -4,6 +4,11 @@ import { formatPoolSnapshot } from '../poolSnapshot';
 import { PoolDiceRow } from './PoolDiceRow';
 import './PoolSnapshotCard.css';
 
+const DIE_COLORS: Record<string, string> = {
+  red: '#dc2626',
+  white: '#ffffff',
+};
+
 interface PoolSnapshotCardProps {
   config: PoolConfig;
   poolId: 'A' | 'B';
@@ -42,7 +47,10 @@ export function PoolSnapshotCard({
     <article
       className={snapshotClassName}
       style={
-        { borderColor: accentColor, '--pool-accent': accentColor } as CSSProperties
+        {
+          borderColor: accentColor,
+          '--pool-accent': accentColor,
+        } as CSSProperties
       }
       onClick={onSelect ? handleCardClick : undefined}
     >
@@ -70,15 +78,33 @@ export function PoolSnapshotCard({
         <div key={section.title} className="pool-snapshot__section">
           <div className="pool-snapshot__section-title">{section.title}</div>
           <dl className="pool-snapshot__lines">
-            {section.lines.map((line) => (
-              <div
-                key={`${section.title}-${line.label}`}
-                className="pool-snapshot__line"
-              >
-                <dt>{line.label}</dt>
-                <dd>{line.value}</dd>
-              </div>
-            ))}
+            {section.lines.map((line) => {
+              const isDefenseDie =
+                section.title === 'Defense' && line.label === 'Defense die';
+              return (
+                <div
+                  key={`${section.title}-${line.label}`}
+                  className="pool-snapshot__line"
+                >
+                  <dt>{line.label}</dt>
+                  <dd>
+                    {isDefenseDie ? (
+                      <>
+                        <span
+                          className="pool-snapshot__die"
+                          style={{
+                            background: DIE_COLORS[config.defenseDieColor],
+                          }}
+                        />
+                        {line.value}
+                      </>
+                    ) : (
+                      line.value
+                    )}
+                  </dd>
+                </div>
+              );
+            })}
           </dl>
         </div>
       ))}

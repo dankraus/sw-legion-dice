@@ -27,6 +27,7 @@ Spec: `docs/superpowers/specs/2026-06-03-comparison-pin-and-compare-design.md`
 ### Task 1: `PoolConfig` type
 
 **Files:**
+
 - Modify: `src/types.ts`
 
 - [ ] **Step 1: Add the `PoolConfig` interface to `src/types.ts`**
@@ -89,6 +90,7 @@ git commit -m "feat: add PoolConfig type"
 ### Task 2: `computePoolResults` helper (TDD)
 
 **Files:**
+
 - Create: `src/poolResults.ts`
 - Test: `src/poolResults.test.ts`
 
@@ -226,7 +228,8 @@ export interface PoolResults {
 }
 
 export function computePoolResults(config: PoolConfig): PoolResults {
-  const criticalX = config.criticalX === '' ? undefined : toCount(config.criticalX);
+  const criticalX =
+    config.criticalX === '' ? undefined : toCount(config.criticalX);
 
   const results = calculateAttackPool(
     config.pool,
@@ -286,6 +289,7 @@ git commit -m "feat: add computePoolResults helper and DEFAULT_POOL_CONFIG"
 This replaces the inline `*Num` parsing and the two `useMemo` calculate calls with the shared helper, with **no behavior change**. It de-duplicates parsing now reused by both pools.
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 - [ ] **Step 1: Build a `liveConfig` from the debounced inputs**
@@ -365,6 +369,7 @@ git commit -m "refactor: compute live results via computePoolResults"
 ### Task 4: `DistributionChart` optional second series (TDD-lite via render test)
 
 **Files:**
+
 - Modify: `src/components/DistributionChart.tsx`
 - Test: `src/components/DistributionChart.test.tsx`
 
@@ -468,7 +473,10 @@ export function DistributionChart({
     <div>
       <h3>{title}</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+        >
           <XAxis
             dataKey="total"
             label={{ value: xAxisLabel, position: 'insideBottom', offset: -15 }}
@@ -522,6 +530,7 @@ git commit -m "feat: support overlaid second series in DistributionChart"
 ### Task 5: `CumulativeTable` optional secondary column (TDD)
 
 **Files:**
+
 - Modify: `src/components/CumulativeTable.tsx`
 - Test: `src/components/CumulativeTable.test.tsx`
 
@@ -630,6 +639,7 @@ git commit -m "feat: support secondary column in CumulativeTable"
 ### Task 6: Delta computation helper (TDD)
 
 **Files:**
+
 - Create: `src/comparisonDeltas.ts`
 - Test: `src/comparisonDeltas.test.ts`
 
@@ -662,12 +672,7 @@ function fakeResults(total: number, wounds: number): PoolResults {
 
 describe('buildDeltaRows', () => {
   it('marks higher avg total for B as better (positive direction)', () => {
-    const rows = buildDeltaRows(
-      fakeResults(2, 1),
-      fakeResults(3, 1.5),
-      '',
-      ''
-    );
+    const rows = buildDeltaRows(fakeResults(2, 1), fakeResults(3, 1.5), '', '');
     const total = rows.find((row) => row.label === 'Avg total')!;
     expect(total.a).toBeCloseTo(2);
     expect(total.b).toBeCloseTo(3);
@@ -742,13 +747,19 @@ export function buildDeltaRows(
     bValue: number | null,
     betterIsHigher: boolean
   ) => {
-    const delta =
-      aValue !== null && bValue !== null ? bValue - aValue : null;
+    const delta = aValue !== null && bValue !== null ? bValue - aValue : null;
     let bIsBetter: boolean | null = null;
     if (delta !== null && delta !== 0) {
       bIsBetter = betterIsHigher ? delta > 0 : delta < 0;
     }
-    rows.push({ label, a: aValue, b: bValue, delta, betterIsHigher, bIsBetter });
+    rows.push({
+      label,
+      a: aValue,
+      b: bValue,
+      delta,
+      betterIsHigher,
+      bIsBetter,
+    });
   };
 
   push('Avg hits', a.results.expectedHits, b.results.expectedHits, true);
@@ -804,6 +815,7 @@ git commit -m "feat: add comparison delta-row builder"
 ### Task 7: `ComparisonResults` component
 
 **Files:**
+
 - Create: `src/components/ComparisonResults.tsx`
 - Create: `src/components/ComparisonResults.css`
 - Test: `src/components/ComparisonResults.test.tsx`
@@ -1034,6 +1046,7 @@ git commit -m "feat: add ComparisonResults component"
 ### Task 8: URL state for pool A + compare flag + labels (TDD)
 
 **Files:**
+
 - Modify: `src/urlState.ts`
 - Modify: `src/urlState.test.ts`
 
@@ -1042,39 +1055,39 @@ git commit -m "feat: add ComparisonResults component"
 Append to `src/urlState.test.ts` inside the top-level `describe('urlState', …)`:
 
 ```ts
-  describe('comparison state', () => {
-    it('roundtrips a pinned pool A under a. prefix with cmp flag and labels', () => {
-      const state: UrlState = {
-        ...DEFAULT_URL_STATE,
-        r: 1,
-        cmp: true,
-        la: 'DLT',
-        lb: 'Stock',
-        a: { ...DEFAULT_URL_STATE_POOL, r: 3, crit: 1, cover: 'light' },
-      };
-      const fragment = buildFragment(state);
-      expect(fragment).toContain('cmp=1');
-      expect(fragment).toContain('la=DLT');
-      expect(fragment).toContain('a.r=3');
-      expect(fragment).toContain('a.crit=1');
+describe('comparison state', () => {
+  it('roundtrips a pinned pool A under a. prefix with cmp flag and labels', () => {
+    const state: UrlState = {
+      ...DEFAULT_URL_STATE,
+      r: 1,
+      cmp: true,
+      la: 'DLT',
+      lb: 'Stock',
+      a: { ...DEFAULT_URL_STATE_POOL, r: 3, crit: 1, cover: 'light' },
+    };
+    const fragment = buildFragment(state);
+    expect(fragment).toContain('cmp=1');
+    expect(fragment).toContain('la=DLT');
+    expect(fragment).toContain('a.r=3');
+    expect(fragment).toContain('a.crit=1');
 
-      const parsed = parseFragment('#' + fragment);
-      expect(parsed.cmp).toBe(true);
-      expect(parsed.la).toBe('DLT');
-      expect(parsed.lb).toBe('Stock');
-      expect(parsed.r).toBe(1);
-      expect(parsed.a.r).toBe(3);
-      expect(parsed.a.crit).toBe(1);
-      expect(parsed.a.cover).toBe('light');
-    });
-
-    it('legacy links without cmp parse with compare off and default pool A', () => {
-      const parsed = parseFragment('#r=2&b=1');
-      expect(parsed.cmp).toBe(false);
-      expect(parsed.r).toBe(2);
-      expect(parsed.a).toEqual(DEFAULT_URL_STATE_POOL);
-    });
+    const parsed = parseFragment('#' + fragment);
+    expect(parsed.cmp).toBe(true);
+    expect(parsed.la).toBe('DLT');
+    expect(parsed.lb).toBe('Stock');
+    expect(parsed.r).toBe(1);
+    expect(parsed.a.r).toBe(3);
+    expect(parsed.a.crit).toBe(1);
+    expect(parsed.a.cover).toBe('light');
   });
+
+  it('legacy links without cmp parse with compare off and default pool A', () => {
+    const parsed = parseFragment('#r=2&b=1');
+    expect(parsed.cmp).toBe(false);
+    expect(parsed.r).toBe(2);
+    expect(parsed.a).toEqual(DEFAULT_URL_STATE_POOL);
+  });
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1207,12 +1220,8 @@ function poolKey(key: keyof UrlPoolState): string {
   return key === 'dugIn' ? 'dug' : key;
 }
 
-function parsePool(
-  params: URLSearchParams,
-  prefix: string
-): UrlPoolState {
-  const get = (key: keyof UrlPoolState) =>
-    params.get(prefix + poolKey(key));
+function parsePool(params: URLSearchParams, prefix: string): UrlPoolState {
+  const get = (key: keyof UrlPoolState) => params.get(prefix + poolKey(key));
   return {
     r: parseNumber(get('r'), DEFAULT_URL_STATE_POOL.r),
     b: parseNumber(get('b'), DEFAULT_URL_STATE_POOL.b),
@@ -1228,8 +1237,16 @@ function parsePool(
     pierce: parseNumber(get('pierce'), DEFAULT_URL_STATE_POOL.pierce),
     impact: parseNumber(get('impact'), DEFAULT_URL_STATE_POOL.impact),
     cost: get('cost') ?? DEFAULT_URL_STATE_POOL.cost,
-    dColor: parseEnum(get('dColor'), D_COLOR_VALUES, DEFAULT_URL_STATE_POOL.dColor),
-    dSurge: parseEnum(get('dSurge'), D_SURGE_VALUES, DEFAULT_URL_STATE_POOL.dSurge),
+    dColor: parseEnum(
+      get('dColor'),
+      D_COLOR_VALUES,
+      DEFAULT_URL_STATE_POOL.dColor
+    ),
+    dSurge: parseEnum(
+      get('dSurge'),
+      D_SURGE_VALUES,
+      DEFAULT_URL_STATE_POOL.dSurge
+    ),
     dSurgeTok: parseNumber(get('dSurgeTok'), DEFAULT_URL_STATE_POOL.dSurgeTok),
     dodge: parseNumber(get('dodge'), DEFAULT_URL_STATE_POOL.dodge),
     shield: parseNumber(get('shield'), DEFAULT_URL_STATE_POOL.shield),
@@ -1283,7 +1300,9 @@ function poolEntries(pool: UrlPoolState, prefix: string): string[] {
     if (!isDefaultPoolValue(key, value)) {
       const serialized =
         typeof value === 'boolean' ? (value ? '1' : '0') : String(value);
-      entries.push(`${prefix}${poolKey(key)}=${encodeURIComponent(serialized)}`);
+      entries.push(
+        `${prefix}${poolKey(key)}=${encodeURIComponent(serialized)}`
+      );
     }
   }
   return entries;
@@ -1324,6 +1343,7 @@ git commit -m "feat: encode pinned pool A, compare flag, and labels in URL"
 ### Task 9: Wire compare mode into `App.tsx`
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 - [ ] **Step 1: Add pinned-config + label state and a config↔UrlPoolState mapping**
@@ -1339,7 +1359,8 @@ import type { UrlPoolState } from './urlState';
 Add a module-level helper (outside the component) that converts a `UrlPoolState` to a `PoolConfig` (string fields use `''` for zero/default), and the inverse:
 
 ```ts
-const numToInput = (value: number): string => (value === 0 ? '' : String(value));
+const numToInput = (value: number): string =>
+  value === 0 ? '' : String(value);
 
 function poolStateToConfig(pool: UrlPoolState): PoolConfig {
   return {
@@ -1483,42 +1504,42 @@ In the header actions, add a Pin/Clear button before the Share button:
 When pinned, show editable labels above the results. Replace the results `<section className="app__results">` body's success branch so that when `pinnedConfig && pinnedResults` it renders the comparison; otherwise the existing single-pool output:
 
 ```tsx
-{totalDice === 0 ? (
-  <p className="app__empty">Add dice to see results.</p>
-) : pinnedConfig && pinnedResults ? (
-  <>
-    <div className="app__compare-labels">
-      <label>
-        A
-        <input
-          value={labelA}
-          onChange={(event) => setLabelA(event.target.value)}
-          maxLength={24}
-        />
-      </label>
-      <label>
-        B
-        <input
-          value={labelB}
-          onChange={(event) => setLabelB(event.target.value)}
-          maxLength={24}
-        />
-      </label>
-    </div>
-    <ComparisonResults
-      resultsA={pinnedResults}
-      resultsB={liveResults}
-      costA={pinnedConfig.pointCost}
-      costB={liveConfig.pointCost}
-      labelA={labelA || 'A'}
-      labelB={labelB || 'B'}
-    />
-  </>
-) : (
-  <>
-    {/* existing single-pool StatsSummary / charts / tables unchanged */}
-  </>
-)}
+{
+  totalDice === 0 ? (
+    <p className="app__empty">Add dice to see results.</p>
+  ) : pinnedConfig && pinnedResults ? (
+    <>
+      <div className="app__compare-labels">
+        <label>
+          A
+          <input
+            value={labelA}
+            onChange={(event) => setLabelA(event.target.value)}
+            maxLength={24}
+          />
+        </label>
+        <label>
+          B
+          <input
+            value={labelB}
+            onChange={(event) => setLabelB(event.target.value)}
+            maxLength={24}
+          />
+        </label>
+      </div>
+      <ComparisonResults
+        resultsA={pinnedResults}
+        resultsB={liveResults}
+        costA={pinnedConfig.pointCost}
+        costB={liveConfig.pointCost}
+        labelA={labelA || 'A'}
+        labelB={labelB || 'B'}
+      />
+    </>
+  ) : (
+    <>{/* existing single-pool StatsSummary / charts / tables unchanged */}</>
+  );
+}
 ```
 
 - [ ] **Step 6: Reset wiring**
@@ -1561,6 +1582,7 @@ Run: `npm run test && npx tsc -b && npm run lint && npm run build`
 Expected: all pass; build succeeds.
 
 Manual check (run `npm run dev`):
+
 1. Add dice → click **Pin as A** → button becomes **Clear compare**; results switch to the delta table + overlaid charts.
 2. Edit the live pool → B column and Δ update; A stays fixed.
 3. Edit labels → legend/columns update.

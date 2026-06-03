@@ -90,7 +90,10 @@ describe('rollDefensePoolDetailed', () => {
   });
 
   it('empty pool returns empty array', () => {
-    const outcomes = rollDefensePoolDetailed({ red: 0, white: 0 }, createSeededRng(1));
+    const outcomes = rollDefensePoolDetailed(
+      { red: 0, white: 0 },
+      createSeededRng(1)
+    );
     expect(outcomes).toEqual([]);
   });
 });
@@ -347,7 +350,9 @@ describe('defense simulation', () => {
       rngUncanny,
       2
     );
-    expect(withUncanny.expectedBlocks).toBeGreaterThan(noUncanny.expectedBlocks);
+    expect(withUncanny.expectedBlocks).toBeGreaterThan(
+      noUncanny.expectedBlocks
+    );
   });
 
   it('getDefenseDistributionForDiceCountSim 1 red die surge none: expectedBlocks close to 3/6', () => {
@@ -463,7 +468,16 @@ describe('applyCover', () => {
     const rngWhite = createSeededRng(777);
     const rngRed = createSeededRng(777);
     const withWhite = applyCover(4, 2, 'heavy', rngWhite, 0);
-    const withRed = applyCover(4, 2, 'heavy', rngRed, 0, false, undefined, 'red');
+    const withRed = applyCover(
+      4,
+      2,
+      'heavy',
+      rngRed,
+      0,
+      false,
+      undefined,
+      'red'
+    );
     // Red die has 3 block faces vs white 1; so red should cancel at least as many hits
     expect(withRed.hits).toBeLessThanOrEqual(withWhite.hits);
   });
@@ -1598,7 +1612,7 @@ describe('Impervious in wounds simulation', () => {
       true,
       0,
       0,
-       0, // uncannyLuckX
+      0, // uncannyLuckX
 
       runs,
       rngImpervious
@@ -1640,7 +1654,7 @@ describe('Impervious in wounds simulation', () => {
       false, // impervious
       0,
       0,
-       0, // uncannyLuckX
+      0, // uncannyLuckX
 
       runs,
       rng
@@ -1666,7 +1680,7 @@ describe('Impervious in wounds simulation', () => {
       true, // impervious
       0,
       0,
-       0, // uncannyLuckX
+      0, // uncannyLuckX
 
       runs,
       rng
@@ -1734,7 +1748,7 @@ describe('Impervious in wounds simulation', () => {
       true,
       0,
       0,
-       0, // uncannyLuckX
+      0, // uncannyLuckX
 
       runs,
       rngImpervious

@@ -14,28 +14,29 @@ Spec: `docs/superpowers/specs/2026-06-03-comparison-editable-pools-design.md`
 
 ## File Structure
 
-| File | Responsibility |
-| ---- | -------------- |
-| `src/poolConfigEditor.ts` (new) | `readConfigFromEditor`, `applyConfigToEditor`, `configToUrlPoolState` (extracted from `App.tsx`) |
-| `src/poolConfigEditor.test.ts` (new) | Round-trip read/apply; URL state mapping |
-| `src/comparePoolState.ts` (new) | `resolveCompareConfigs` — derives `configA`, `configB`, URL bare source |
-| `src/comparePoolState.test.ts` (new) | Config resolution + URL gating cases |
-| `src/components/ComparePoolBar.tsx` (new) | Single-pool entry + compare tabs UI |
-| `src/components/ComparePoolBar.css` (new) | Segmented tabs, editing subline |
-| `src/components/ComparePoolBar.test.tsx` (new) | Render + click handlers |
-| `src/components/PoolSnapshotCard.tsx` | `isActive`, `onSelect`, Editing pill |
-| `src/components/PoolSnapshotCard.css` | Active/inactive card styles |
-| `src/components/PoolSnapshotCard.test.tsx` | Active pill + click handler |
-| `src/components/ComparisonResults.tsx` | Pass `activePool`, card select handlers |
-| `src/components/ComparisonResults.test.tsx` | Active snapshot props |
-| `src/App.tsx` | State, handlers, compare bar, URL gating, remove header pin |
-| `src/App.css` | Optional accent border on config column in compare mode |
+| File                                           | Responsibility                                                                                   |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `src/poolConfigEditor.ts` (new)                | `readConfigFromEditor`, `applyConfigToEditor`, `configToUrlPoolState` (extracted from `App.tsx`) |
+| `src/poolConfigEditor.test.ts` (new)           | Round-trip read/apply; URL state mapping                                                         |
+| `src/comparePoolState.ts` (new)                | `resolveCompareConfigs` — derives `configA`, `configB`, URL bare source                          |
+| `src/comparePoolState.test.ts` (new)           | Config resolution + URL gating cases                                                             |
+| `src/components/ComparePoolBar.tsx` (new)      | Single-pool entry + compare tabs UI                                                              |
+| `src/components/ComparePoolBar.css` (new)      | Segmented tabs, editing subline                                                                  |
+| `src/components/ComparePoolBar.test.tsx` (new) | Render + click handlers                                                                          |
+| `src/components/PoolSnapshotCard.tsx`          | `isActive`, `onSelect`, Editing pill                                                             |
+| `src/components/PoolSnapshotCard.css`          | Active/inactive card styles                                                                      |
+| `src/components/PoolSnapshotCard.test.tsx`     | Active pill + click handler                                                                      |
+| `src/components/ComparisonResults.tsx`         | Pass `activePool`, card select handlers                                                          |
+| `src/components/ComparisonResults.test.tsx`    | Active snapshot props                                                                            |
+| `src/App.tsx`                                  | State, handlers, compare bar, URL gating, remove header pin                                      |
+| `src/App.css`                                  | Optional accent border on config column in compare mode                                          |
 
 ---
 
 ### Task 1: `poolConfigEditor` helpers (TDD)
 
 **Files:**
+
 - Create: `src/poolConfigEditor.ts`
 - Create: `src/poolConfigEditor.test.ts`
 - Modify: `src/App.tsx` (later task imports from here; no App changes yet)
@@ -107,7 +108,11 @@ describe('applyConfigToEditor', () => {
       setBackup: vi.fn(),
     };
     applyConfigToEditor(config, setters);
-    expect(setters.setPool).toHaveBeenCalledWith({ red: 2, black: 0, white: 1 });
+    expect(setters.setPool).toHaveBeenCalledWith({
+      red: 2,
+      black: 0,
+      white: 1,
+    });
     expect(setters.setSurge).toHaveBeenCalledWith('crit');
     expect(setters.setAimTokens).toHaveBeenCalledWith('1');
     expect(setters.setCover).toHaveBeenCalledWith('light');
@@ -282,6 +287,7 @@ git commit -m "feat: add pool config editor helpers"
 ### Task 2: `resolveCompareConfigs` (TDD)
 
 **Files:**
+
 - Create: `src/comparePoolState.ts`
 - Create: `src/comparePoolState.test.ts`
 
@@ -378,8 +384,13 @@ export function resolveCompareConfigs(args: {
   editorConfig: PoolConfig;
   debouncedEditorConfig: PoolConfig;
 }): CompareConfigResolution | null {
-  const { pinnedConfig, cachedPoolB, activePool, editorConfig, debouncedEditorConfig } =
-    args;
+  const {
+    pinnedConfig,
+    cachedPoolB,
+    activePool,
+    editorConfig,
+    debouncedEditorConfig,
+  } = args;
   if (pinnedConfig === null) return null;
 
   const configA = pinnedConfig;
@@ -393,7 +404,13 @@ export function resolveCompareConfigs(args: {
       : (cachedPoolB ?? debouncedEditorConfig);
   const barePoolStateSource = configB;
 
-  return { configA, configB, debouncedConfigA, debouncedConfigB, barePoolStateSource };
+  return {
+    configA,
+    configB,
+    debouncedConfigA,
+    debouncedConfigB,
+    barePoolStateSource,
+  };
 }
 ```
 
@@ -414,6 +431,7 @@ git commit -m "feat: add compare pool config resolution helper"
 ### Task 3: `ComparePoolBar` component (TDD)
 
 **Files:**
+
 - Create: `src/components/ComparePoolBar.tsx`
 - Create: `src/components/ComparePoolBar.css`
 - Create: `src/components/ComparePoolBar.test.tsx`
@@ -431,9 +449,15 @@ describe('ComparePoolBar', () => {
   it('renders start compare button in single mode', () => {
     const onStart = vi.fn();
     const { getByRole } = render(
-      <ComparePoolBar mode="single" onStartCompare={onStart} startDisabled={false} />
+      <ComparePoolBar
+        mode="single"
+        onStartCompare={onStart}
+        startDisabled={false}
+      />
     );
-    fireEvent.click(getByRole('button', { name: /compare against this setup/i }));
+    fireEvent.click(
+      getByRole('button', { name: /compare against this setup/i })
+    );
     expect(onStart).toHaveBeenCalled();
   });
 
@@ -537,7 +561,11 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
   return (
     <div className="compare-bar compare-bar--active">
       <div className="compare-bar__row">
-        <div className="compare-bar__tabs" role="tablist" aria-label="Compare pools">
+        <div
+          className="compare-bar__tabs"
+          role="tablist"
+          aria-label="Compare pools"
+        >
           <button
             type="button"
             role="tab"
@@ -585,7 +613,10 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
         </button>
       </div>
       <p className="compare-bar__editing" style={{ color: activeColor }}>
-        <span className="compare-bar__editing-marker" style={{ color: activeColor }}>
+        <span
+          className="compare-bar__editing-marker"
+          style={{ color: activeColor }}
+        >
           ■
         </span>{' '}
         Editing: {activeLabel}
@@ -616,6 +647,7 @@ git commit -m "feat: add ComparePoolBar component"
 ### Task 4: `PoolSnapshotCard` active state (TDD)
 
 **Files:**
+
 - Modify: `src/components/PoolSnapshotCard.tsx`
 - Modify: `src/components/PoolSnapshotCard.css`
 - Modify: `src/components/PoolSnapshotCard.test.tsx`
@@ -687,6 +719,7 @@ git commit -m "feat: add active editing state to PoolSnapshotCard"
 ### Task 5: Wire `ComparisonResults` active pool (TDD)
 
 **Files:**
+
 - Modify: `src/components/ComparisonResults.tsx`
 - Modify: `src/components/ComparisonResults.test.tsx`
 
@@ -746,6 +779,7 @@ git commit -m "feat: pass active pool state to comparison snapshots"
 ### Task 6: `App.tsx` compare state and handlers
 
 **Files:**
+
 - Modify: `src/App.tsx`
 
 This is the largest task. Work in sub-steps within one commit or split into two commits (state/handlers, then URL).
@@ -958,6 +992,7 @@ git commit -m "feat: wire editable compare pools with tab switching"
 ### Task 7: URL bare-key gating (TDD)
 
 **Files:**
+
 - Modify: `src/App.tsx` (`urlState` useMemo)
 - Modify: `src/urlState.test.ts`
 
@@ -1003,8 +1038,14 @@ Test in `src/buildAppUrlState.test.ts`:
 
 ```ts
 it('keeps bare keys from cached B when editing A', () => {
-  const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
-  const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 5, black: 0, white: 0 } };
+  const configB = {
+    ...DEFAULT_POOL_CONFIG,
+    pool: { red: 1, black: 0, white: 0 },
+  };
+  const configA = {
+    ...DEFAULT_POOL_CONFIG,
+    pool: { red: 5, black: 0, white: 0 },
+  };
   const state = buildAppUrlState({
     debouncedInputs: configA,
     pinnedConfig: configA,
@@ -1041,6 +1082,7 @@ git commit -m "fix: gate URL bare keys to cached pool B when editing A"
 ### Task 8: Integration tests for compare flows (TDD)
 
 **Files:**
+
 - Create: `src/comparePoolFlows.test.ts`
 
 Pure-function tests covering spec scenarios without full App mount:
@@ -1056,8 +1098,14 @@ import { DEFAULT_POOL_CONFIG } from './poolResults';
 
 describe('compare pool flows', () => {
   it('tab switch preserves B when editing A', () => {
-    const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
-    const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 5, black: 0, white: 0 } };
+    const configB = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 1, black: 0, white: 0 },
+    };
+    const configA = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 5, black: 0, white: 0 },
+    };
     const onA = resolveCompareConfigs({
       pinnedConfig: configA,
       cachedPoolB: configB,
@@ -1070,8 +1118,14 @@ describe('compare pool flows', () => {
   });
 
   it('URL a.* updates while bare keys stay B when editing A', () => {
-    const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
-    const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 5, black: 0, white: 0 } };
+    const configB = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 1, black: 0, white: 0 },
+    };
+    const configA = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 5, black: 0, white: 0 },
+    };
     const state = buildAppUrlState({
       debouncedInputs: configA,
       pinnedConfig: configA,
@@ -1085,9 +1139,14 @@ describe('compare pool flows', () => {
   });
 
   it('applyConfigToEditor round-trip preserves pool', () => {
-    const config = { ...DEFAULT_POOL_CONFIG, pool: { red: 2, black: 1, white: 0 } };
+    const config = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 2, black: 1, white: 0 },
+    };
     const bag: Record<string, unknown> = {};
-    const setters = { /* same vi.fn pattern as poolConfigEditor.test */ };
+    const setters = {
+      /* same vi.fn pattern as poolConfigEditor.test */
+    };
     applyConfigToEditor(config, setters);
     // assert setters called — covered in poolConfigEditor.test
   });
@@ -1101,7 +1160,9 @@ Add `src/App.test.tsx` smoke test (if `@testing-library/react` App mount is feas
 it('shows compare bar in pool column not header', () => {
   const { queryByRole, getByRole } = render(<App />);
   expect(queryByRole('button', { name: /pin as a/i })).toBeNull();
-  expect(getByRole('button', { name: /compare against this setup/i })).toBeTruthy();
+  expect(
+    getByRole('button', { name: /compare against this setup/i })
+  ).toBeTruthy();
 });
 ```
 
@@ -1121,6 +1182,7 @@ git commit -m "test: add compare pool flow integration tests"
 ### Task 9: Optional config column accent + lint
 
 **Files:**
+
 - Modify: `src/App.css`
 - Modify: `src/App.tsx`
 

@@ -21,16 +21,12 @@ function lineValue(
 describe('formatPoolSnapshot', () => {
   it('omits Attack section (dice and surge shown in PoolDiceRow)', () => {
     const sections = formatPoolSnapshot(DEFAULT_POOL_CONFIG);
-    expect(sections.some((section) => section.title === 'Attack')).toBe(
-      false
-    );
+    expect(sections.some((section) => section.title === 'Attack')).toBe(false);
   });
 
   it('omits Tokens section when all token counts are default', () => {
     const sections = formatPoolSnapshot(DEFAULT_POOL_CONFIG);
-    expect(sections.some((section) => section.title === 'Tokens')).toBe(
-      false
-    );
+    expect(sections.some((section) => section.title === 'Tokens')).toBe(false);
   });
 
   it('includes Tokens when a token count is set', () => {
