@@ -326,10 +326,12 @@ describe('resolveCompareConfigs', () => {
     });
     expect(result!.configA).toEqual(configA);
     expect(result!.configB).toEqual(configB);
+    expect(result!.debouncedConfigA).toEqual(configA);
+    expect(result!.debouncedConfigB).toEqual(configB);
     expect(result!.barePoolStateSource).toBe(configB);
   });
 
-  it('uses cachedPoolB for configB and bare URL when activePool is A', () => {
+  it('uses cachedPoolB for configB and debounced editor for configA when activePool is A', () => {
     const editedA = { ...configA, aimTokens: '2' };
     const result = resolveCompareConfigs({
       pinnedConfig: editedA,
@@ -340,6 +342,8 @@ describe('resolveCompareConfigs', () => {
     });
     expect(result!.configA).toEqual(editedA);
     expect(result!.configB).toEqual(configB);
+    expect(result!.debouncedConfigA).toEqual(editedA);
+    expect(result!.debouncedConfigB).toEqual(configB);
     expect(result!.barePoolStateSource).toBe(configB);
   });
 });
@@ -362,6 +366,7 @@ export type ActivePool = 'A' | 'B';
 export type CompareConfigResolution = {
   configA: PoolConfig;
   configB: PoolConfig;
+  debouncedConfigA: PoolConfig;
   debouncedConfigB: PoolConfig;
   barePoolStateSource: PoolConfig;
 };
@@ -380,13 +385,15 @@ export function resolveCompareConfigs(args: {
   const configA = pinnedConfig;
   const configB =
     activePool === 'B' ? editorConfig : (cachedPoolB ?? editorConfig);
+  const debouncedConfigA =
+    activePool === 'A' ? debouncedEditorConfig : pinnedConfig;
   const debouncedConfigB =
     activePool === 'B'
       ? debouncedEditorConfig
       : (cachedPoolB ?? debouncedEditorConfig);
   const barePoolStateSource = configB;
 
-  return { configA, configB, debouncedConfigB, barePoolStateSource };
+  return { configA, configB, debouncedConfigA, debouncedConfigB, barePoolStateSource };
 }
 ```
 
@@ -448,6 +455,24 @@ describe('ComparePoolBar', () => {
     fireEvent.click(getByRole('button', { name: /exit compare/i }));
     expect(onEnd).toHaveBeenCalled();
     expect(getByText(/Editing: Upgrade/)).toBeTruthy();
+  });
+
+  it('moves focus between tabs with arrow keys', () => {
+    const onChange = vi.fn();
+    const { getByRole } = render(
+      <ComparePoolBar
+        mode="compare"
+        labelA="Heavy"
+        labelB="Upgrade"
+        activePool="B"
+        onActivePoolChange={onChange}
+        onEndCompare={() => {}}
+      />
+    );
+    const tabB = getByRole('tab', { name: 'Upgrade' });
+    tabB.focus();
+    fireEvent.keyDown(tabB, { key: 'ArrowLeft' });
+    expect(onChange).toHaveBeenCalledWith('A');
   });
 });
 ```
@@ -572,6 +597,8 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
 
 Create `src/components/ComparePoolBar.css` with truncated tabs (`max-width`, `text-overflow: ellipsis`, `overflow: hidden`, `white-space: nowrap`), flex row layout, and ghost/filled tab styles.
 
+Add `onKeyDown` on the tablist: **ArrowLeft** / **ArrowRight** switch pools (call `onActivePoolChange` with the adjacent tab). Follow [WAI-ARIA tabs keyboard pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/): only two tabs, wrap optional.
+
 - [ ] **Step 4: Run tests**
 
 Run: `npm run test -- src/components/ComparePoolBar.test.tsx`
@@ -657,13 +684,35 @@ git commit -m "feat: add active editing state to PoolSnapshotCard"
 
 ---
 
-### Task 5: Wire `ComparisonResults` active pool
+### Task 5: Wire `ComparisonResults` active pool (TDD)
 
 **Files:**
 - Modify: `src/components/ComparisonResults.tsx`
 - Modify: `src/components/ComparisonResults.test.tsx`
 
-- [ ] **Step 1: Extend props**
+- [ ] **Step 1: Write failing test**
+
+Update `ComparisonResults.test.tsx` — add props and assert active card:
+
+```tsx
+const { getByText, getAllByText } = render(
+  <ComparisonResults
+    ...
+    activePool="B"
+    onSelectPoolA={() => {}}
+    onSelectPoolB={() => {}}
+  />
+);
+expect(getAllByText('Editing')).toHaveLength(1);
+expect(getByText('Editing').closest('.pool-snapshot')).toBeTruthy();
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `npm run test -- src/components/ComparisonResults.test.tsx`
+Expected: FAIL — unknown props / no Editing pill
+
+- [ ] **Step 3: Extend props and pass to cards**
 
 Add:
 
@@ -680,11 +729,7 @@ Pass to cards:
 <PoolSnapshotCard ... isActive={activePool === 'B'} onSelect={onSelectPoolB} />
 ```
 
-- [ ] **Step 2: Update test**
-
-Pass `activePool="B"`, stub select handlers; assert `Editing` appears once on B card.
-
-- [ ] **Step 3: Run tests**
+- [ ] **Step 4: Run tests**
 
 Run: `npm run test -- src/components/ComparisonResults.test.tsx`
 Expected: PASS
@@ -760,17 +805,18 @@ const compareResolution = useMemo(
 
 const configA = compareResolution?.configA ?? null;
 const configB = compareResolution?.configB ?? liveConfig;
+const debouncedConfigA = compareResolution?.debouncedConfigA ?? null;
 const debouncedConfigB = compareResolution?.debouncedConfigB ?? liveConfig;
 ```
 
-- [ ] **Step 5: Results from resolved configs**
+- [ ] **Step 5: Results from resolved configs (debounced)**
 
-Replace `pinnedResults` / compare results wiring:
+Snapshots use immediate `configA` / `configB`; **charts and deltas** use debounced configs:
 
 ```ts
 const compareResultsA = useMemo(
-  () => (configA ? computePoolResults(configA) : null),
-  [configA]
+  () => (debouncedConfigA ? computePoolResults(debouncedConfigA) : null),
+  [debouncedConfigA]
 );
 const compareResultsB = useMemo(
   () => (pinnedConfig ? computePoolResults(debouncedConfigB) : null),
@@ -778,7 +824,7 @@ const compareResultsB = useMemo(
 );
 ```
 
-Pass `configA!`, `configB`, `compareResultsA`, `compareResultsB` to `ComparisonResults`.
+Pass immediate `configA`, `configB` for snapshot cards; pass `compareResultsA`, `compareResultsB` for charts/deltas.
 
 - [ ] **Step 6: Pool editor setters object**
 
@@ -798,6 +844,8 @@ const poolEditorSetters: PoolEditorSetters = useMemo(
 
 - [ ] **Step 7: Handlers**
 
+Use **only** the batch-update pattern below (avoids stale `cachedPoolB` / `pinnedConfig`):
+
 ```ts
 const handleStartCompare = () => {
   const snapshot = readConfigFromEditor(simulationInputs);
@@ -815,24 +863,6 @@ const handleEndCompare = () => {
 };
 
 const handleActivePoolChange = (pool: ActivePool) => {
-  if (pool === activePool || pinnedConfig === null) return;
-  const outgoing = readConfigFromEditor(simulationInputs);
-  if (activePool === 'B') {
-    setCachedPoolB(outgoing);
-  } else {
-    setPinnedConfig(outgoing);
-  }
-  const incoming =
-    pool === 'B' ? (cachedPoolB ?? outgoing) : (pinnedConfig ?? outgoing);
-  applyConfigToEditor(incoming, poolEditorSetters);
-  setActivePool(pool);
-};
-```
-
-Fix stale closure: use functional updates or read latest `cachedPoolB`/`pinnedConfig` when switching — e.g. compute incoming after persisting outgoing in one batch:
-
-```ts
-const handleActivePoolChange = (pool: ActivePool) => {
   if (pool === activePool || !pinnedConfig) return;
   const outgoing = readConfigFromEditor(simulationInputs);
   let nextPinned = pinnedConfig;
@@ -847,26 +877,19 @@ const handleActivePoolChange = (pool: ActivePool) => {
 };
 ```
 
-- [ ] **Step 8: Sync `pinnedConfig` while editing A**
+- [ ] **Step 8: Sync `pinnedConfig` while editing A (single pattern — no loop)**
+
+Use **only** this effect; do not list `pinnedConfig` in the dependency array:
 
 ```ts
 useEffect(() => {
   if (pinnedConfig === null || activePool !== 'A') return;
   setPinnedConfig(readConfigFromEditor(simulationInputs));
-}, [simulationInputs, pinnedConfig, activePool]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sync A from editor inputs only
+}, [simulationInputs, activePool]);
 ```
 
-Careful: this can loop if not guarded — only depend on `simulationInputs` and compare `activePool === 'A'`. Do **not** include `pinnedConfig` in deps; use functional update or compare JSON.
-
-Preferred pattern:
-
-```ts
-useEffect(() => {
-  if (pinnedConfig === null || activePool !== 'A') return;
-  setPinnedConfig(readConfigFromEditor(simulationInputs));
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: sync A from editor
-}, [simulationInputs, activePool, pinnedConfig !== null]);
-```
+Guard at top with `pinnedConfig === null` read from closure; effect re-runs when compare starts because `activePool` or `simulationInputs` change.
 
 - [ ] **Step 9: Sync `cachedPoolB` while editing B**
 
@@ -874,7 +897,8 @@ useEffect(() => {
 useEffect(() => {
   if (pinnedConfig === null || activePool !== 'B') return;
   setCachedPoolB(readConfigFromEditor(simulationInputs));
-}, [simulationInputs, activePool, pinnedConfig]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- sync B cache from editor inputs only
+}, [simulationInputs, activePool]);
 ```
 
 - [ ] **Step 10: Update `handleReset`**
@@ -1014,7 +1038,87 @@ git commit -m "fix: gate URL bare keys to cached pool B when editing A"
 
 ---
 
-### Task 8: Optional config column accent + lint
+### Task 8: Integration tests for compare flows (TDD)
+
+**Files:**
+- Create: `src/comparePoolFlows.test.ts`
+
+Pure-function tests covering spec scenarios without full App mount:
+
+- [ ] **Step 1: Write failing tests**
+
+```ts
+import { describe, it, expect } from 'vitest';
+import { resolveCompareConfigs } from './comparePoolState';
+import { buildAppUrlState } from './buildAppUrlState';
+import { applyConfigToEditor, readConfigFromEditor } from './poolConfigEditor';
+import { DEFAULT_POOL_CONFIG } from './poolResults';
+
+describe('compare pool flows', () => {
+  it('tab switch preserves B when editing A', () => {
+    const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
+    const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 5, black: 0, white: 0 } };
+    const onA = resolveCompareConfigs({
+      pinnedConfig: configA,
+      cachedPoolB: configB,
+      activePool: 'A',
+      editorConfig: configA,
+      debouncedEditorConfig: configA,
+    });
+    expect(onA!.configB.pool.red).toBe(1);
+    expect(onA!.configA.pool.red).toBe(5);
+  });
+
+  it('URL a.* updates while bare keys stay B when editing A', () => {
+    const configB = { ...DEFAULT_POOL_CONFIG, pool: { red: 1, black: 0, white: 0 } };
+    const configA = { ...DEFAULT_POOL_CONFIG, pool: { red: 5, black: 0, white: 0 } };
+    const state = buildAppUrlState({
+      debouncedInputs: configA,
+      pinnedConfig: configA,
+      cachedPoolB: configB,
+      activePool: 'A',
+      labelA: 'A',
+      labelB: 'B',
+    });
+    expect(state.r).toBe(1);
+    expect(state.a.r).toBe(5);
+  });
+
+  it('applyConfigToEditor round-trip preserves pool', () => {
+    const config = { ...DEFAULT_POOL_CONFIG, pool: { red: 2, black: 1, white: 0 } };
+    const bag: Record<string, unknown> = {};
+    const setters = { /* same vi.fn pattern as poolConfigEditor.test */ };
+    applyConfigToEditor(config, setters);
+    // assert setters called — covered in poolConfigEditor.test
+  });
+});
+```
+
+Add `src/App.test.tsx` smoke test (if `@testing-library/react` App mount is feasible) or test exported handlers via a small `comparePoolHandlers.ts` module if App mount is too heavy:
+
+```tsx
+// App.test.tsx — render App, queryByRole Pin should be null, compare bar start button present
+it('shows compare bar in pool column not header', () => {
+  const { queryByRole, getByRole } = render(<App />);
+  expect(queryByRole('button', { name: /pin as a/i })).toBeNull();
+  expect(getByRole('button', { name: /compare against this setup/i })).toBeTruthy();
+});
+```
+
+- [ ] **Step 2: Run tests — FAIL**
+
+- [ ] **Step 3: Implement missing pieces until pass**
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/comparePoolFlows.test.ts src/App.test.tsx
+git commit -m "test: add compare pool flow integration tests"
+```
+
+---
+
+### Task 9: Optional config column accent + lint
 
 **Files:**
 - Modify: `src/App.css`
@@ -1060,7 +1164,7 @@ git commit -m "style: accent border on config column for active compare pool"
 
 ---
 
-### Task 9: Final verification
+### Task 10: Final verification
 
 - [ ] **Step 1: Run full suite**
 
@@ -1087,5 +1191,6 @@ git commit -m "chore: fixups from compare editable pools verification"
 ## Execution notes
 
 - Remove duplicate `configToPoolState` from `App.tsx` once `configToUrlPoolState` is wired (keep `poolStateToConfig` for URL parse init).
-- Guard `useEffect` A-sync against infinite loops — if tests flap, switch to updating `pinnedConfig` only inside `handleActivePoolChange` and input `onChange` wrappers while on A (avoid effect).
-- `handleActivePoolChange` must use latest pinned/cached values in one synchronous block (see Step 7) to avoid stale state on rapid tab clicks.
+- `handleActivePoolChange` must use the batch-update pattern in Step 7 only.
+- A-sync effect: deps are `[simulationInputs, activePool]` only — never `pinnedConfig`.
+- Immediate `configA`/`configB` for snapshots; `debouncedConfigA`/`debouncedConfigB` for `computePoolResults`.
