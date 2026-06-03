@@ -30,4 +30,13 @@ describe('describeActiveModifiers', () => {
       describeActiveModifiers({ ...DEFAULT_POOL_CONFIG, aimTokens: '0' })
     ).toEqual([]);
   });
+
+  it('does not produce a "White defense" label (shown as a defense line instead)', () => {
+    expect(
+      describeActiveModifiers({
+        ...DEFAULT_POOL_CONFIG,
+        defenseDieColor: 'white',
+      })
+    ).not.toContain('White defense');
+  });
 });

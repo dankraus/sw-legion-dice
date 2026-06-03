@@ -22,7 +22,6 @@ export function describeActiveModifiers(config: PoolConfig): string[] {
   labels.push(countLabel('Impact', config.impactX));
   labels.push(countLabel('Pierce', config.pierceX));
 
-  if (config.defenseDieColor === 'white') labels.push('White defense');
   if (config.defenseSurge === 'block') labels.push('Def surge→Block');
   if (config.cover === 'light') labels.push('Cover Light');
   if (config.cover === 'heavy') labels.push('Cover Heavy');
