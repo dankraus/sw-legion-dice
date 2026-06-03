@@ -958,7 +958,8 @@ function App() {
         </div>
         <p className="app__footer-tagline">
           Legion Roller is a dice simulator and probability calculator for Star
-          Wars Legion by Atomic Mass Games.
+          Wars Legion by Atomic Mass Games. Results are calculated using Monte Carlo 
+          simulation with 10,000 runs to accurately model dice roll distributions.
         </p>
         <p className="app__footer-disclaimer">
           This site is not affiliated with, endorsed by, or connected with
