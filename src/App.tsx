@@ -869,33 +869,17 @@ function App() {
           <section className="app__results">
             {pinnedConfig && pinnedResults ? (
               <>
-                <div className="app__compare-labels">
-                  <label>
-                    A
-                    <input
-                      value={labelA}
-                      onChange={(event) => setLabelA(event.target.value)}
-                      maxLength={24}
-                      aria-label="Label for pool A"
-                    />
-                  </label>
-                  <label>
-                    B
-                    <input
-                      value={labelB}
-                      onChange={(event) => setLabelB(event.target.value)}
-                      maxLength={24}
-                      aria-label="Label for pool B"
-                    />
-                  </label>
-                </div>
                 <ComparisonResults
+                  configA={pinnedConfig}
+                  configB={liveConfig}
                   resultsA={pinnedResults}
                   resultsB={liveResults}
                   costA={pinnedConfig.pointCost}
                   costB={liveConfig.pointCost}
                   labelA={labelA || 'A'}
                   labelB={labelB || 'B'}
+                  onLabelAChange={setLabelA}
+                  onLabelBChange={setLabelB}
                 />
               </>
             ) : totalDice === 0 ? (

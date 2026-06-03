@@ -1,19 +1,25 @@
+import type { PoolConfig } from '../types';
 import type { PoolResults } from '../poolResults';
 import { buildDeltaRows } from '../comparisonDeltas';
 import { DistributionChart } from './DistributionChart';
 import { CumulativeTable } from './CumulativeTable';
+import { PoolSnapshotCard } from './PoolSnapshotCard';
 import './ComparisonResults.css';
 
 const COLOR_A = '#2563eb';
 const COLOR_B = '#f59e0b';
 
 interface ComparisonResultsProps {
+  configA: PoolConfig;
+  configB: PoolConfig;
   resultsA: PoolResults;
   resultsB: PoolResults;
   costA: string;
   costB: string;
   labelA: string;
   labelB: string;
+  onLabelAChange: (value: string) => void;
+  onLabelBChange: (value: string) => void;
 }
 
 function formatValue(value: number | null): string {
@@ -27,17 +33,55 @@ function formatDelta(value: number | null): string {
 }
 
 export function ComparisonResults({
+  configA,
+  configB,
   resultsA,
   resultsB,
   costA,
   costB,
   labelA,
   labelB,
+  onLabelAChange,
+  onLabelBChange,
 }: ComparisonResultsProps) {
   const rows = buildDeltaRows(resultsA, resultsB, costA, costB);
 
   return (
     <div className="comparison">
+      <div className="comparison__snapshots">
+        <PoolSnapshotCard
+          config={configA}
+          label={labelA}
+          accentColor={COLOR_A}
+        />
+        <PoolSnapshotCard
+          config={configB}
+          label={labelB}
+          accentColor={COLOR_B}
+        />
+      </div>
+
+      <div className="app__compare-labels">
+        <label>
+          A
+          <input
+            value={labelA}
+            onChange={(event) => onLabelAChange(event.target.value)}
+            maxLength={24}
+            aria-label="Label for pool A"
+          />
+        </label>
+        <label>
+          B
+          <input
+            value={labelB}
+            onChange={(event) => onLabelBChange(event.target.value)}
+            maxLength={24}
+            aria-label="Label for pool B"
+          />
+        </label>
+      </div>
+
       <table className="comparison__delta">
         <thead>
           <tr>

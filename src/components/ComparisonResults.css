@@ -1,3 +1,10 @@
+.comparison__snapshots {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
 .comparison__delta {
   width: 100%;
   border-collapse: collapse;

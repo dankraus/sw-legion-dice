@@ -4,27 +4,36 @@ import { ComparisonResults } from './ComparisonResults';
 import { computePoolResults, DEFAULT_POOL_CONFIG } from '../poolResults';
 
 describe('ComparisonResults', () => {
-  it('renders the delta table with both labels and an Avg total row', () => {
-    const a = computePoolResults({
+  it('renders snapshot cards, labels, and delta table', () => {
+    const configA = {
       ...DEFAULT_POOL_CONFIG,
       pool: { red: 3, black: 0, white: 0 },
-    });
-    const b = computePoolResults({
+    };
+    const configB = {
       ...DEFAULT_POOL_CONFIG,
       pool: { red: 1, black: 0, white: 0 },
-    });
-    const { getAllByText, getByText } = render(
+    };
+    const resultsA = computePoolResults(configA);
+    const resultsB = computePoolResults(configB);
+    const { getAllByText, getByText, getByLabelText } = render(
       <ComparisonResults
-        resultsA={a}
-        resultsB={b}
+        configA={configA}
+        configB={configB}
+        resultsA={resultsA}
+        resultsB={resultsB}
         costA=""
         costB=""
         labelA="DLT"
         labelB="Stock"
+        onLabelAChange={() => {}}
+        onLabelBChange={() => {}}
       />
     );
+    expect(getByText('3 red · 0 black · 0 white')).toBeTruthy();
+    expect(getByText('1 red · 0 black · 0 white')).toBeTruthy();
     expect(getAllByText('DLT').length).toBeGreaterThan(0);
     expect(getAllByText('Stock').length).toBeGreaterThan(0);
+    expect(getByLabelText('Label for pool A')).toBeTruthy();
     expect(getByText('Avg total')).toBeTruthy();
   });
 });
