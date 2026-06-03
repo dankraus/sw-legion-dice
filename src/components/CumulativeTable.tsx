@@ -18,8 +18,15 @@ export function CumulativeTable({
   secondaryLabel = 'B',
 }: CumulativeTableProps) {
   const hasSecondary = secondary !== undefined;
-  const secondaryFor = (total: number) =>
-    secondary?.find((row) => row.total === total)?.probability ?? 0;
+  const probabilityFor = (rows: Row[] | undefined, total: number) =>
+    rows?.find((row) => row.total === total)?.probability ?? 0;
+
+  const totals = Array.from(
+    new Set([
+      ...cumulative.map((row) => row.total),
+      ...(secondary ?? []).map((row) => row.total),
+    ])
+  ).sort((first, second) => first - second);
 
   return (
     <div>
@@ -33,12 +40,12 @@ export function CumulativeTable({
           </tr>
         </thead>
         <tbody>
-          {cumulative.map((row) => (
-            <tr key={row.total}>
-              <td>{row.total}</td>
-              <td>{(row.probability * 100).toFixed(1)}%</td>
+          {totals.map((total) => (
+            <tr key={total}>
+              <td>{total}</td>
+              <td>{(probabilityFor(cumulative, total) * 100).toFixed(1)}%</td>
               {hasSecondary && (
-                <td>{(secondaryFor(row.total) * 100).toFixed(1)}%</td>
+                <td>{(probabilityFor(secondary, total) * 100).toFixed(1)}%</td>
               )}
             </tr>
           ))}

@@ -17,4 +17,23 @@ describe('CumulativeTable', () => {
     expect(getByText('80.0%')).toBeTruthy();
     expect(getByText('50.0%')).toBeTruthy();
   });
+
+  it('renders rows for totals only present in the secondary pool', () => {
+    const { getByText } = render(
+      <CumulativeTable
+        cumulative={[{ total: 1, probability: 0.5 }]}
+        secondary={[
+          { total: 1, probability: 0.9 },
+          { total: 2, probability: 0.4 },
+        ]}
+        primaryLabel="A"
+        secondaryLabel="B"
+      />
+    );
+    const totalCell = getByText('2');
+    expect(totalCell).toBeTruthy();
+    const row = totalCell.closest('tr')!;
+    expect(row.textContent).toContain('40.0%');
+    expect(row.textContent).toContain('0.0%');
+  });
 });
