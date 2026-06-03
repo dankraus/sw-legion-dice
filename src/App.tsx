@@ -29,6 +29,7 @@ import { CumulativeTable } from './components/CumulativeTable';
 import { ComparisonResults } from './components/ComparisonResults';
 import { RulebookVersion } from './components/RulebookVersion';
 import { DiceRollerModal } from './components/DiceRollerModal';
+import { ShareModal } from './components/ShareModal';
 import './App.css';
 
 const numToInput = (value: number): string =>
@@ -270,7 +271,7 @@ function App() {
   const [backup, setBackup] = useState<boolean>(
     () => initialFromUrl?.backup ?? false
   );
-  const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [diceRollerOpen, setDiceRollerOpen] = useState(false);
   const [pinnedConfig, setPinnedConfig] = useState<PoolConfig | null>(() =>
     initialFromUrl?.cmp ? poolStateToConfig(initialFromUrl.a) : null
@@ -512,18 +513,6 @@ function App() {
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
 
-  const handleCopyLink = () => {
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(window.location.href).then(
-        () => {
-          setCopyFeedback(true);
-          window.setTimeout(() => setCopyFeedback(false), 2000);
-        },
-        () => {}
-      );
-    }
-  };
-
   const handleReset = () => {
     setPool({ red: 0, black: 0, white: 0 });
     setSurge('none');
@@ -595,10 +584,10 @@ function App() {
           <button
             type="button"
             className="app__reset"
-            onClick={handleCopyLink}
-            title="Copy URL with current settings to share"
+            onClick={() => setShareOpen(true)}
+            title="Share this setup as a link, text, or image"
           >
-            {copyFeedback ? 'Copied!' : 'Share'}
+            Share
           </button>
           <button type="button" className="app__reset" onClick={handleReset}>
             Reset
@@ -608,6 +597,27 @@ function App() {
 
       {diceRollerOpen ? (
         <DiceRollerModal onClose={() => setDiceRollerOpen(false)} />
+      ) : null}
+
+      {shareOpen ? (
+        <ShareModal
+          url={window.location.href}
+          live={{
+            config: liveConfig,
+            results: liveResults,
+            label: labelB || 'B',
+          }}
+          pinned={
+            pinnedConfig && pinnedResults
+              ? {
+                  config: pinnedConfig,
+                  results: pinnedResults,
+                  label: labelA || 'A',
+                }
+              : undefined
+          }
+          onClose={() => setShareOpen(false)}
+        />
       ) : null}
 
       <main className="app__main">
