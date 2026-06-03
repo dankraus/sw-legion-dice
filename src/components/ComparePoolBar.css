@@ -44,9 +44,9 @@
   flex: 1;
   min-width: 0;
   gap: 0;
-  border: 1px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 0 0 1px #e5e7eb inset;
 }
 
 .compare-bar__tab {
@@ -56,21 +56,32 @@
   padding: 0.45rem 0.65rem;
   font-size: 0.875rem;
   font-weight: 600;
-  border: 1px solid transparent;
-  border-right: 1px solid #e5e7eb;
+  border: none;
   background: #fff;
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  position: relative;
 }
 
-.compare-bar__tab:last-child {
-  border-right: none;
+.compare-bar__tab:first-child::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: #e5e7eb;
 }
 
 .compare-bar__tab--active {
   color: #fff;
+  z-index: 1;
+}
+
+.compare-bar__tab--active::after {
+  display: none;
 }
 
 .compare-bar__tab:not(.compare-bar__tab--active) {
