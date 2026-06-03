@@ -1,0 +1,19 @@
+.face-count-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.face-count-display__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.face-count-display__blank-label {
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.face-count-display + .face-count-display::before {
+  content: ', ';
+}

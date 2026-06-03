@@ -5,31 +5,15 @@ import {
   rollDefensePoolDetailed,
   type DieOutcome,
   type DefenseDieOutcome,
-  type AttackFace,
-  type DefenseFace,
 } from '../engine/simulate';
-import {
-  formatAttackTallies,
-  formatAttackPoolTotal,
-  formatDefenseTallies,
-  formatDefensePoolTotal,
-} from '../diceRollerTallies';
 import { DiceSelector } from './DiceSelector';
 import { DieFaceChip } from './DieFaceChip';
+import {
+  AttackTallyLines,
+  DefenseTallyLines,
+  PoolTotalLine,
+} from '../legionFont/DiceRollerTallyLines';
 import './DiceRollerModal.css';
-
-const ATTACK_FACE_LABELS: Record<AttackFace, string> = {
-  crit: 'Crit',
-  surge: 'Surge',
-  hit: 'Hit',
-  blank: 'Blank',
-};
-
-const DEFENSE_FACE_LABELS: Record<DefenseFace, string> = {
-  block: 'Block',
-  surge: 'Surge',
-  blank: 'Blank',
-};
 
 interface DiceRollerModalProps {
   onClose: () => void;
@@ -152,18 +136,16 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                     <DieFaceChip
                       key={`attack-${index}`}
                       color={outcome.color}
-                      faceLabel={ATTACK_FACE_LABELS[outcome.face]}
+                      face={outcome.face}
+                      poolKind="attack"
                     />
                   ))}
                 </div>
-                <p className="dice-roller-modal__pool-total">
-                  {formatAttackPoolTotal(lastAttackOutcomes)}
-                </p>
-                <ul className="dice-roller-modal__tallies">
-                  {formatAttackTallies(lastAttackOutcomes).map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
+                <PoolTotalLine
+                  outcomes={lastAttackOutcomes}
+                  poolKind="attack"
+                />
+                <AttackTallyLines outcomes={lastAttackOutcomes} />
               </>
             )}
           </div>
@@ -207,18 +189,16 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
                     <DieFaceChip
                       key={`defense-${index}`}
                       color={outcome.color}
-                      faceLabel={DEFENSE_FACE_LABELS[outcome.face]}
+                      face={outcome.face}
+                      poolKind="defense"
                     />
                   ))}
                 </div>
-                <p className="dice-roller-modal__pool-total">
-                  {formatDefensePoolTotal(lastDefenseOutcomes)}
-                </p>
-                <ul className="dice-roller-modal__tallies">
-                  {formatDefenseTallies(lastDefenseOutcomes).map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
+                <PoolTotalLine
+                  outcomes={lastDefenseOutcomes}
+                  poolKind="defense"
+                />
+                <DefenseTallyLines outcomes={lastDefenseOutcomes} />
               </>
             )}
           </div>

@@ -8,7 +8,11 @@ This site is not affiliated with, endorsed by, or connected with Atomic Mass Gam
 
 ## Support
 
-If Legion Roller helps your list-building or table math, consider supporting the project on Ko-Fi](https://ko-fi.com/dankraus). After covering hosting costs for the year (domain name), I will donate to local food banks.
+If Legion Roller helps your list-building or table math, consider supporting the project on [Ko-fi](https://ko-fi.com/dankraus). After covering hosting costs for the year (domain name), I will donate to local food banks.
+
+## Acknowledgments
+
+Dice symbols in Quick roll use the [Legion font](https://github.com/Owen-A/Legion-font) by [Owen-A](https://github.com/Owen-A) (MIT). Thank you for making Legion-friendly typography available to the community.
 
 ## Development
 

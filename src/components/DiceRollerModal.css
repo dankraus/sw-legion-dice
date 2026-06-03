@@ -121,20 +121,3 @@
   margin-bottom: 0.75rem;
 }
 
-.dice-roller-modal__pool-total {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.dice-roller-modal__tallies {
-  margin: 0;
-  padding-left: 1.25rem;
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.dice-roller-modal__tallies li {
-  margin-bottom: 0.25rem;
-}
