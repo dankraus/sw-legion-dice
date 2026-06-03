@@ -54,3 +54,40 @@ export interface WoundsResults {
   distribution: { total: number; probability: number }[];
   cumulative: { total: number; probability: number }[];
 }
+
+/**
+ * All inputs that define one attack+defense configuration.
+ * Numeric keyword/token fields are kept as the raw string the inputs use
+ * ('' means zero/unset); computePoolResults parses them.
+ */
+export interface PoolConfig {
+  pool: AttackPool;
+  surge: SurgeConversion;
+  criticalX: string;
+  surgeTokens: string;
+  aimTokens: string;
+  observeTokens: string;
+  preciseX: string;
+  ramX: string;
+  sharpshooterX: string;
+  pierceX: string;
+  impactX: string;
+  pointCost: string;
+  defenseDieColor: DefenseDieColor;
+  defenseSurge: DefenseSurgeConversion;
+  defenseSurgeTokens: string;
+  dodgeTokens: string;
+  shieldTokens: string;
+  outmaneuver: boolean;
+  cover: CoverLevel;
+  dugIn: boolean;
+  lowProfile: boolean;
+  suppressed: boolean;
+  coverX: string;
+  armorX: string;
+  impervious: boolean;
+  suppressionTokens: string;
+  dangerSenseX: string;
+  uncannyLuckX: string;
+  backup: boolean;
+}
