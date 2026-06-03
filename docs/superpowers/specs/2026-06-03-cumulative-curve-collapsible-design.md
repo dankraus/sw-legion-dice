@@ -81,9 +81,21 @@ type Row = { total: number; probability: number };
 - **Legend:** Displayed when secondary data present
 
 **Data transformation:**
-1. Merge primary and secondary datasets to get all unique totals
-2. Map each total to `{ total, primary: number, secondary: number }`
-3. Fill missing values with 0 for gaps in either dataset
+1. Merge primary and secondary datasets to get all unique totals (sorted ascending)
+2. For each total, find the cumulative probability by:
+   - Looking up the exact value if it exists in the dataset
+   - Carrying forward the last known value if the total is missing (cumulative probabilities never decrease)
+3. Map to chart format: `{ total, primary: number, secondary: number }`
+
+**Example:**
+- Pool A: `[(0, 1.0), (1, 0.85), (3, 0.50)]`
+- Pool B: `[(0, 1.0), (2, 0.60)]`
+- Merged totals: `[0, 1, 2, 3]`
+- Chart data:
+  - `{ total: 0, primary: 1.0, secondary: 1.0 }`
+  - `{ total: 1, primary: 0.85, secondary: 1.0 }` ← B carries forward from 0
+  - `{ total: 2, primary: 0.85, secondary: 0.60 }` ← A carries forward from 1
+  - `{ total: 3, primary: 0.50, secondary: 0.60 }` ← B carries forward from 2
 
 **Responsive behavior:**
 - Desktop: Full chart width with readable labels
@@ -108,17 +120,17 @@ type Row = { total: number; probability: number };
 
 ### Animation
 
-**Transition:** CSS `max-height` with 200ms duration
-- Smooth expand/collapse
+**Transition:** CSS-based smooth expand/collapse (200ms duration)
+- Element always in DOM (conditional CSS class for visibility)
+- Use `max-height` transition: `0` (collapsed) → `1000px` (expanded)
+- `overflow: hidden` prevents content visibility during transition
 - Not distracting during interaction
-
-**Alternative:** No animation (instant toggle) if smoother performance needed
 
 ### States
 
 **Collapsed (default):**
 - Chart visible with title
-- Table completely hidden (no height, no DOM rendering)
+- Table hidden via CSS (`max-height: 0`, `overflow: hidden`)
 - Button shows "Show exact values ▼"
 
 **Expanded:**
