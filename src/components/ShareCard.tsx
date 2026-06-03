@@ -1,6 +1,8 @@
 import type { PoolConfig } from '../types';
 import type { PoolResults } from '../poolResults';
 import { describeActiveModifiers } from '../share/describeActiveModifiers';
+import { pointCostValue } from '../share/pointCost';
+import { buildDeltaRows } from '../comparisonDeltas';
 import './ShareCard.css';
 
 export interface ShareCardPool {
@@ -21,11 +23,6 @@ const DIE_COLORS: Record<string, string> = {
   white: '#ffffff',
 };
 
-function costValue(config: PoolConfig): number {
-  const parsed = Number(config.pointCost);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-}
-
 function DiceRow({ config }: { config: PoolConfig }) {
   const attack: { color: string; count: number; name: string }[] = [
     { color: DIE_COLORS.red, count: config.pool.red, name: 'red' },
@@ -36,6 +33,10 @@ function DiceRow({ config }: { config: PoolConfig }) {
   const text = attack
     .map((entry) => `${entry.count} ${entry.name}`)
     .join(' · ');
+
+  const defenseColor = config.defenseDieColor;
+  const defenseLabel =
+    defenseColor === 'white' ? 'White defense die' : 'Red defense die';
 
   return (
     <>
@@ -52,13 +53,44 @@ function DiceRow({ config }: { config: PoolConfig }) {
         )}
         <span>{text || 'none'}</span>
       </div>
+      <div className="share-card__pool-label">Defense</div>
+      <div className="share-card__dice">
+        <span
+          className="share-card__die"
+          style={{ background: DIE_COLORS[defenseColor] }}
+        />
+        <span>{defenseLabel}</span>
+      </div>
     </>
+  );
+}
+
+function MiniDistribution({ results }: { results: PoolResults }) {
+  const distribution = results.results.distribution;
+  const maxProbability = distribution.reduce(
+    (max, entry) => Math.max(max, entry.probability),
+    0
+  );
+  return (
+    <div className="share-card__dist">
+      {distribution.map((entry) => {
+        const heightPercent =
+          maxProbability > 0 ? (entry.probability / maxProbability) * 100 : 0;
+        return (
+          <div
+            key={entry.total}
+            className="share-card__dist-bar"
+            style={{ height: `${Math.max(heightPercent, 4)}%` }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
 function StatBlock({ pool }: { pool: ShareCardPool }) {
   const { results, woundsResults } = pool.results;
-  const cost = costValue(pool.config);
+  const cost = pointCostValue(pool.config);
   const ptsPerWound =
     cost > 0 && woundsResults.expectedWounds > 0
       ? (cost / woundsResults.expectedWounds).toFixed(1)
@@ -88,20 +120,55 @@ function StatBlock({ pool }: { pool: ShareCardPool }) {
 }
 
 function PoolDetails({ pool }: { pool: ShareCardPool }) {
-  const mods = describeActiveModifiers(pool.config);
+  const modifiers = describeActiveModifiers(pool.config);
   return (
     <div>
       <DiceRow config={pool.config} />
-      {mods.length > 0 && (
+      {modifiers.length > 0 && (
         <div className="share-card__pills">
-          {mods.map((mod) => (
-            <span key={mod} className="share-card__pill">
-              {mod}
+          {modifiers.map((modifier) => (
+            <span key={modifier} className="share-card__pill">
+              {modifier}
             </span>
           ))}
         </div>
       )}
       <StatBlock pool={pool} />
+      <MiniDistribution results={pool.results} />
+    </div>
+  );
+}
+
+function CompareDeltas({
+  pinned,
+  live,
+}: {
+  pinned: ShareCardPool;
+  live: ShareCardPool;
+}) {
+  const rows = buildDeltaRows(
+    pinned.results,
+    live.results,
+    pinned.config.pointCost,
+    live.config.pointCost
+  );
+  const wanted = ['Avg total', 'Avg wounds'];
+  const summary = rows.filter(
+    (row) => wanted.includes(row.label) && row.delta !== null
+  );
+  if (summary.length === 0) return null;
+  return (
+    <div className="share-card__deltas">
+      {summary.map((row) => {
+        const delta = row.delta as number;
+        const sign = delta >= 0 ? '+' : '';
+        return (
+          <span key={row.label} className="share-card__delta">
+            Δ {row.label} {sign}
+            {delta.toFixed(2)}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -114,16 +181,19 @@ export function ShareCard({ url, live, pinned }: ShareCardProps) {
         Legion Roller
       </div>
       {pinned ? (
-        <div className="share-card__columns">
-          <div>
-            <strong>{pinned.label}</strong>
-            <PoolDetails pool={pinned} />
+        <>
+          <div className="share-card__columns">
+            <div>
+              <strong>{pinned.label}</strong>
+              <PoolDetails pool={pinned} />
+            </div>
+            <div>
+              <strong>{live.label}</strong>
+              <PoolDetails pool={live} />
+            </div>
           </div>
-          <div>
-            <strong>{live.label}</strong>
-            <PoolDetails pool={live} />
-          </div>
-        </div>
+          <CompareDeltas pinned={pinned} live={live} />
+        </>
       ) : (
         <PoolDetails pool={live} />
       )}

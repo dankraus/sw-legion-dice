@@ -85,6 +85,37 @@
   color: #6b7280;
 }
 
+.share-card__dist {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 36px;
+  margin-top: 12px;
+}
+
+.share-card__dist-bar {
+  flex: 1;
+  min-width: 2px;
+  background: #93c5fd;
+  border-radius: 2px 2px 0 0;
+}
+
+.share-card__deltas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.share-card__delta {
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
 .share-card__footer {
   border-top: 1px solid #eee;
   margin-top: 12px;
