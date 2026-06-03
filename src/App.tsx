@@ -348,10 +348,7 @@ function App() {
       uLuck:
         debouncedInputs.uncannyLuckX === ''
           ? 0
-          : Math.max(
-              0,
-              Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0
-            ),
+          : Math.max(0, Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0),
       backup: debouncedInputs.backup,
     }),
     [debouncedInputs]
@@ -401,7 +398,10 @@ function App() {
   const defenseSurgeTokensNum =
     debouncedInputs.defenseSurgeTokens === ''
       ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0);
+      : Math.max(
+          0,
+          Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0
+        );
   const dodgeTokensNum =
     debouncedInputs.dodgeTokens === ''
       ? 0
@@ -413,7 +413,10 @@ function App() {
   const coverXNum =
     debouncedInputs.coverX === ''
       ? 0
-      : Math.min(2, Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0));
+      : Math.min(
+          2,
+          Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0)
+        );
   const armorXNum =
     debouncedInputs.armorX === ''
       ? 0
@@ -421,10 +424,7 @@ function App() {
   const suppressionTokensNum =
     debouncedInputs.suppressionTokens === ''
       ? 0
-      : Math.max(
-          0,
-          Math.floor(Number(debouncedInputs.suppressionTokens)) || 0
-        );
+      : Math.max(0, Math.floor(Number(debouncedInputs.suppressionTokens)) || 0);
   const dangerSenseXNum =
     debouncedInputs.dangerSenseX === ''
       ? 0
@@ -576,15 +576,15 @@ function App() {
             onClick={() => setDiceRollerOpen(true)}
             title="Roll a dice pool to see its outcome"
           >
-            Quick roll
+            Quick Roll
           </button>
           <button
             type="button"
             className="app__reset"
             onClick={handleCopyLink}
-            title="Copy URL with current settings"
+            title="Copy URL with current settings to share"
           >
-            {copyFeedback ? 'Copied!' : 'Copy link'}
+            {copyFeedback ? 'Copied!' : 'Share'}
           </button>
           <button type="button" className="app__reset" onClick={handleReset}>
             Reset
@@ -876,7 +876,9 @@ function App() {
                       <span className="stats-summary__value">
                         {(parsedCost / woundsResults.expectedWounds).toFixed(1)}
                       </span>
-                      <span className="stats-summary__label">Pts / Avg Wound</span>
+                      <span className="stats-summary__label">
+                        Pts / Avg Wound
+                      </span>
                     </div>
                   )}
                 </div>

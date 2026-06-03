@@ -8,7 +8,7 @@ alwaysApply: false
 
 **Apply this rule every time you add a new keyword, token, or input value** (e.g. a new number input, toggle, or dice-pool option).
 
-Whenever you add state in `App.tsx` that affects the calculator configuration, also wire it into URL fragment handling so "Copy link" and shared URLs include the new value.
+Whenever you add state in `App.tsx` that affects the calculator configuration, also wire it into URL fragment handling so "Share" and shared URLs include the new value.
 
 ## Checklist
 

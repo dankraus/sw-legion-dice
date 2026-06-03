@@ -75,7 +75,7 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
       >
         <header className="dice-roller-modal__header">
           <h2 id="dice-roller-modal-title" className="dice-roller-modal__title">
-            Quick roll
+            Quick Roll
           </h2>
           <button
             type="button"
