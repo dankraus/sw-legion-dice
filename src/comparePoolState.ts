@@ -21,7 +21,8 @@ export function resolveCompareConfigs(args: {
     args;
   if (pinnedConfig === null) return null;
 
-  const configA = pinnedConfig;
+  const configA =
+    activePool === 'A' ? editorConfig : pinnedConfig;
   const configB =
     activePool === 'B' ? editorConfig : (cachedPoolB ?? editorConfig);
   const debouncedConfigA =

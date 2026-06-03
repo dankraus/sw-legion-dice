@@ -122,6 +122,11 @@
   color: #111827;
 }
 
+.app__pool--compare {
+  border-left: 3px solid transparent;
+  padding-left: 0.5rem;
+}
+
 .app__attack-pool {
   padding-bottom: 0.75rem;
 }

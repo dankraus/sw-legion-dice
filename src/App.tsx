@@ -3,7 +3,6 @@ import { useDebouncedValue } from './useDebouncedValue';
 import {
   parseFragment,
   buildFragment,
-  DEFAULT_URL_STATE_POOL,
   type UrlState,
   type UrlPoolState,
 } from './urlState';
@@ -27,9 +26,17 @@ import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
 import { CumulativeTable } from './components/CumulativeTable';
 import { ComparisonResults } from './components/ComparisonResults';
+import { ComparePoolBar } from './components/ComparePoolBar';
 import { RulebookVersion } from './components/RulebookVersion';
 import { DiceRollerModal } from './components/DiceRollerModal';
 import { ShareModal } from './components/ShareModal';
+import {
+  readConfigFromEditor,
+  applyConfigToEditor,
+  type PoolEditorSetters,
+} from './poolConfigEditor';
+import { resolveCompareConfigs, type ActivePool } from './comparePoolState';
+import { buildAppUrlState } from './buildAppUrlState';
 import './App.css';
 
 const numToInput = (value: number): string =>
@@ -66,44 +73,6 @@ function poolStateToConfig(pool: UrlPoolState): PoolConfig {
     dangerSenseX: numToInput(pool.danger),
     uncannyLuckX: numToInput(pool.uLuck),
     backup: pool.backup,
-  };
-}
-
-function configToPoolState(config: PoolConfig): UrlPoolState {
-  const num = (value: string) =>
-    value === '' ? 0 : Math.max(0, Math.floor(Number(value)) || 0);
-  return {
-    r: config.pool.red,
-    b: config.pool.black,
-    w: config.pool.white,
-    surge: config.surge,
-    crit: num(config.criticalX),
-    sTok: num(config.surgeTokens),
-    aim: num(config.aimTokens),
-    obs: num(config.observeTokens),
-    precise: num(config.preciseX),
-    ram: num(config.ramX),
-    sharp: num(config.sharpshooterX),
-    pierce: num(config.pierceX),
-    impact: num(config.impactX),
-    cost: config.pointCost,
-    dColor: config.defenseDieColor,
-    dSurge: config.defenseSurge,
-    dSurgeTok: num(config.defenseSurgeTokens),
-    dodge: num(config.dodgeTokens),
-    shield: num(config.shieldTokens),
-    out: config.outmaneuver,
-    cover: config.cover,
-    dugIn: config.dugIn,
-    lowProf: config.lowProfile,
-    sup: config.suppressed,
-    coverX: Math.min(2, num(config.coverX)),
-    armor: num(config.armorX),
-    imp: config.impervious,
-    suppTok: num(config.suppressionTokens),
-    danger: num(config.dangerSenseX),
-    uLuck: num(config.uncannyLuckX),
-    backup: config.backup,
   };
 }
 
@@ -276,6 +245,10 @@ function App() {
   const [pinnedConfig, setPinnedConfig] = useState<PoolConfig | null>(() =>
     initialFromUrl?.cmp ? poolStateToConfig(initialFromUrl.a) : null
   );
+  const [cachedPoolB, setCachedPoolB] = useState<PoolConfig | null>(() =>
+    initialFromUrl?.cmp ? poolStateToConfig(initialFromUrl) : null
+  );
+  const [activePool, setActivePool] = useState<ActivePool>('B');
   const [labelA, setLabelA] = useState<string>(() => initialFromUrl?.la ?? 'A');
   const [labelB, setLabelB] = useState<string>(() => initialFromUrl?.lb ?? 'B');
 
@@ -346,6 +319,11 @@ function App() {
 
   const debouncedInputs = useDebouncedValue(simulationInputs);
 
+  const editorConfig = useMemo(
+    () => readConfigFromEditor(simulationInputs),
+    [simulationInputs]
+  );
+
   const liveConfig = useMemo<PoolConfig>(
     () => ({
       pool: debouncedInputs.pool,
@@ -381,107 +359,36 @@ function App() {
     [debouncedInputs]
   );
 
+  const isComparing = pinnedConfig !== null;
+
+  const compareResolution = useMemo(
+    () =>
+      resolveCompareConfigs({
+        pinnedConfig,
+        cachedPoolB,
+        activePool,
+        editorConfig,
+        debouncedEditorConfig: liveConfig,
+      }),
+    [pinnedConfig, cachedPoolB, activePool, editorConfig, liveConfig]
+  );
+
+  const configA = compareResolution?.configA ?? null;
+  const configB = compareResolution?.configB ?? liveConfig;
+  const debouncedConfigA = compareResolution?.debouncedConfigA ?? null;
+  const debouncedConfigB = compareResolution?.debouncedConfigB ?? liveConfig;
+
   const urlState = useMemo<UrlState>(
-    () => ({
-      r: debouncedInputs.pool.red,
-      b: debouncedInputs.pool.black,
-      w: debouncedInputs.pool.white,
-      surge: debouncedInputs.surge,
-      crit:
-        debouncedInputs.criticalX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.criticalX)) || 0),
-      sTok:
-        debouncedInputs.surgeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.surgeTokens)) || 0),
-      aim:
-        debouncedInputs.aimTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.aimTokens)) || 0),
-      obs:
-        debouncedInputs.observeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.observeTokens)) || 0),
-      precise:
-        debouncedInputs.preciseX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.preciseX)) || 0),
-      ram:
-        debouncedInputs.ramX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0),
-      sharp:
-        debouncedInputs.sharpshooterX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.sharpshooterX)) || 0),
-      pierce:
-        debouncedInputs.pierceX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.pierceX)) || 0),
-      impact:
-        debouncedInputs.impactX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.impactX)) || 0),
-      cost: debouncedInputs.pointCost,
-      dColor: debouncedInputs.defenseDieColor,
-      dSurge: debouncedInputs.defenseSurge,
-      dSurgeTok:
-        debouncedInputs.defenseSurgeTokens === ''
-          ? 0
-          : Math.max(
-              0,
-              Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0
-            ),
-      dodge:
-        debouncedInputs.dodgeTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.dodgeTokens)) || 0),
-      shield:
-        debouncedInputs.shieldTokens === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.shieldTokens)) || 0),
-      out: debouncedInputs.outmaneuver,
-      cover: debouncedInputs.cover,
-      dugIn: debouncedInputs.dugIn,
-      lowProf: debouncedInputs.lowProfile,
-      sup: debouncedInputs.suppressed,
-      coverX:
-        debouncedInputs.coverX === ''
-          ? 0
-          : Math.min(
-              2,
-              Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0)
-            ),
-      armor:
-        debouncedInputs.armorX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.armorX)) || 0),
-      imp: debouncedInputs.impervious,
-      suppTok:
-        debouncedInputs.suppressionTokens === ''
-          ? 0
-          : Math.max(
-              0,
-              Math.floor(Number(debouncedInputs.suppressionTokens)) || 0
-            ),
-      danger:
-        debouncedInputs.dangerSenseX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0),
-      uLuck:
-        debouncedInputs.uncannyLuckX === ''
-          ? 0
-          : Math.max(0, Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0),
-      backup: debouncedInputs.backup,
-      cmp: pinnedConfig !== null,
-      la: labelA,
-      lb: labelB,
-      a: pinnedConfig
-        ? configToPoolState(pinnedConfig)
-        : { ...DEFAULT_URL_STATE_POOL },
-    }),
-    [debouncedInputs, pinnedConfig, labelA, labelB]
+    () =>
+      buildAppUrlState({
+        debouncedInputs,
+        pinnedConfig,
+        cachedPoolB,
+        activePool,
+        labelA,
+        labelB,
+      }),
+    [debouncedInputs, pinnedConfig, cachedPoolB, activePool, labelA, labelB]
   );
 
   useEffect(() => {
@@ -498,17 +405,82 @@ function App() {
     [liveConfig]
   );
 
-  const pinnedResults = useMemo(
-    () => (pinnedConfig ? computePoolResults(pinnedConfig) : null),
-    [pinnedConfig]
+  const compareResultsA = useMemo(
+    () => (debouncedConfigA ? computePoolResults(debouncedConfigA) : null),
+    [debouncedConfigA]
+  );
+  const compareResultsB = useMemo(
+    () => (isComparing ? computePoolResults(debouncedConfigB) : null),
+    [isComparing, debouncedConfigB]
   );
   const liveResults = useMemo(
     () => ({ results, woundsResults }),
     [results, woundsResults]
   );
 
-  const handlePin = () => setPinnedConfig(liveConfig);
-  const handleClearCompare = () => setPinnedConfig(null);
+  const poolEditorSetters: PoolEditorSetters = useMemo(
+    () => ({
+      setPool,
+      setSurge,
+      setCriticalX,
+      setSurgeTokens,
+      setAimTokens,
+      setObserveTokens,
+      setPreciseX,
+      setRamX,
+      setSharpshooterX,
+      setPierceX,
+      setImpactX,
+      setPointCost,
+      setDefenseDieColor,
+      setDefenseSurge,
+      setDefenseSurgeTokens,
+      setDodgeTokens,
+      setShieldTokens,
+      setOutmaneuver,
+      setCover,
+      setDugIn,
+      setLowProfile,
+      setSuppressed,
+      setCoverX,
+      setArmorX,
+      setImpervious,
+      setSuppressionTokens,
+      setDangerSenseX,
+      setUncannyLuckX,
+      setBackup,
+    }),
+    []
+  );
+
+  const handleStartCompare = () => {
+    const snapshot = readConfigFromEditor(simulationInputs);
+    setPinnedConfig(snapshot);
+    setCachedPoolB(snapshot);
+    setActivePool('B');
+  };
+
+  const handleEndCompare = () => {
+    if (activePool === 'A' && cachedPoolB) {
+      applyConfigToEditor(cachedPoolB, poolEditorSetters);
+    }
+    setPinnedConfig(null);
+    setCachedPoolB(null);
+  };
+
+  const handleActivePoolChange = (pool: ActivePool) => {
+    if (pool === activePool || !pinnedConfig) return;
+    const outgoing = readConfigFromEditor(simulationInputs);
+    let nextPinned = pinnedConfig;
+    let nextCached = cachedPoolB;
+    if (activePool === 'B') nextCached = outgoing;
+    else nextPinned = outgoing;
+    const incoming = pool === 'B' ? (nextCached ?? outgoing) : nextPinned;
+    applyConfigToEditor(incoming, poolEditorSetters);
+    setPinnedConfig(nextPinned);
+    setCachedPoolB(nextCached);
+    setActivePool(pool);
+  };
 
   const totalDice = pool.red + pool.black + pool.white;
   const parsedCost = Number(pointCost);
@@ -544,9 +516,13 @@ function App() {
     setUncannyLuckX('');
     setBackup(false);
     setPinnedConfig(null);
+    setCachedPoolB(null);
+    setActivePool('B');
     setLabelA('A');
     setLabelB('B');
   };
+
+  const activePoolAccent = activePool === 'A' ? '#2563eb' : '#f59e0b';
 
   return (
     <div className="app">
@@ -571,19 +547,6 @@ function App() {
           <button
             type="button"
             className="app__reset"
-            onClick={pinnedConfig ? handleClearCompare : handlePin}
-            disabled={!pinnedConfig && totalDice === 0}
-            title={
-              pinnedConfig
-                ? 'Exit compare mode and clear pinned pool A'
-                : 'Pin the current pool as A to compare against'
-            }
-          >
-            {pinnedConfig ? 'Clear compare' : 'Pin as A'}
-          </button>
-          <button
-            type="button"
-            className="app__reset"
             onClick={() => setShareOpen(true)}
             title="Share this setup as a link, text, or image"
           >
@@ -603,15 +566,15 @@ function App() {
         <ShareModal
           url={window.location.href}
           live={{
-            config: liveConfig,
-            results: liveResults,
+            config: configB,
+            results: compareResultsB ?? liveResults,
             label: labelB || 'B',
           }}
           pinned={
-            pinnedConfig && pinnedResults
+            pinnedConfig && compareResultsA && configA
               ? {
-                  config: pinnedConfig,
-                  results: pinnedResults,
+                  config: configA,
+                  results: compareResultsA,
                   label: labelA || 'A',
                 }
               : undefined
@@ -622,7 +585,34 @@ function App() {
 
       <main className="app__main">
         <div className="app__layout">
-          <section className="app__pool">
+          <section
+            className={
+              'app__pool' +
+              (isComparing ? ' app__pool--compare' : '') +
+              (isComparing ? ` app__pool--editing-${activePool.toLowerCase()}` : '')
+            }
+            style={
+              isComparing
+                ? { borderLeftColor: activePoolAccent }
+                : undefined
+            }
+          >
+            {isComparing ? (
+              <ComparePoolBar
+                mode="compare"
+                labelA={labelA}
+                labelB={labelB}
+                activePool={activePool}
+                onActivePoolChange={handleActivePoolChange}
+                onEndCompare={handleEndCompare}
+              />
+            ) : (
+              <ComparePoolBar
+                mode="single"
+                onStartCompare={handleStartCompare}
+                startDisabled={totalDice === 0}
+              />
+            )}
             <div className="app__attack-pool">
               <h2 className="app__section-heading">Attack Pool</h2>
               <DiceSelector
@@ -867,19 +857,22 @@ function App() {
           </section>
 
           <section className="app__results">
-            {pinnedConfig && pinnedResults ? (
+            {isComparing && compareResultsA && compareResultsB && configA ? (
               <>
                 <ComparisonResults
-                  configA={pinnedConfig}
-                  configB={liveConfig}
-                  resultsA={pinnedResults}
-                  resultsB={liveResults}
-                  costA={pinnedConfig.pointCost}
-                  costB={liveConfig.pointCost}
+                  configA={configA}
+                  configB={configB}
+                  resultsA={compareResultsA}
+                  resultsB={compareResultsB}
+                  costA={configA.pointCost}
+                  costB={configB.pointCost}
                   labelA={labelA || 'A'}
                   labelB={labelB || 'B'}
                   onLabelAChange={setLabelA}
                   onLabelBChange={setLabelB}
+                  activePool={activePool}
+                  onSelectPoolA={() => handleActivePoolChange('A')}
+                  onSelectPoolB={() => handleActivePoolChange('B')}
                 />
               </>
             ) : totalDice === 0 ? (

@@ -41,18 +41,26 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
     );
   }
 
-  const displayA = tabLabel(props.labelA, 'A');
-  const displayB = tabLabel(props.labelB, 'B');
-  const activeLabel = props.activePool === 'A' ? displayA : displayB;
-  const activeColor = props.activePool === 'A' ? COLOR_A : COLOR_B;
+  const {
+    labelA,
+    labelB,
+    activePool,
+    onActivePoolChange,
+    onEndCompare,
+  } = props;
+
+  const displayA = tabLabel(labelA, 'A');
+  const displayB = tabLabel(labelB, 'B');
+  const activeLabel = activePool === 'A' ? displayA : displayB;
+  const activeColor = activePool === 'A' ? COLOR_A : COLOR_B;
 
   function handleTabListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'ArrowLeft' && props.activePool === 'B') {
+    if (event.key === 'ArrowLeft' && activePool === 'B') {
       event.preventDefault();
-      props.onActivePoolChange('A');
-    } else if (event.key === 'ArrowRight' && props.activePool === 'A') {
+      onActivePoolChange('A');
+    } else if (event.key === 'ArrowRight' && activePool === 'A') {
       event.preventDefault();
-      props.onActivePoolChange('B');
+      onActivePoolChange('B');
     }
   }
 
@@ -68,36 +76,36 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
           <button
             type="button"
             role="tab"
-            aria-selected={props.activePool === 'A'}
+            aria-selected={activePool === 'A'}
             className={
               'compare-bar__tab' +
-              (props.activePool === 'A' ? ' compare-bar__tab--active' : '')
+              (activePool === 'A' ? ' compare-bar__tab--active' : '')
             }
             style={
-              props.activePool === 'A'
+              activePool === 'A'
                 ? { backgroundColor: COLOR_A, borderColor: COLOR_A }
                 : { color: COLOR_A, borderColor: COLOR_A }
             }
             title={displayA}
-            onClick={() => props.onActivePoolChange('A')}
+            onClick={() => onActivePoolChange('A')}
           >
             {displayA}
           </button>
           <button
             type="button"
             role="tab"
-            aria-selected={props.activePool === 'B'}
+            aria-selected={activePool === 'B'}
             className={
               'compare-bar__tab' +
-              (props.activePool === 'B' ? ' compare-bar__tab--active' : '')
+              (activePool === 'B' ? ' compare-bar__tab--active' : '')
             }
             style={
-              props.activePool === 'B'
+              activePool === 'B'
                 ? { backgroundColor: COLOR_B, borderColor: COLOR_B }
                 : { color: COLOR_B, borderColor: COLOR_B }
             }
             title={displayB}
-            onClick={() => props.onActivePoolChange('B')}
+            onClick={() => onActivePoolChange('B')}
           >
             {displayB}
           </button>
@@ -105,7 +113,7 @@ export function ComparePoolBar(props: ComparePoolBarProps) {
         <button
           type="button"
           className="compare-bar__end"
-          onClick={props.onEndCompare}
+          onClick={onEndCompare}
           aria-label="Exit compare mode"
         >
           End compare
