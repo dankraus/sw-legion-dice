@@ -35,6 +35,7 @@
 
 .share-card__dice {
   display: flex;
+  flex-wrap: wrap;
   gap: 5px;
   align-items: center;
   margin-top: 3px;
@@ -47,6 +48,12 @@
   height: 15px;
   border-radius: 3px;
   border: 1px solid #cbd5e1;
+}
+
+.share-card__die-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .share-card__pills {

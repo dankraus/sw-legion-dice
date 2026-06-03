@@ -30,10 +30,6 @@ function DiceRow({ config }: { config: PoolConfig }) {
     { color: DIE_COLORS.white, count: config.pool.white, name: 'white' },
   ].filter((entry) => entry.count > 0);
 
-  const text = attack
-    .map((entry) => `${entry.count} ${entry.name}`)
-    .join(' · ');
-
   const defenseColor = config.defenseDieColor;
   const defenseLabel =
     defenseColor === 'white' ? 'White defense die' : 'Red defense die';
@@ -42,16 +38,20 @@ function DiceRow({ config }: { config: PoolConfig }) {
     <>
       <div className="share-card__pool-label">Attack</div>
       <div className="share-card__dice">
-        {attack.flatMap((entry) =>
-          Array.from({ length: entry.count }).map((_, index) => (
-            <span
-              key={`${entry.name}-${index}`}
-              className="share-card__die"
-              style={{ background: entry.color }}
-            />
+        {attack.length === 0 ? (
+          <span>none</span>
+        ) : (
+          attack.map((entry) => (
+            <span key={entry.name} className="share-card__die-group">
+              <span
+                className="share-card__die"
+                style={{ background: entry.color }}
+              />
+              <span>{entry.name}</span>
+              <span>×{entry.count}</span>
+            </span>
           ))
         )}
-        <span>{text || 'none'}</span>
       </div>
       <div className="share-card__pool-label">Defense</div>
       <div className="share-card__dice">
