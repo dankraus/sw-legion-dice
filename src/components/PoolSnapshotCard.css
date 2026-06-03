@@ -126,3 +126,26 @@
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
+
+.pool-snapshot--active {
+  background: color-mix(in srgb, var(--pool-accent, #2563eb) 8%, #fafafa);
+  border-width: 2px;
+  opacity: 1;
+}
+
+.pool-snapshot--inactive {
+  opacity: 0.72;
+}
+
+.pool-snapshot__editing-pill {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border-radius: 999px;
+}

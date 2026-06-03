@@ -1,3 +1,4 @@
+import type { CSSProperties, MouseEvent } from 'react';
 import type { PoolConfig } from '../types';
 import { formatPoolSnapshot } from '../poolSnapshot';
 import { PoolDiceRow } from './PoolDiceRow';
@@ -9,6 +10,8 @@ interface PoolSnapshotCardProps {
   label: string;
   onLabelChange: (value: string) => void;
   accentColor: string;
+  isActive?: boolean;
+  onSelect?: () => void;
 }
 
 export function PoolSnapshotCard({
@@ -17,13 +20,31 @@ export function PoolSnapshotCard({
   label,
   onLabelChange,
   accentColor,
+  isActive = false,
+  onSelect,
 }: PoolSnapshotCardProps) {
   const sections = formatPoolSnapshot(config);
 
+  const handleCardClick = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('.pool-snapshot__label-input')) {
+      return;
+    }
+    onSelect?.();
+  };
+
+  const snapshotClassName = [
+    'pool-snapshot',
+    isActive ? 'pool-snapshot--active' : 'pool-snapshot--inactive',
+  ].join(' ');
+
   return (
     <article
-      className="pool-snapshot"
-      style={{ borderColor: accentColor }}
+      className={snapshotClassName}
+      style={
+        { borderColor: accentColor, '--pool-accent': accentColor } as CSSProperties
+      }
+      onClick={onSelect ? handleCardClick : undefined}
     >
       <header className="pool-snapshot__header">
         <span className="pool-snapshot__marker" style={{ color: accentColor }}>
@@ -40,6 +61,9 @@ export function PoolSnapshotCard({
             aria-label={`Label for pool ${poolId}`}
           />
         </label>
+        {isActive ? (
+          <span className="pool-snapshot__editing-pill">Editing</span>
+        ) : null}
       </header>
       <PoolDiceRow config={config} classPrefix="pool-snapshot" />
       {sections.map((section) => (
