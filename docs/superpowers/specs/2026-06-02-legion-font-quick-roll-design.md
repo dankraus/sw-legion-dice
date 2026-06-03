@@ -8,24 +8,24 @@ Render Star Wars: Legion dice face symbols in Quick roll using the [Legion font]
 
 ## Product decisions
 
-| Topic          | Decision                                           |
-| -------------- | -------------------------------------------------- |
-| Scope          | Reusable `legionFont` module; Quick roll first     |
-| Surfaces       | Result chips, per-color tallies, pool total lines  |
-| Missing glyphs | Do not ship until all seven faces are mapped       |
-| Credit         | README Acknowledgments links to Owen-A/Legion-font |
+| Topic | Decision |
+| ----- | -------- |
+| Scope | Reusable `legionFont` module; Quick roll first |
+| Surfaces | Result chips, per-color tallies, pool total lines |
+| Missing glyphs | Do not ship until all seven faces are mapped |
+| Credit | README Acknowledgments links to Owen-A/Legion-font |
 
 ## Glyph mapping (Legionfont0.1.4.ttf)
 
-| Face          | Character | Notes                                                    |
-| ------------- | --------- | -------------------------------------------------------- |
-| Attack crit   | `c`       | Critical hit                                             |
-| Attack hit    | `h`       | Hit                                                      |
-| Attack surge  | `o`       | Attack surge                                             |
-| Attack blank  | (none)    | Per-die chip empty; tallies/totals show the word `blank` |
-| Defense block | `s`       | Block                                                    |
-| Defense surge | `d`       | Defense surge                                            |
-| Defense blank | (none)    | Per-die chip empty; tallies/totals show the word `blank` |
+| Face | Character | Notes |
+| ---- | --------- | ----- |
+| Attack crit | `c` | Critical hit |
+| Attack hit | `h` | Hit |
+| Attack surge | `o` | Attack surge |
+| Attack blank | (none) | Per-die chip empty; tallies/totals show the word `blank` |
+| Defense block | `s` | Block |
+| Defense surge | `d` | Defense surge |
+| Defense blank | (none) | Per-die chip empty; tallies/totals show the word `blank` |
 
 ## Architecture
 

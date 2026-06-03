@@ -1,9 +1,4 @@
-import type {
-  DieOutcome,
-  DefenseDieOutcome,
-  AttackFace,
-  DefenseFace,
-} from '../engine/simulate';
+import type { DieOutcome, DefenseDieOutcome, AttackFace, DefenseFace } from '../engine/simulate';
 import {
   getAttackTallyGroups,
   getDefenseTallyGroups,
@@ -45,20 +40,11 @@ export function TallyLines({ outcomes, poolKind }: TallyLinesProps) {
         const colorLabel = color[0].toUpperCase() + color.slice(1);
         const ariaLabel = `${colorLabel}: ${parts.map(({ face, count }) => faceAriaText(face, count, poolKind)).join(', ')}`;
         return (
-          <li
-            key={color}
-            className="dice-roller-tally-lines__row"
-            aria-label={ariaLabel}
-          >
+          <li key={color} className="dice-roller-tally-lines__row" aria-label={ariaLabel}>
             <span aria-hidden="true">
               {colorLabel}:{' '}
               {parts.map((part) => (
-                <FaceCountDisplay
-                  key={part.face}
-                  count={part.count}
-                  face={part.face}
-                  poolKind={poolKind}
-                />
+                <FaceCountDisplay key={part.face} count={part.count} face={part.face} poolKind={poolKind} />
               ))}
             </span>
           </li>
@@ -86,12 +72,7 @@ export function PoolTotalLine({ outcomes, poolKind }: PoolTotalLineProps) {
       <span aria-hidden="true">
         Total:{' '}
         {parts.map((part) => (
-          <FaceCountDisplay
-            key={part.face}
-            count={part.count}
-            face={part.face}
-            poolKind={poolKind}
-          />
+          <FaceCountDisplay key={part.face} count={part.count} face={part.face} poolKind={poolKind} />
         ))}
       </span>
     </p>

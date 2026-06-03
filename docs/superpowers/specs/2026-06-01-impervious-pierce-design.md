@@ -9,10 +9,10 @@ Impervious reduces Pierce: cancel one fewer block when the defender rolls at lea
 
 ## Rules
 
-| Effect     | When Impervious is on                                                                                                                             |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Extra dice | None                                                                                                                                              |
-| Pierce     | If `blocks > 0` after surge conversion, cancel `max(0, Pierce X − 1)` blocks; otherwise cancel Pierce X (no practical effect when `blocks === 0`) |
+| Effect | When Impervious is on |
+|--------|------------------------|
+| Extra dice | None |
+| Pierce | If `blocks > 0` after surge conversion, cancel `max(0, Pierce X − 1)` blocks; otherwise cancel Pierce X (no practical effect when `blocks === 0`) |
 
 **Example:** Pierce 3, Impervious, 5 blocks → 2 cancelled → 3 effective blocks.
 

@@ -62,7 +62,10 @@ export function DiceRollerModal({ onClose }: DiceRollerModalProps) {
   };
 
   return (
-    <div className="dice-roller-modal__backdrop" onClick={handleBackdropClick}>
+    <div
+      className="dice-roller-modal__backdrop"
+      onClick={handleBackdropClick}
+    >
       <div
         className="dice-roller-modal__panel"
         role="dialog"

@@ -152,7 +152,10 @@ function resolveImpactThenArmor(
   let hitsAfterImpact = hitsAfterCover;
   let critsAfterImpact = critsAfterCover;
   if (normalizedArmorX > 0 && normalizedImpactX > 0) {
-    const convertedHitCount = Math.min(normalizedImpactX, hitsAfterCover);
+    const convertedHitCount = Math.min(
+      normalizedImpactX,
+      hitsAfterCover
+    );
     hitsAfterImpact = hitsAfterCover - convertedHitCount;
     critsAfterImpact = critsAfterCover + convertedHitCount;
   }
@@ -272,10 +275,7 @@ export function effectiveBlocksAfterPierce(
   pierceX: number,
   impervious: boolean
 ): number {
-  return Math.max(
-    0,
-    blocks - pierceBlocksCancelled(blocks, pierceX, impervious)
-  );
+  return Math.max(0, blocks - pierceBlocksCancelled(blocks, pierceX, impervious));
 }
 
 /** Roll one defense die; returns face type. Uses rng() in [0,1). */
@@ -453,8 +453,7 @@ export function applyRerolls(
 ): { hits: number; crits: number } {
   const roundCapacities = getRerollRounds(aimTokens, observeTokens, preciseX);
   const totalDice = pool.red + pool.black + pool.white;
-  if (totalDice === 0 || roundCapacities.length === 0)
-    return { ...resolveResult };
+  if (totalDice === 0 || roundCapacities.length === 0) return { ...resolveResult };
   const colors: DieColor[] = ['red', 'black', 'white'];
   const outcomes: DieOutcome[] = [];
   let critIndex = 0;
@@ -774,7 +773,8 @@ export function simulateWounds(
       normalizedSuppressionTokens,
       normalizedDangerSenseX
     );
-    const totalDefenseDice = defenseDice + dangerSenseExtra;
+    const totalDefenseDice =
+      defenseDice + dangerSenseExtra;
     const faces: DefenseFace[] = [];
     for (let dieIndex = 0; dieIndex < totalDefenseDice; dieIndex++) {
       faces.push(rollOneDefenseDieOutcome(defenseDieColor, rng));

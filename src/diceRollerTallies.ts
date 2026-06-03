@@ -69,18 +69,12 @@ export function getAttackPoolTotalParts(
   outcomes: DieOutcome[]
 ): FaceCountPart<AttackFace>[] {
   const counts = countByFace(outcomes, ATTACK_FACE_ORDER);
-  return ATTACK_FACE_ORDER.map((face) => ({
-    face,
-    count: counts.get(face) ?? 0,
-  }));
+  return ATTACK_FACE_ORDER.map((face) => ({ face, count: counts.get(face) ?? 0 }));
 }
 
 export function getDefensePoolTotalParts(
   outcomes: DefenseDieOutcome[]
 ): FaceCountPart<DefenseFace>[] {
   const counts = countByFace(outcomes, DEFENSE_FACE_ORDER);
-  return DEFENSE_FACE_ORDER.map((face) => ({
-    face,
-    count: counts.get(face) ?? 0,
-  }));
+  return DEFENSE_FACE_ORDER.map((face) => ({ face, count: counts.get(face) ?? 0 }));
 }

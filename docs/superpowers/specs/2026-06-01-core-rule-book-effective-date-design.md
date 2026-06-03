@@ -8,13 +8,13 @@ Show users which Core Rule Book effective date the calculator’s rules reflect,
 
 ## Decisions
 
-| Topic         | Choice                                                                                                |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
-| Placement     | Header, under tagline “Never tell me the odds!”                                                       |
-| Copy          | `Core Rule Book effective {date}`                                                                     |
-| Initial date  | `5.29.2026`                                                                                           |
-| Link          | Full line links to [AMG Legion rules & organized play](https://www.atomicmassgames.com/swlegiondocs/) |
-| Link behavior | `target="_blank"`, `rel="noopener noreferrer"`                                                        |
+| Topic | Choice |
+|-------|--------|
+| Placement | Header, under tagline “Never tell me the odds!” |
+| Copy | `Core Rule Book effective {date}` |
+| Initial date | `5.29.2026` |
+| Link | Full line links to [AMG Legion rules & organized play](https://www.atomicmassgames.com/swlegiondocs/) |
+| Link behavior | `target="_blank"`, `rel="noopener noreferrer"` |
 
 ## Architecture
 

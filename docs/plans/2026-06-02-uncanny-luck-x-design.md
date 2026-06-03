@@ -60,9 +60,9 @@ No changes to attack rerolls, cover, or Danger Sense logic.
 
 ## URL state
 
-| State        | Key     | Default | Omit when |
-| ------------ | ------- | ------- | --------- |
-| uncannyLuckX | `uLuck` | `0`     | `0`       |
+| State         | Key     | Default | Omit when |
+| ------------- | ------- | ------- | --------- |
+| uncannyLuckX  | `uLuck` | `0`     | `0`       |
 
 Follow `url-state-new-inputs` rule: `UrlState`, `DEFAULT_URL_STATE`, `parseFragment`, `buildFragment`, `App.tsx` init/sync/reset, `urlState.test.ts` round-trip.
 

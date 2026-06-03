@@ -8,24 +8,22 @@ Let users compare two attack/defense configurations side by side so they can ans
 
 ## Product decisions
 
-| Topic         | Decision                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------- |
-| Layout        | "Pin & Compare" — one config editor; live pool = B, pinned snapshot = A                                 |
+| Topic | Decision |
+| ----- | -------- |
+| Layout | "Pin & Compare" — one config editor; live pool = B, pinned snapshot = A |
 | Compare scope | Full: overlaid Attack + Wounds distribution charts, A/B/Δ summary stats, side-by-side cumulative tables |
-| Controls      | **Pin as A**, **Clear / Exit compare**, editable A/B labels. No Swap.                                   |
-| Δ coloring    | Green when B is the better/cheaper pick, red when worse; per-metric direction                           |
-| Sharing       | Encode both A and B in the URL fragment; existing single-pool links keep working                        |
-| Engine        | No probability/simulation math changes; reuse `calculateAttackPool` / `calculateWounds`                 |
+| Controls | **Pin as A**, **Clear / Exit compare**, editable A/B labels. No Swap. |
+| Δ coloring | Green when B is the better/cheaper pick, red when worse; per-metric direction |
+| Sharing | Encode both A and B in the URL fragment; existing single-pool links keep working |
+| Engine | No probability/simulation math changes; reuse `calculateAttackPool` / `calculateWounds` |
 
 ## Architecture
 
 ### Data model
-
 - Introduce a `PoolConfig` type capturing all current pool inputs (the existing `simulationInputs` object in `App.tsx` is effectively this shape: `pool`, `surge`, all keyword/token string fields, `pointCost`, defense fields).
 - Add a pure helper in a new `src/poolResults.ts`: `computePoolResults(config: PoolConfig): { results: AttackResults; woundsResults: WoundsResults }` that does the numeric parsing (the `*Num` derivations currently inline in `App.tsx`) and calls `calculateAttackPool` + `calculateWounds`. This is the seam that lets two pools be computed identically.
 
 ### State & controls (`App.tsx`)
-
 - Existing per-input `useState` continues to drive the **live** pool (B).
 - New state: `pinnedConfig: PoolConfig | null`, `labelA: string` (default `"A"`), `labelB: string` (default `"B"`).
 - **Pin as A** → snapshot the current live `PoolConfig` into `pinnedConfig`; enter compare mode.
@@ -34,7 +32,6 @@ Let users compare two attack/defense configurations side by side so they can ans
 - Compare mode is active iff `pinnedConfig !== null`.
 
 ### Results UI
-
 - New `ComparisonResults` component, rendered only in compare mode (otherwise the current single-pool results render unchanged):
   - **Delta summary table** — columns: A, B, Δ(B−A). Rows mirror the full set of summary stats already shown today: Avg hits, Avg crits, Avg total, Pts/success, Avg wounds, Pts/wound. Δ cell colored green/red by metric direction (higher damage/successes = better; lower pts-per-success and pts-per-wound = better). Pts/success and Pts/wound rows only appear when at least one pool has a point cost > 0, and a pool's cell is blank when that pool has no cost.
   - **Overlaid Attack distribution** and **overlaid Wounds distribution**.
@@ -43,7 +40,6 @@ Let users compare two attack/defense configurations side by side so they can ans
 - Extend `CumulativeTable`: optional secondary column (`secondary`, header label). Single-column behavior unchanged when omitted.
 
 ### URL sharing (`urlState.ts`)
-
 - Keep the **live pool (B)** serialized with today's bare keys via the existing `buildFragment`/`parseFragment` — this preserves backward compatibility for all existing shared links.
 - Serialize the **pinned pool A** under `a.`-prefixed keys by composing the existing per-pool logic with a key-prefixing wrapper (e.g. `a.r`, `a.crit`, `a.dColor`…). Defaults are omitted exactly like the live pool.
 - Add top-level keys: `cmp` (`1` when compare mode active), `la` (label A), `lb` (label B). `la`/`lb` are omitted when equal to defaults `"A"`/`"B"`.
@@ -51,15 +47,15 @@ Let users compare two attack/defense configurations side by side so they can ans
 
 ## Components & files
 
-| File                                         | Change                                                                                                                 |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `src/types.ts`                               | Add `PoolConfig` type                                                                                                  |
-| `src/poolResults.ts` (new)                   | Add `computePoolResults(config)` helper                                                                                |
-| `src/App.tsx`                                | `pinnedConfig`/label state, Pin & Clear controls, render `ComparisonResults` in compare mode, reset wiring, URL wiring |
-| `src/components/ComparisonResults.tsx` (new) | Delta table + overlaid charts + side-by-side cumulative                                                                |
-| `src/components/DistributionChart.tsx`       | Optional second series + legend                                                                                        |
-| `src/components/CumulativeTable.tsx`         | Optional secondary column                                                                                              |
-| `src/urlState.ts`                            | `a.`-prefixed pool A, `cmp`, `la`, `lb`; prefix wrapper reusing existing parse/build                                   |
+| File | Change |
+| ---- | ------ |
+| `src/types.ts` | Add `PoolConfig` type |
+| `src/poolResults.ts` (new) | Add `computePoolResults(config)` helper |
+| `src/App.tsx` | `pinnedConfig`/label state, Pin & Clear controls, render `ComparisonResults` in compare mode, reset wiring, URL wiring |
+| `src/components/ComparisonResults.tsx` (new) | Delta table + overlaid charts + side-by-side cumulative |
+| `src/components/DistributionChart.tsx` | Optional second series + legend |
+| `src/components/CumulativeTable.tsx` | Optional secondary column |
+| `src/urlState.ts` | `a.`-prefixed pool A, `cmp`, `la`, `lb`; prefix wrapper reusing existing parse/build |
 
 ## Testing
 
