@@ -35,7 +35,9 @@ describe('shareImage', () => {
   it('copyImageToClipboard writes a ClipboardItem', async () => {
     const write = vi.fn(async () => undefined);
     (globalThis as Record<string, unknown>).ClipboardItem = class {
-      constructor(public items: Record<string, Blob>) {}
+      constructor(items: Record<string, Blob>) {
+        void items;
+      }
     };
     Object.assign(navigator, { clipboard: { write } });
     await copyImageToClipboard(document.createElement('div'));
