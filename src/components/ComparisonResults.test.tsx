@@ -15,7 +15,7 @@ describe('ComparisonResults', () => {
     };
     const resultsA = computePoolResults(configA);
     const resultsB = computePoolResults(configB);
-    const { getAllByDisplayValue, getByText, getByLabelText } = render(
+    const { getAllByDisplayValue, getByText, getByLabelText, getAllByText } = render(
       <ComparisonResults
         configA={configA}
         configB={configB}
@@ -27,6 +27,9 @@ describe('ComparisonResults', () => {
         labelB="Stock"
         onLabelAChange={() => {}}
         onLabelBChange={() => {}}
+        activePool="B"
+        onSelectPoolA={() => {}}
+        onSelectPoolB={() => {}}
       />
     );
     expect(getByText('×3')).toBeTruthy();
@@ -35,5 +38,7 @@ describe('ComparisonResults', () => {
     expect(getAllByDisplayValue('Stock').length).toBeGreaterThan(0);
     expect(getByLabelText('Label for pool A')).toBeTruthy();
     expect(getByText('Avg total')).toBeTruthy();
+    expect(getAllByText('Editing')).toHaveLength(1);
+    expect(getByText('Editing').closest('.pool-snapshot')).toBeTruthy();
   });
 });

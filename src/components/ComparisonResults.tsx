@@ -20,6 +20,9 @@ interface ComparisonResultsProps {
   labelB: string;
   onLabelAChange: (value: string) => void;
   onLabelBChange: (value: string) => void;
+  activePool: 'A' | 'B';
+  onSelectPoolA: () => void;
+  onSelectPoolB: () => void;
 }
 
 function formatValue(value: number | null): string {
@@ -43,6 +46,9 @@ export function ComparisonResults({
   labelB,
   onLabelAChange,
   onLabelBChange,
+  activePool,
+  onSelectPoolA,
+  onSelectPoolB,
 }: ComparisonResultsProps) {
   const rows = buildDeltaRows(resultsA, resultsB, costA, costB);
 
@@ -55,6 +61,8 @@ export function ComparisonResults({
           label={labelA}
           onLabelChange={onLabelAChange}
           accentColor={COLOR_A}
+          isActive={activePool === 'A'}
+          onSelect={onSelectPoolA}
         />
         <PoolSnapshotCard
           config={configB}
@@ -62,6 +70,8 @@ export function ComparisonResults({
           label={labelB}
           onLabelChange={onLabelBChange}
           accentColor={COLOR_B}
+          isActive={activePool === 'B'}
+          onSelect={onSelectPoolB}
         />
       </div>
 
