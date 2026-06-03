@@ -1,0 +1,78 @@
+.pool-snapshot {
+  flex: 1 1 220px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fafafa;
+}
+
+.pool-snapshot__header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pool-snapshot__marker {
+  font-size: 0.85rem;
+}
+
+.pool-snapshot__pool-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-top: 0.35rem;
+}
+
+.pool-snapshot__dice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.pool-snapshot__die {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.pool-snapshot__section {
+  margin-top: 0.5rem;
+}
+
+.pool-snapshot__section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.2rem;
+}
+
+.pool-snapshot__lines {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.pool-snapshot__line {
+  display: contents;
+}
+
+.pool-snapshot__lines dt {
+  color: #4b5563;
+  margin: 0;
+}
+
+.pool-snapshot__lines dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}

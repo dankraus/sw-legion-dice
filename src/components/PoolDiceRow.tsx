@@ -28,9 +28,11 @@ export function PoolDiceRow({ config, classPrefix }: PoolDiceRowProps) {
   const dice = `${classPrefix}__dice`;
   const die = `${classPrefix}__die`;
 
+  const showPoolLabels = classPrefix === 'share-card';
+
   return (
     <>
-      <div className={poolLabel}>Attack</div>
+      {showPoolLabels ? <div className={poolLabel}>Attack</div> : null}
       <div className={dice}>
         {classPrefix === 'share-card' ? (
           attack.length === 0 ? (
@@ -62,7 +64,7 @@ export function PoolDiceRow({ config, classPrefix }: PoolDiceRowProps) {
           </>
         )}
       </div>
-      <div className={poolLabel}>Defense</div>
+      {showPoolLabels ? <div className={poolLabel}>Defense</div> : null}
       <div className={dice}>
         <span
           className={die}
