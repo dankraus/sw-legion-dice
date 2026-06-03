@@ -7,8 +7,9 @@ import type {
   DefenseDieColor,
   DefenseSurgeConversion,
   CoverLevel,
+  PoolConfig,
 } from './types';
-import { calculateAttackPool, calculateWounds } from './engine/probability';
+import { computePoolResults } from './poolResults';
 import { DiceSelector } from './components/DiceSelector';
 import { AttackSurgeToggle } from './components/AttackSurgeToggle';
 import { DefenseSurgeToggle } from './components/DefenseSurgeToggle';
@@ -257,6 +258,41 @@ function App() {
 
   const debouncedInputs = useDebouncedValue(simulationInputs);
 
+  const liveConfig = useMemo<PoolConfig>(
+    () => ({
+      pool: debouncedInputs.pool,
+      surge: debouncedInputs.surge,
+      criticalX: debouncedInputs.criticalX,
+      surgeTokens: debouncedInputs.surgeTokens,
+      aimTokens: debouncedInputs.aimTokens,
+      observeTokens: debouncedInputs.observeTokens,
+      preciseX: debouncedInputs.preciseX,
+      ramX: debouncedInputs.ramX,
+      sharpshooterX: debouncedInputs.sharpshooterX,
+      pierceX: debouncedInputs.pierceX,
+      impactX: debouncedInputs.impactX,
+      pointCost: debouncedInputs.pointCost,
+      defenseDieColor: debouncedInputs.defenseDieColor,
+      defenseSurge: debouncedInputs.defenseSurge,
+      defenseSurgeTokens: debouncedInputs.defenseSurgeTokens,
+      dodgeTokens: debouncedInputs.dodgeTokens,
+      shieldTokens: debouncedInputs.shieldTokens,
+      outmaneuver: debouncedInputs.outmaneuver,
+      cover: debouncedInputs.cover,
+      dugIn: debouncedInputs.dugIn,
+      lowProfile: debouncedInputs.lowProfile,
+      suppressed: debouncedInputs.suppressed,
+      coverX: debouncedInputs.coverX,
+      armorX: debouncedInputs.armorX,
+      impervious: debouncedInputs.impervious,
+      suppressionTokens: debouncedInputs.suppressionTokens,
+      dangerSenseX: debouncedInputs.dangerSenseX,
+      uncannyLuckX: debouncedInputs.uncannyLuckX,
+      backup: debouncedInputs.backup,
+    }),
+    [debouncedInputs]
+  );
+
   const urlState = useMemo<UrlState>(
     () => ({
       r: debouncedInputs.pool.red,
@@ -363,152 +399,9 @@ function App() {
     window.history.replaceState(undefined, '', url);
   }, [urlState]);
 
-  const criticalXNum =
-    debouncedInputs.criticalX === ''
-      ? undefined
-      : Math.max(0, Math.floor(Number(debouncedInputs.criticalX)) || 0);
-  const surgeTokensNum =
-    debouncedInputs.surgeTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.surgeTokens)) || 0);
-  const aimTokensNum =
-    debouncedInputs.aimTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.aimTokens)) || 0);
-  const observeTokensNum =
-    debouncedInputs.observeTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.observeTokens)) || 0);
-  const preciseXNum =
-    debouncedInputs.preciseX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.preciseX)) || 0);
-  const ramXNum =
-    debouncedInputs.ramX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.ramX)) || 0);
-  const sharpshooterXNum =
-    debouncedInputs.sharpshooterX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.sharpshooterX)) || 0);
-  const pierceXNum =
-    debouncedInputs.pierceX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.pierceX)) || 0);
-  const defenseSurgeTokensNum =
-    debouncedInputs.defenseSurgeTokens === ''
-      ? 0
-      : Math.max(
-          0,
-          Math.floor(Number(debouncedInputs.defenseSurgeTokens)) || 0
-        );
-  const dodgeTokensNum =
-    debouncedInputs.dodgeTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.dodgeTokens)) || 0);
-  const shieldTokensNum =
-    debouncedInputs.shieldTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.shieldTokens)) || 0);
-  const coverXNum =
-    debouncedInputs.coverX === ''
-      ? 0
-      : Math.min(
-          2,
-          Math.max(0, Math.floor(Number(debouncedInputs.coverX)) || 0)
-        );
-  const armorXNum =
-    debouncedInputs.armorX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.armorX)) || 0);
-  const suppressionTokensNum =
-    debouncedInputs.suppressionTokens === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.suppressionTokens)) || 0);
-  const dangerSenseXNum =
-    debouncedInputs.dangerSenseX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.dangerSenseX)) || 0);
-  const uncannyLuckXNum =
-    debouncedInputs.uncannyLuckX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.uncannyLuckX)) || 0);
-  const impactXNum =
-    debouncedInputs.impactX === ''
-      ? 0
-      : Math.max(0, Math.floor(Number(debouncedInputs.impactX)) || 0);
-  const results = useMemo(
-    () =>
-      calculateAttackPool(
-        debouncedInputs.pool,
-        debouncedInputs.surge,
-        criticalXNum,
-        surgeTokensNum,
-        aimTokensNum,
-        observeTokensNum,
-        preciseXNum,
-        ramXNum
-      ),
-    [
-      debouncedInputs.pool,
-      debouncedInputs.surge,
-      criticalXNum,
-      surgeTokensNum,
-      aimTokensNum,
-      observeTokensNum,
-      preciseXNum,
-      ramXNum,
-    ]
-  );
-
-  const woundsResults = useMemo(
-    () =>
-      calculateWounds(
-        results,
-        debouncedInputs.defenseDieColor,
-        debouncedInputs.defenseSurge,
-        dodgeTokensNum,
-        shieldTokensNum,
-        debouncedInputs.outmaneuver,
-        defenseSurgeTokensNum,
-        debouncedInputs.cover,
-        debouncedInputs.lowProfile,
-        debouncedInputs.suppressed,
-        coverXNum,
-        debouncedInputs.dugIn,
-        sharpshooterXNum,
-        debouncedInputs.backup,
-        armorXNum,
-        impactXNum,
-        pierceXNum,
-        debouncedInputs.impervious,
-        suppressionTokensNum,
-        dangerSenseXNum,
-        uncannyLuckXNum
-      ),
-    [
-      results,
-      debouncedInputs.defenseDieColor,
-      debouncedInputs.defenseSurge,
-      dodgeTokensNum,
-      shieldTokensNum,
-      debouncedInputs.outmaneuver,
-      defenseSurgeTokensNum,
-      debouncedInputs.cover,
-      debouncedInputs.lowProfile,
-      debouncedInputs.suppressed,
-      coverXNum,
-      debouncedInputs.dugIn,
-      sharpshooterXNum,
-      debouncedInputs.backup,
-      armorXNum,
-      impactXNum,
-      pierceXNum,
-      debouncedInputs.impervious,
-      suppressionTokensNum,
-      dangerSenseXNum,
-      uncannyLuckXNum,
-    ]
+  const { results, woundsResults } = useMemo(
+    () => computePoolResults(liveConfig),
+    [liveConfig]
   );
 
   const totalDice = pool.red + pool.black + pool.white;
