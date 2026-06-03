@@ -1,6 +1,8 @@
 import type { PoolConfig } from '../types';
 import type { PoolResults } from '../poolResults';
 import { describeActiveModifiers } from './describeActiveModifiers';
+import { pointCostValue } from './pointCost';
+import { buildDeltaRows } from '../comparisonDeltas';
 
 export interface SharePool {
   config: PoolConfig;
@@ -22,18 +24,13 @@ function poolComposition(config: PoolConfig): string {
   return parts.length > 0 ? parts.join(' ') : 'no attack dice';
 }
 
-function costValue(config: PoolConfig): number {
-  const parsed = Number(config.pointCost);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-}
-
 function statsLine(pool: SharePool): string {
   const { results, woundsResults } = pool.results;
   const segments = [
     `Avg total ${results.expectedTotal.toFixed(2)}`,
     `Avg wounds ${woundsResults.expectedWounds.toFixed(2)}`,
   ];
-  const cost = costValue(pool.config);
+  const cost = pointCostValue(pool.config);
   if (cost > 0 && woundsResults.expectedWounds > 0) {
     segments.push(
       `Pts/wound ${(cost / woundsResults.expectedWounds).toFixed(1)}`
@@ -43,9 +40,27 @@ function statsLine(pool: SharePool): string {
 }
 
 function poolBlock(pool: SharePool): string {
-  const mods = describeActiveModifiers(pool.config);
-  const modText = mods.length > 0 ? ` | ${mods.join(', ')}` : '';
-  return `${poolComposition(pool.config)}${modText} | ${statsLine(pool)}`;
+  const modifiers = describeActiveModifiers(pool.config);
+  const modifierText = modifiers.length > 0 ? ` | ${modifiers.join(', ')}` : '';
+  return `${poolComposition(pool.config)}${modifierText} | ${statsLine(pool)}`;
+}
+
+function deltaSegment(pinned: SharePool, live: SharePool): string {
+  const rows = buildDeltaRows(
+    pinned.results,
+    live.results,
+    pinned.config.pointCost,
+    live.config.pointCost
+  );
+  const wanted = ['Avg total', 'Avg wounds'];
+  const parts = rows
+    .filter((row) => wanted.includes(row.label) && row.delta !== null)
+    .map((row) => {
+      const delta = row.delta as number;
+      const sign = delta >= 0 ? '+' : '';
+      return `Δ ${row.label} ${sign}${delta.toFixed(2)}`;
+    });
+  return parts.join(', ');
 }
 
 export function buildShareText(input: ShareTextInput): string {
@@ -55,6 +70,7 @@ export function buildShareText(input: ShareTextInput): string {
       `${header} — ${input.pinned.label} vs ${input.live.label}`,
       `${input.pinned.label}: ${poolBlock(input.pinned)}`,
       `${input.live.label}: ${poolBlock(input.live)}`,
+      deltaSegment(input.pinned, input.live),
       input.url,
     ].join('\n');
   }
