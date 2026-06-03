@@ -857,9 +857,7 @@ function App() {
           </section>
 
           <section className="app__results">
-            {totalDice === 0 ? (
-              <p className="app__empty">Add dice to see results.</p>
-            ) : pinnedConfig && pinnedResults ? (
+            {pinnedConfig && pinnedResults ? (
               <>
                 <div className="app__compare-labels">
                   <label>
@@ -868,6 +866,7 @@ function App() {
                       value={labelA}
                       onChange={(event) => setLabelA(event.target.value)}
                       maxLength={24}
+                      aria-label="Label for pool A"
                     />
                   </label>
                   <label>
@@ -876,6 +875,7 @@ function App() {
                       value={labelB}
                       onChange={(event) => setLabelB(event.target.value)}
                       maxLength={24}
+                      aria-label="Label for pool B"
                     />
                   </label>
                 </div>
@@ -888,6 +888,8 @@ function App() {
                   labelB={labelB || 'B'}
                 />
               </>
+            ) : totalDice === 0 ? (
+              <p className="app__empty">Add dice to see results.</p>
             ) : (
               <>
                 <h3 className="app__results-heading">Attack</h3>
