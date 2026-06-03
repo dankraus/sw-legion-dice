@@ -1,0 +1,106 @@
+.compare-bar {
+  margin-bottom: 0.75rem;
+}
+
+.compare-bar--single {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.compare-bar__heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.compare-bar__start {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  background: #2563eb;
+  border: 1px solid #2563eb;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.compare-bar__start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compare-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.compare-bar__tabs {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.compare-bar__tab {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 50%;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.compare-bar__tab:last-child {
+  border-right: none;
+}
+
+.compare-bar__tab--active {
+  color: #fff;
+}
+
+.compare-bar__tab:not(.compare-bar__tab--active) {
+  background: transparent;
+}
+
+.compare-bar__end {
+  flex-shrink: 0;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.compare-bar__end:hover {
+  color: #111827;
+  border-color: #9ca3af;
+}
+
+.compare-bar__editing {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.compare-bar__editing-marker {
+  font-size: 0.65rem;
+  vertical-align: middle;
+}
