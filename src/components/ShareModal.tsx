@@ -15,12 +15,17 @@ interface ShareModalProps {
   onClose: () => void;
 }
 
+function poolHasDice(config: ShareCardPool['config']): boolean {
+  return config.pool.red + config.pool.black + config.pool.white > 0;
+}
+
 export function ShareModal({ url, live, pinned, onClose }: ShareModalProps) {
   const captureRef = useRef<HTMLDivElement>(null);
+  const flashTimeoutRef = useRef<number | undefined>(undefined);
   const [feedback, setFeedback] = useState<string>('');
 
   const hasDice =
-    live.config.pool.red + live.config.pool.black + live.config.pool.white > 0;
+    poolHasDice(live.config) || (pinned ? poolHasDice(pinned.config) : false);
   const imageCopyable = canCopyImage();
 
   useEffect(() => {
@@ -31,9 +36,20 @@ export function ShareModal({ url, live, pinned, onClose }: ShareModalProps) {
     return () => document.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
+  useEffect(() => {
+    return () => {
+      if (flashTimeoutRef.current !== undefined) {
+        window.clearTimeout(flashTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const flash = (message: string) => {
     setFeedback(message);
-    window.setTimeout(() => setFeedback(''), 2000);
+    if (flashTimeoutRef.current !== undefined) {
+      window.clearTimeout(flashTimeoutRef.current);
+    }
+    flashTimeoutRef.current = window.setTimeout(() => setFeedback(''), 2000);
   };
 
   const handleCopyLink = () => {
@@ -63,8 +79,12 @@ export function ShareModal({ url, live, pinned, onClose }: ShareModalProps) {
 
   const handleDownload = async () => {
     if (!captureRef.current) return;
-    await downloadPng(captureRef.current, 'legion-roller-card.png');
-    flash('Downloaded');
+    try {
+      await downloadPng(captureRef.current, 'legion-roller-card.png');
+      flash('Downloaded');
+    } catch {
+      flash('Could not generate PNG');
+    }
   };
 
   return (
@@ -73,11 +93,11 @@ export function ShareModal({ url, live, pinned, onClose }: ShareModalProps) {
         className="share-modal__panel"
         role="dialog"
         aria-modal="true"
-        aria-label="Share"
+        aria-labelledby="share-modal-title"
         onClick={(event) => event.stopPropagation()}
       >
         <header className="share-modal__header">
-          <h2>Share</h2>
+          <h2 id="share-modal-title">Share</h2>
           <button
             type="button"
             className="share-modal__close"
