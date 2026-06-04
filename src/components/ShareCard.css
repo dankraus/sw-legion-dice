@@ -17,15 +17,16 @@
 .share-card__brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   font-weight: 700;
   color: #1f2937;
   padding-bottom: 8px;
 }
 
 .share-card__brand img {
-  width: 22px;
-  height: 22px;
+  height: 1.5em;
+  width: auto;
+  display: block;
 }
 
 .share-card__pool-label {
