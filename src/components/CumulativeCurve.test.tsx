@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { CumulativeCurve, transformCumulativeData } from './CumulativeCurve';
 
 describe('CumulativeCurve', () => {
@@ -43,6 +44,29 @@ describe('CumulativeCurve', () => {
 
     expect(screen.getByText('Pool A')).toBeInTheDocument();
     expect(screen.getByText('Pool B')).toBeInTheDocument();
+  });
+
+  it('has toggle button that starts collapsed', () => {
+    const data = [{ total: 0, probability: 1.0 }];
+
+    render(<CumulativeCurve cumulative={data} />);
+
+    const button = screen.getByRole('button', { name: /show exact values/i });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('expands table when toggle button clicked', async () => {
+    const user = userEvent.setup();
+    const data = [{ total: 0, probability: 1.0 }];
+
+    render(<CumulativeCurve cumulative={data} />);
+
+    const button = screen.getByRole('button', { name: /show exact values/i });
+    await user.click(button);
+
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(button).toHaveTextContent(/hide exact values/i);
   });
 });
 

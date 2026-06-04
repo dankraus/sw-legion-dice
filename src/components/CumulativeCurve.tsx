@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -79,6 +80,7 @@ export function CumulativeCurve({
   secondaryLabel = 'B',
   defaultExpanded = false,
 }: CumulativeCurveProps) {
+  const [isTableExpanded, setIsTableExpanded] = useState(defaultExpanded);
   const hasSecondary = secondary !== undefined;
   const chartData = transformCumulativeData(cumulative, secondary);
 
@@ -86,6 +88,14 @@ export function CumulativeCurve({
     <div className="cumulative-curve">
       <div className="cumulative-curve__header">
         <h3>{title}</h3>
+        <button
+          className="cumulative-curve__toggle"
+          onClick={() => setIsTableExpanded(!isTableExpanded)}
+          aria-expanded={isTableExpanded}
+          aria-controls="cumulative-table-region"
+        >
+          {isTableExpanded ? 'Hide exact values ▲' : 'Show exact values ▼'}
+        </button>
       </div>
 
       <div className="cumulative-curve__chart">

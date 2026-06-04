@@ -13,6 +13,26 @@
   margin: 0;
 }
 
+.cumulative-curve__toggle {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #475569;
+  transition: background-color 0.15s;
+}
+
+.cumulative-curve__toggle:hover {
+  background-color: #f8fafc;
+}
+
+.cumulative-curve__toggle:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .cumulative-curve__chart {
   margin: 16px 0;
 }
