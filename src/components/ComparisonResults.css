@@ -34,10 +34,10 @@
 
 .comparison__cumulatives {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .comparison__cumulatives > div {
-  flex: 1 1 220px;
+  width: 100%;
 }
