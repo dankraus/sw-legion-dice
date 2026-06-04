@@ -150,6 +150,14 @@ describe('CumulativeCurve data transformation', () => {
     ]);
   });
 
+  it('rounds floating point artifacts to two decimal places', () => {
+    const primary = [{ total: 4, probability: 0.3518 }];
+
+    const transformed = transformCumulativeData(primary);
+
+    expect(transformed).toEqual([{ total: 4, primary: 35.18, secondary: 0 }]);
+  });
+
   it('handles unsorted input arrays safely', () => {
     const primary = [
       { total: 3, probability: 0.50 }, // out of order

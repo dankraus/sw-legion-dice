@@ -28,6 +28,9 @@ interface ChartDataPoint {
   secondary: number;
 }
 
+const toChartPercent = (probability: number): number =>
+  +((probability * 100).toFixed(2));
+
 // eslint-disable-next-line react-refresh/only-export-components
 export function transformCumulativeData(
   primary: Row[],
@@ -51,16 +54,16 @@ export function transformCumulativeData(
     let lastProbability = 0;
     for (const row of rows) {
       if (row.total === total) {
-        return row.probability * 100;
+        return toChartPercent(row.probability);
       }
       if (row.total < total) {
-        lastProbability = row.probability * 100;
+        lastProbability = row.probability;
       }
       if (row.total > total) {
         break;
       }
     }
-    return lastProbability;
+    return toChartPercent(lastProbability);
   };
 
   return allTotals.map((total) => ({
@@ -86,6 +89,8 @@ export function CumulativeCurve({
   const tableRegionId = useId();
   const hasSecondary = secondary !== undefined;
   const chartData = transformCumulativeData(cumulative, secondary);
+  const formatAxisPercent = (value: number) => `${Math.round(value)}%`;
+  const formatTooltipPercent = (value: number) => `${value.toFixed(2)}%`;
 
   return (
     <div className="cumulative-curve">
@@ -105,17 +110,33 @@ export function CumulativeCurve({
         <ResponsiveContainer width="100%" height={200}>
           <LineChart
             data={chartData}
-            margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+            margin={{
+              top: hasSecondary ? 28 : 5,
+              right: 20,
+              bottom: 30,
+              left: 36,
+            }}
           >
             <XAxis
               dataKey="total"
-              label={{ value: 'At Least', position: 'insideBottom', offset: -15 }}
+              label={{ value: 'At Least', position: 'insideBottom', offset: -10 }}
             />
             <YAxis
-              tickFormatter={(value: number) => `${value}%`}
-              label={{ value: 'Probability', angle: -90, position: 'insideLeft' }}
+              tickFormatter={(value: number) => formatAxisPercent(value)}
+              width={44}
+              label={{
+                value: 'Probability',
+                angle: -90,
+                position: 'left',
+                offset: 12,
+              }}
             />
-            <Tooltip formatter={(value) => [`${value}%`, 'Probability']} />
+            <Tooltip
+              formatter={(value) => [
+                formatTooltipPercent(Number(value)),
+                'Probability',
+              ]}
+            />
             {hasSecondary && <Legend verticalAlign="top" height={24} />}
             <Line
               type="stepAfter"

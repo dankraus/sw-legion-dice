@@ -34,9 +34,12 @@ export function DistributionChart({
 }: DistributionChartProps) {
   const hasSecondary = secondaryDistribution !== undefined;
 
+  const formatAxisPercent = (value: number) => `${Math.round(value)}%`;
+  const formatTooltipPercent = (value: number) => `${value.toFixed(2)}%`;
+
   const percentOf = (points: Point[] | undefined, total: number) => {
     const found = points?.find((entry) => entry.total === total);
-    return found ? +(found.probability * 100).toFixed(1) : 0;
+    return found ? +((found.probability * 100).toFixed(2)) : 0;
   };
 
   const totals = Array.from(
@@ -58,17 +61,33 @@ export function DistributionChart({
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
-          margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+          margin={{
+            top: hasSecondary ? 28 : 5,
+            right: 20,
+            bottom: 30,
+            left: 36,
+          }}
         >
           <XAxis
             dataKey="total"
-            label={{ value: xAxisLabel, position: 'insideBottom', offset: -15 }}
+            label={{ value: xAxisLabel, position: 'insideBottom', offset: -10 }}
           />
           <YAxis
-            tickFormatter={(value: number) => `${value}%`}
-            label={{ value: 'Probability', angle: -90, position: 'insideLeft' }}
+            tickFormatter={(value: number) => formatAxisPercent(value)}
+            width={44}
+            label={{
+              value: 'Probability',
+              angle: -90,
+              position: 'left',
+              offset: 12,
+            }}
           />
-          <Tooltip formatter={(value) => [`${value}%`, 'Probability']} />
+          <Tooltip
+            formatter={(value) => [
+              formatTooltipPercent(Number(value)),
+              'Probability',
+            ]}
+          />
           {hasSecondary && <Legend verticalAlign="top" height={24} />}
           <Bar
             dataKey="primary"
