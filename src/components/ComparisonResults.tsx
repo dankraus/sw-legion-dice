@@ -2,7 +2,7 @@ import type { PoolConfig } from '../types';
 import type { PoolResults } from '../poolResults';
 import { buildDeltaRows } from '../comparisonDeltas';
 import { DistributionChart } from './DistributionChart';
-import { CumulativeTable } from './CumulativeTable';
+import { CumulativeCurve } from './CumulativeCurve';
 import { PoolSnapshotCard } from './PoolSnapshotCard';
 import './ComparisonResults.css';
 
@@ -136,14 +136,14 @@ export function ComparisonResults({
       />
 
       <div className="comparison__cumulatives">
-        <CumulativeTable
+        <CumulativeCurve
           cumulative={resultsA.results.cumulative}
           secondary={resultsB.results.cumulative}
           title="At Least N Successes"
           primaryLabel={labelA}
           secondaryLabel={labelB}
         />
-        <CumulativeTable
+        <CumulativeCurve
           cumulative={resultsA.woundsResults.cumulative}
           secondary={resultsB.woundsResults.cumulative}
           title="At Least N Wounds"

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ComparisonResults } from './ComparisonResults';
 import { computePoolResults, DEFAULT_POOL_CONFIG } from '../poolResults';
 
@@ -41,5 +41,40 @@ describe('ComparisonResults', () => {
     expect(getByText('Avg total')).toBeTruthy();
     expect(getAllByText('Editing')).toHaveLength(1);
     expect(getByText('Editing').closest('.pool-snapshot')).toBeTruthy();
+  });
+
+  it('renders cumulative curves instead of tables', () => {
+    const configA = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 3, black: 0, white: 0 },
+    };
+    const configB = {
+      ...DEFAULT_POOL_CONFIG,
+      pool: { red: 1, black: 0, white: 0 },
+    };
+    const resultsA = computePoolResults(configA);
+    const resultsB = computePoolResults(configB);
+    const { container } = render(
+      <ComparisonResults
+        configA={configA}
+        configB={configB}
+        resultsA={resultsA}
+        resultsB={resultsB}
+        costA="100"
+        costB="120"
+        labelA="Pool A"
+        labelB="Pool B"
+        onLabelAChange={() => {}}
+        onLabelBChange={() => {}}
+        activePool="A"
+        onSelectPoolA={() => {}}
+        onSelectPoolB={() => {}}
+      />
+    );
+
+    const charts = container.querySelectorAll('.recharts-line');
+    expect(charts.length).toBeGreaterThan(0);
+
+    expect(screen.getAllByText(/show exact values/i).length).toBeGreaterThan(0);
   });
 });
