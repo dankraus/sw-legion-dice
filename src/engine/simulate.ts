@@ -460,7 +460,6 @@ export function applyRerolls(
   let critIndex = 0;
   let surgeIndex = 0;
   let hitIndex = 0;
-  let blankIndex = 0;
   for (const color of colors) {
     const count = pool[color];
     for (let i = 0; i < count; i++) {
@@ -475,7 +474,6 @@ export function applyRerolls(
       if (which === 'crit') critIndex++;
       else if (which === 'surge') surgeIndex++;
       else if (which === 'hit') hitIndex++;
-      else blankIndex++;
       outcomes.push({ color, face: which as AttackFace });
     }
   }
