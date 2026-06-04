@@ -42,8 +42,9 @@ describe('CumulativeCurve', () => {
       />
     );
 
-    expect(screen.getByText('Pool A')).toBeInTheDocument();
-    expect(screen.getByText('Pool B')).toBeInTheDocument();
+    // Labels appear in both chart legend and table (which is always in DOM but collapsed)
+    expect(screen.getAllByText('Pool A').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Pool B').length).toBeGreaterThan(0);
   });
 
   it('has toggle button that starts collapsed', () => {
@@ -67,6 +68,36 @@ describe('CumulativeCurve', () => {
 
     expect(button).toHaveAttribute('aria-expanded', 'true');
     expect(button).toHaveTextContent(/hide exact values/i);
+  });
+
+  it('shows table when expanded', async () => {
+    const user = userEvent.setup();
+    const data = [
+      { total: 0, probability: 1.0 },
+      { total: 1, probability: 0.75 },
+    ];
+
+    render(<CumulativeCurve cumulative={data} />);
+
+    const button = screen.getByRole('button', { name: /show exact values/i });
+    const tableRegion = document.getElementById(
+      button.getAttribute('aria-controls')!
+    )!;
+
+    // Table region exists but is collapsed
+    expect(tableRegion).toHaveClass('cumulative-curve__table-wrapper--collapsed');
+    expect(tableRegion).toHaveAttribute('aria-hidden', 'true');
+
+    // Click toggle button
+    await user.click(button);
+
+    // Table region now expanded
+    expect(tableRegion).toHaveClass('cumulative-curve__table-wrapper--expanded');
+    expect(tableRegion).toHaveAttribute('aria-hidden', 'false');
+
+    // Table content visible (use getAllByText since "At Least" appears in both chart and table)
+    expect(screen.getAllByText('At Least').length).toBeGreaterThan(0);
+    expect(screen.getByText('75.0%')).toBeInTheDocument();
   });
 });
 

@@ -30,7 +30,7 @@ export function CumulativeTable({
 
   return (
     <div>
-      <h3>{title}</h3>
+      {title !== '' && <h3>{title}</h3>}
       <table className="cumulative-table">
         <thead>
           <tr>

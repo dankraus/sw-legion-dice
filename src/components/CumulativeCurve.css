@@ -36,3 +36,17 @@
 .cumulative-curve__chart {
   margin: 16px 0;
 }
+
+.cumulative-curve__table-wrapper {
+  overflow: hidden;
+  transition: max-height 0.2s ease-in-out;
+  margin-top: 12px;
+}
+
+.cumulative-curve__table-wrapper--collapsed {
+  max-height: 0;
+}
+
+.cumulative-curve__table-wrapper--expanded {
+  max-height: 1000px;
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import {
   LineChart,
   Line,
@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { CumulativeTable } from './CumulativeTable';
 import './CumulativeCurve.css';
 
 type Row = { total: number; probability: number };
@@ -81,18 +82,20 @@ export function CumulativeCurve({
   defaultExpanded = false,
 }: CumulativeCurveProps) {
   const [isTableExpanded, setIsTableExpanded] = useState(defaultExpanded);
+  const titleId = useId();
+  const tableRegionId = useId();
   const hasSecondary = secondary !== undefined;
   const chartData = transformCumulativeData(cumulative, secondary);
 
   return (
     <div className="cumulative-curve">
       <div className="cumulative-curve__header">
-        <h3>{title}</h3>
+        <h3 id={titleId}>{title}</h3>
         <button
           className="cumulative-curve__toggle"
           onClick={() => setIsTableExpanded(!isTableExpanded)}
           aria-expanded={isTableExpanded}
-          aria-controls="cumulative-table-region"
+          aria-controls={tableRegionId}
         >
           {isTableExpanded ? 'Hide exact values ▲' : 'Show exact values ▼'}
         </button>
@@ -134,6 +137,26 @@ export function CumulativeCurve({
             )}
           </LineChart>
         </ResponsiveContainer>
+      </div>
+
+      <div
+        id={tableRegionId}
+        className={`cumulative-curve__table-wrapper ${
+          isTableExpanded
+            ? 'cumulative-curve__table-wrapper--expanded'
+            : 'cumulative-curve__table-wrapper--collapsed'
+        }`}
+        role="region"
+        aria-labelledby={titleId}
+        aria-hidden={!isTableExpanded}
+      >
+        <CumulativeTable
+          cumulative={cumulative}
+          secondary={secondary}
+          title=""
+          primaryLabel={primaryLabel}
+          secondaryLabel={secondaryLabel}
+        />
       </div>
     </div>
   );
