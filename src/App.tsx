@@ -865,8 +865,8 @@ function App() {
                   resultsB={compareResultsB}
                   costA={configA.pointCost}
                   costB={configB.pointCost}
-                  labelA={labelA || 'A'}
-                  labelB={labelB || 'B'}
+                  labelA={labelA}
+                  labelB={labelB}
                   onLabelAChange={setLabelA}
                   onLabelBChange={setLabelB}
                   activePool={activePool}

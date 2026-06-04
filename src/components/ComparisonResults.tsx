@@ -9,6 +9,11 @@ import './ComparisonResults.css';
 const COLOR_A = '#2563eb';
 const COLOR_B = '#f59e0b';
 
+function poolDisplayLabel(label: string, fallback: string): string {
+  const trimmed = label.trim();
+  return trimmed === '' ? fallback : trimmed;
+}
+
 interface ComparisonResultsProps {
   configA: PoolConfig;
   configB: PoolConfig;
@@ -51,6 +56,8 @@ export function ComparisonResults({
   onSelectPoolB,
 }: ComparisonResultsProps) {
   const rows = buildDeltaRows(resultsA, resultsB, costA, costB);
+  const displayLabelA = poolDisplayLabel(labelA, 'A');
+  const displayLabelB = poolDisplayLabel(labelB, 'B');
 
   return (
     <div className="comparison">
@@ -81,11 +88,11 @@ export function ComparisonResults({
             <th></th>
             <th>
               <span style={{ color: COLOR_A }}>■ </span>
-              {labelA}
+              {displayLabelA}
             </th>
             <th>
               <span style={{ color: COLOR_B }}>■ </span>
-              {labelB}
+              {displayLabelB}
             </th>
             <th>Δ (B−A)</th>
           </tr>
@@ -120,8 +127,8 @@ export function ComparisonResults({
         xAxisLabel="Total Successes"
         barColor={COLOR_A}
         secondaryColor={COLOR_B}
-        seriesLabel={labelA}
-        secondaryLabel={labelB}
+        seriesLabel={displayLabelA}
+        secondaryLabel={displayLabelB}
       />
 
       <DistributionChart
@@ -131,8 +138,8 @@ export function ComparisonResults({
         xAxisLabel="Wounds"
         barColor={COLOR_A}
         secondaryColor={COLOR_B}
-        seriesLabel={labelA}
-        secondaryLabel={labelB}
+        seriesLabel={displayLabelA}
+        secondaryLabel={displayLabelB}
       />
 
       <div className="comparison__cumulatives">
@@ -140,15 +147,15 @@ export function ComparisonResults({
           cumulative={resultsA.results.cumulative}
           secondary={resultsB.results.cumulative}
           title="At Least N Successes"
-          primaryLabel={labelA}
-          secondaryLabel={labelB}
+          primaryLabel={displayLabelA}
+          secondaryLabel={displayLabelB}
         />
         <CumulativeCurve
           cumulative={resultsA.woundsResults.cumulative}
           secondary={resultsB.woundsResults.cumulative}
           title="At Least N Wounds"
-          primaryLabel={labelA}
-          secondaryLabel={labelB}
+          primaryLabel={displayLabelA}
+          secondaryLabel={displayLabelB}
         />
       </div>
     </div>
