@@ -22,4 +22,19 @@ describe('DistributionChart', () => {
     expect(getByText('B')).toBeTruthy();
     expect(container).toBeTruthy();
   });
+
+  it('lists pool A before pool B in the legend when labels sort otherwise alphabetically', () => {
+    const { container } = render(
+      <DistributionChart
+        distribution={[{ total: 0, probability: 1 }]}
+        secondaryDistribution={[{ total: 0, probability: 1 }]}
+        seriesLabel="Zebra"
+        secondaryLabel="Apple"
+      />
+    );
+    const legendLabels = Array.from(
+      container.querySelectorAll('.recharts-legend-item-text')
+    ).map((element) => element.textContent);
+    expect(legendLabels).toEqual(['Zebra', 'Apple']);
+  });
 });

@@ -47,6 +47,21 @@ describe('CumulativeCurve', () => {
     expect(screen.getAllByText('Pool B').length).toBeGreaterThan(0);
   });
 
+  it('lists pool A before pool B in the legend when labels sort otherwise alphabetically', () => {
+    const { container } = render(
+      <CumulativeCurve
+        cumulative={[{ total: 0, probability: 1 }]}
+        secondary={[{ total: 0, probability: 0.9 }]}
+        primaryLabel="Zebra"
+        secondaryLabel="Apple"
+      />
+    );
+    const legendLabels = Array.from(
+      container.querySelectorAll('.recharts-legend-item-text')
+    ).map((element) => element.textContent);
+    expect(legendLabels).toEqual(['Zebra', 'Apple']);
+  });
+
   it('has toggle button that starts collapsed', () => {
     const data = [{ total: 0, probability: 1.0 }];
 

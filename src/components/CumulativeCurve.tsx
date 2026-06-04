@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { poolCompareLegendItemSorter } from '../chartLegendOrder';
 import { CumulativeTable } from './CumulativeTable';
 import './CumulativeCurve.css';
 
@@ -137,7 +138,13 @@ export function CumulativeCurve({
                 'Probability',
               ]}
             />
-            {hasSecondary && <Legend verticalAlign="top" height={24} />}
+            {hasSecondary && (
+              <Legend
+                verticalAlign="top"
+                height={24}
+                itemSorter={poolCompareLegendItemSorter}
+              />
+            )}
             <Line
               type="stepAfter"
               dataKey="primary"

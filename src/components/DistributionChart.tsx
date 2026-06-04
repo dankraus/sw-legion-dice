@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
+import { poolCompareLegendItemSorter } from '../chartLegendOrder';
 
 type Point = { total: number; probability: number };
 
@@ -88,7 +89,13 @@ export function DistributionChart({
               'Probability',
             ]}
           />
-          {hasSecondary && <Legend verticalAlign="top" height={24} />}
+          {hasSecondary && (
+            <Legend
+              verticalAlign="top"
+              height={24}
+              itemSorter={poolCompareLegendItemSorter}
+            />
+          )}
           <Bar
             dataKey="primary"
             name={seriesLabel}
