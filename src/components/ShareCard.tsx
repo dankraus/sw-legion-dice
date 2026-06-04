@@ -104,7 +104,7 @@ function StatBlock({ pool }: { pool: ShareCardPool }) {
         <div className="share-card__stat-value">
           {results.expectedTotal.toFixed(2)}
         </div>
-        <div className="share-card__stat-label">Avg total</div>
+        <div className="share-card__stat-label">Avg successes</div>
       </div>
       <div>
         <div className="share-card__stat-value is-wounds">
@@ -167,7 +167,7 @@ function CompareDeltas({
         const sign = delta >= 0 ? '+' : '';
         return (
           <span key={row.label} className="share-card__delta">
-            Δ {row.label} {sign}
+            Δ {row.label === 'Avg total' ? 'Avg successes' : row.label} {sign}
             {delta.toFixed(2)}
           </span>
         );

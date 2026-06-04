@@ -21,7 +21,7 @@ describe('ShareCard', () => {
     expect(getByText('×3')).toBeTruthy();
     expect(getByText('×1')).toBeTruthy();
     expect(getByText('Aim 2')).toBeTruthy();
-    expect(getByText('Avg total')).toBeTruthy();
+    expect(getByText('Avg successes')).toBeTruthy();
   });
 
   it('renders a mini distribution with a left y-axis, bars, and success totals', () => {
@@ -96,7 +96,7 @@ describe('ShareCard', () => {
     );
     const deltas = container.querySelector('.share-card__deltas');
     expect(deltas).toBeTruthy();
-    expect(deltas?.textContent).toContain('Δ Avg total');
+    expect(deltas?.textContent).toContain('Δ Avg successes');
     expect(deltas?.textContent).toContain('Δ Avg wounds');
   });
 
