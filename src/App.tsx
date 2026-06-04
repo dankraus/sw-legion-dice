@@ -24,7 +24,7 @@ import { CheckboxToggle } from './components/CheckboxToggle';
 import { NumberInputWithControls } from './components/NumberInputWithControls';
 import { StatsSummary } from './components/StatsSummary';
 import { DistributionChart } from './components/DistributionChart';
-import { CumulativeTable } from './components/CumulativeTable';
+import { CumulativeCurve } from './components/CumulativeCurve';
 import { ComparisonResults } from './components/ComparisonResults';
 import { ComparePoolBar } from './components/ComparePoolBar';
 import { RulebookVersion } from './components/RulebookVersion';
@@ -890,7 +890,7 @@ function App() {
                   title="Attack Distribution"
                   xAxisLabel="Total Successes"
                 />
-                <CumulativeTable
+                <CumulativeCurve
                   cumulative={results.cumulative}
                   title="Attack: At Least N Successes"
                 />
@@ -919,7 +919,7 @@ function App() {
                   xAxisLabel="Wounds"
                   barColor="#dc2626"
                 />
-                <CumulativeTable
+                <CumulativeCurve
                   cumulative={woundsResults.cumulative}
                   title="At Least N Wounds"
                 />
