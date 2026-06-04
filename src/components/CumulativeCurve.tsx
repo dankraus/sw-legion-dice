@@ -1,3 +1,12 @@
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import './CumulativeCurve.css';
 
 type Row = { total: number; probability: number };
@@ -59,6 +68,9 @@ export function transformCumulativeData(
   }));
 }
 
+const COLOR_PRIMARY = '#2563eb';
+const COLOR_SECONDARY = '#f59e0b';
+
 export function CumulativeCurve({
   cumulative,
   title = 'Cumulative Probabilities',
@@ -67,9 +79,52 @@ export function CumulativeCurve({
   secondaryLabel = 'B',
   defaultExpanded = false,
 }: CumulativeCurveProps) {
+  const hasSecondary = secondary !== undefined;
+  const chartData = transformCumulativeData(cumulative, secondary);
+
   return (
     <div className="cumulative-curve">
-      <h3>{title}</h3>
+      <div className="cumulative-curve__header">
+        <h3>{title}</h3>
+      </div>
+
+      <div className="cumulative-curve__chart">
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 5, right: 20, bottom: 25, left: 0 }}
+          >
+            <XAxis
+              dataKey="total"
+              label={{ value: 'At Least', position: 'insideBottom', offset: -15 }}
+            />
+            <YAxis
+              tickFormatter={(value: number) => `${value}%`}
+              label={{ value: 'Probability', angle: -90, position: 'insideLeft' }}
+            />
+            <Tooltip formatter={(value) => [`${value}%`, 'Probability']} />
+            {hasSecondary && <Legend verticalAlign="top" height={24} />}
+            <Line
+              type="stepAfter"
+              dataKey="primary"
+              name={primaryLabel}
+              stroke={COLOR_PRIMARY}
+              strokeWidth={2.5}
+              dot={false}
+            />
+            {hasSecondary && (
+              <Line
+                type="stepAfter"
+                dataKey="secondary"
+                name={secondaryLabel}
+                stroke={COLOR_SECONDARY}
+                strokeWidth={2.5}
+                dot={false}
+              />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -1,3 +1,18 @@
 .cumulative-curve {
   margin: 16px 0;
 }
+
+.cumulative-curve__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cumulative-curve__header h3 {
+  margin: 0;
+}
+
+.cumulative-curve__chart {
+  margin: 16px 0;
+}

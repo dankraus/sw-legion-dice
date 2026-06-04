@@ -14,6 +14,36 @@ describe('CumulativeCurve', () => {
 
     expect(screen.getByText('Cumulative Probabilities')).toBeInTheDocument();
   });
+
+  it('renders line chart with primary data', () => {
+    const data = [
+      { total: 0, probability: 1.0 },
+      { total: 1, probability: 0.85 },
+    ];
+
+    render(<CumulativeCurve cumulative={data} />);
+
+    // Recharts renders an SVG with role="application"
+    const chart = screen.getByRole('application');
+    expect(chart).toBeInTheDocument();
+  });
+
+  it('renders line chart with primary and secondary data', () => {
+    const primary = [{ total: 0, probability: 1.0 }];
+    const secondary = [{ total: 0, probability: 0.9 }];
+
+    render(
+      <CumulativeCurve
+        cumulative={primary}
+        secondary={secondary}
+        primaryLabel="Pool A"
+        secondaryLabel="Pool B"
+      />
+    );
+
+    expect(screen.getByText('Pool A')).toBeInTheDocument();
+    expect(screen.getByText('Pool B')).toBeInTheDocument();
+  });
 });
 
 describe('CumulativeCurve data transformation', () => {
