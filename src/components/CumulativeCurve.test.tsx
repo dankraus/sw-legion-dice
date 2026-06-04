@@ -99,6 +99,31 @@ describe('CumulativeCurve', () => {
     expect(screen.getAllByText('At Least').length).toBeGreaterThan(0);
     expect(screen.getByText('75.0%')).toBeInTheDocument();
   });
+
+  it('respects defaultExpanded prop', () => {
+    const data = [{ total: 0, probability: 1.0 }];
+
+    render(<CumulativeCurve cumulative={data} defaultExpanded={true} />);
+
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(button).toHaveTextContent(/hide exact values/i);
+  });
+
+  it('handles empty data gracefully', () => {
+    render(<CumulativeCurve cumulative={[]} />);
+
+    expect(screen.getByText('Cumulative Probabilities')).toBeInTheDocument();
+    // Chart should still render (Recharts handles empty data)
+  });
+
+  it('handles single data point', () => {
+    const data = [{ total: 5, probability: 0.42 }];
+
+    render(<CumulativeCurve cumulative={data} />);
+
+    expect(screen.getByText('Cumulative Probabilities')).toBeInTheDocument();
+  });
 });
 
 describe('CumulativeCurve data transformation', () => {
